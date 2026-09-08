@@ -19,10 +19,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.sachlabel.app.R
 import com.sachlabel.app.data.model.ProductScan
 import com.sachlabel.app.data.model.UserContext
 import com.sachlabel.app.health.HealthContextEngine
@@ -49,8 +51,8 @@ fun HealthContextScreen(
     ) {
         // Sticky Header
         SachLabelHeader(
-            title = "What This Means For You",
-            subtitle = "Dietary Relevance Audit",
+            title = stringResource(R.string.health_screen_title),
+            subtitle = stringResource(R.string.health_screen_subtitle),
             showBackButton = true,
             onBackClick = onBack
         )
@@ -64,7 +66,7 @@ fun HealthContextScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text(
-                text = "SELECT YOUR DIETARY GOAL OR CONCERN",
+                text = stringResource(R.string.health_section_goal),
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
                 color = TextSecondary,
@@ -111,7 +113,7 @@ fun HealthContextScreen(
                     customInput = it
                     analysisResult = null
                 },
-                placeholder = { Text("Or enter custom allergy, goal or ingredient...", fontSize = 13.sp, color = TextMuted) },
+                placeholder = { Text(stringResource(R.string.health_input_placeholder), fontSize = 13.sp, color = TextMuted) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
                 colors = OutlinedTextFieldDefaults.colors(
@@ -149,7 +151,7 @@ fun HealthContextScreen(
                     disabledContainerColor = SurfaceContainerLow
                 )
             ) {
-                Text("Check Ingredient Relevance", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.health_check_btn), fontSize = 14.sp, fontWeight = FontWeight.Bold)
             }
 
             // Findings Section
@@ -165,7 +167,7 @@ fun HealthContextScreen(
                 ) {
                     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                         Text(
-                            text = "STATUTORY INGREDIENT AUDIT",
+                            text = stringResource(R.string.health_findings_header),
                             fontSize = 10.sp,
                             fontWeight = FontWeight.Bold,
                             color = PrimaryGreen,
@@ -183,7 +185,7 @@ fun HealthContextScreen(
                         if (result.relevantIngredients.isNotEmpty()) {
                             HorizontalDivider(color = OutlineVariant.copy(alpha = 0.3f))
                             Text(
-                                text = "Relevant ingredients found on back label:",
+                                text = stringResource(R.string.health_relevant_found),
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = TextSecondary
@@ -222,7 +224,7 @@ fun HealthContextScreen(
                         )
                         Column {
                             Text(
-                                text = "MANDATORY STATUTORY NOTICE",
+                                text = stringResource(R.string.health_notice_header),
                                 fontSize = 10.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = CautionAmber,

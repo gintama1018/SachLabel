@@ -18,12 +18,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.sachlabel.app.R
 import com.sachlabel.app.data.model.UserLanguage
 import com.sachlabel.app.ui.theme.*
 
@@ -71,7 +73,7 @@ fun WelcomeScreen(
                             .background(PrimaryGreen)
                     )
                     Text(
-                        text = "STEP 1 OF 2",
+                        text = stringResource(R.string.welcome_step),
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
                         color = PrimaryGreen,
@@ -171,7 +173,7 @@ fun WelcomeScreen(
         }
 
         Text(
-            text = "The Indian Grocery Label Investigator",
+            text = stringResource(R.string.welcome_tagline),
             fontSize = 13.sp,
             color = TextSecondary,
             textAlign = TextAlign.Center
@@ -199,7 +201,7 @@ fun WelcomeScreen(
                     modifier = Modifier.size(22.dp)
                 )
                 Text(
-                    text = "We don't score how healthy a product is. We check whether what's printed on the front actually matches what's printed on the back — with direct statutory evidence.",
+                    text = stringResource(R.string.welcome_quote),
                     fontSize = 12.sp,
                     color = TextPrimary,
                     fontStyle = FontStyle.Italic,
@@ -237,7 +239,7 @@ fun WelcomeScreen(
                             modifier = Modifier.size(15.dp)
                         )
                         Text(
-                            text = "LIVE CASE STUDY",
+                            text = stringResource(R.string.welcome_live_case),
                             fontSize = 10.sp,
                             fontWeight = FontWeight.Bold,
                             color = TextSecondary,
@@ -405,22 +407,22 @@ fun WelcomeScreen(
                 icon = Icons.Default.Highlight,
                 iconBg = PrimaryFixed,
                 iconTint = PrimaryGreen,
-                title = "Direct Evidence",
-                description = "Exact words from statutory back-of-pack ingredient lists highlighted with no vague algorithmic scores."
+                title = stringResource(R.string.welcome_feature1_title),
+                description = stringResource(R.string.welcome_feature1_desc)
             )
             FeatureItem(
                 icon = Icons.Default.RecordVoiceOver,
                 iconBg = CautionAmberLow,
                 iconTint = CautionAmber,
-                title = "In Your Voice",
-                description = "Audio breakdowns in Hindi, Tamil, Bengali, and English so everyone in the family shops with confidence."
+                title = stringResource(R.string.welcome_feature2_title),
+                description = stringResource(R.string.welcome_feature2_desc)
             )
             FeatureItem(
                 icon = Icons.Default.Speed,
                 iconBg = AlertCrimsonLow,
                 iconTint = AlertCrimson,
-                title = "2-Second Clarity",
-                description = "Take photos right in the supermarket aisle for an unambiguous, evidence-first audit."
+                title = stringResource(R.string.welcome_feature3_title),
+                description = stringResource(R.string.welcome_feature3_desc)
             )
         }
 
@@ -443,7 +445,7 @@ fun WelcomeScreen(
             )
             Spacer(modifier = Modifier.width(10.dp))
             Text(
-                text = "Start Scanning Products",
+                text = stringResource(R.string.welcome_start_scanning),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -466,7 +468,7 @@ fun WelcomeScreen(
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = "See How It Works (Demo)",
+                    text = stringResource(R.string.welcome_see_demo),
                     fontSize = 13.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = PrimaryGreen
@@ -477,7 +479,7 @@ fun WelcomeScreen(
 
             TextButton(onClick = onSkip) {
                 Text(
-                    text = "Skip to Home",
+                    text = stringResource(R.string.welcome_skip),
                     fontSize = 13.sp,
                     color = TextSecondary
                 )
@@ -498,7 +500,7 @@ fun WelcomeScreen(
                 modifier = Modifier.size(14.dp)
             )
             Text(
-                text = "Independent Label Auditor • Evidence-First • On-Device",
+                text = stringResource(R.string.welcome_trust_footer),
                 fontSize = 10.sp,
                 color = TextSecondary,
                 fontWeight = FontWeight.Medium

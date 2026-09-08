@@ -17,6 +17,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.sachlabel.app.R
 import com.sachlabel.app.data.model.Verdict
 import com.sachlabel.app.ui.theme.*
 
@@ -25,33 +27,33 @@ fun VerdictBadge(
     verdict: Verdict,
     modifier: Modifier = Modifier
 ) {
-    val (label, icon, bgColor, contentColor) = when (verdict) {
+    val (labelResId, icon, bgColor, contentColor) = when (verdict) {
         Verdict.MISLEADING -> Quadruple(
-            "MISLEADING",
+            R.string.verdict_misleading,
             Icons.Default.Warning,
             AlertCrimsonContainer,
             Color.White
         )
         Verdict.NEEDS_CONTEXT -> Quadruple(
-            "NEEDS CONTEXT",
+            R.string.verdict_needs_context,
             Icons.Default.Info,
             CautionAmber,
             Color.White
         )
         Verdict.CONSISTENT -> Quadruple(
-            "VERIFIED ACCURATE",
+            R.string.verdict_verified_accurate,
             Icons.Default.CheckCircle,
             PrimaryContainer,
             Color.White
         )
         Verdict.NOT_ENOUGH_EVIDENCE -> Quadruple(
-            "UNCERTAIN",
+            R.string.verdict_uncertain,
             Icons.Default.Info,
             SurfaceContainerHigh,
             TextSecondary
         )
         Verdict.NO_CLAIM_DETECTED -> Quadruple(
-            "NO CLAIM",
+            R.string.verdict_no_claim,
             Icons.Default.Info,
             SurfaceContainerHigh,
             TextSecondary
@@ -73,7 +75,7 @@ fun VerdictBadge(
             modifier = Modifier.size(13.dp)
         )
         Text(
-            text = label,
+            text = stringResource(labelResId),
             color = contentColor,
             fontSize = 11.sp,
             fontWeight = FontWeight.Bold,

@@ -1,6 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">SachLabel</string>
+    <string name="app_tagline">SachLabel • सच परखें</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_history">History</string>
+    <string name="nav_scan">Scan</string>
+    <string name="nav_standards">Standards</string>
+    <string name="nav_more">More</string>
+
+    <!-- Common UI -->
+    <string name="common_front">Front</string>
+    <string name="common_back">Back</string>
+    <string name="common_flip">Flip</string>
+    <string name="common_demo">Demo</string>
+    <string name="common_retake">Retake Photo</string>
+    <string name="common_use_photo">Use This Photo</string>
+    <string name="common_full_audit">Full Audit</string>
+    <string name="common_all">All</string>
+    <string name="common_alerts">⚠️ Alerts</string>
+    <string name="common_verified">✅ Verified</string>
+    <string name="common_share">Share</string>
+    <string name="common_step_of">Step %1$d of %2$d</string>
 
     <!-- Home -->
     <string name="home_greeting">Namaskar</string>
@@ -19,54 +41,152 @@
     <string name="home_demo_cta">Try demo scenarios</string>
     <string name="home_what_we_check">What we check for</string>
     <string name="home_on_device_note">On-device · Private · Offline-capable</string>
+    <string name="home_products_checked">%1$d Products Checked</string>
+    <string name="home_on_device_badge">100% On-Device Food Check</string>
+    <string name="home_flagged_count">• %1$d flagged</string>
+    <string name="home_no_cloud_badge">• No Cloud Required</string>
+    <string name="home_analyzed_today">%1$d analyzed today</string>
+    <string name="home_no_scans_today">No scans today</string>
+    <string name="home_alert_count">%1$d Alert</string>
+    <string name="home_safe_count">%1$d Safe</string>
+    <string name="home_tap_to_scan">Tap to scan</string>
+    <string name="home_listen_duration">Listen (42s)</string>
+    <string name="home_sugar_oil_title">Sugar &amp; Oil</string>
+    <string name="home_sugar_oil_sub">Hidden fats</string>
+    <string name="home_claim_match_title">Claim Match</string>
+    <string name="home_claim_match_sub">Fact compare</string>
+    <string name="home_atta_maida_title">Atta / Maida</string>
+    <string name="home_atta_maida_sub">Grain purity</string>
+    <string name="home_kids_drinks_title">Kids Drinks</string>
+    <string name="home_kids_drinks_sub">Growth myths</string>
+    <string name="home_offline_ocr_title">Offline OCR</string>
+    <string name="home_offline_ocr_sub">Aisle ready</string>
+    <string name="home_demo_cases_title">Demo Cases</string>
+    <string name="home_demo_cases_sub">5 Scenarios</string>
+    <string name="home_front_assertion">FRONT ASSERTION</string>
+    <string name="home_label_evidence">LABEL EVIDENCE CHECK</string>
+    <string name="home_back_reality">BACK REALITY</string>
+    <string name="home_featured_demo">Featured demo</string>
+    <string name="home_latest_scan">Latest scan</string>
 
-    <!-- Bottom Nav -->
-    <string name="nav_home">Home</string>
-    <string name="nav_history">History</string>
-    <string name="nav_scan">Scan</string>
-    <string name="nav_standards">Standards</string>
-    <string name="nav_more">More</string>
+    <!-- Verdicts -->
+    <string name="verdict_misleading">MISLEADING</string>
+    <string name="verdict_needs_context">NEEDS CONTEXT</string>
+    <string name="verdict_verified_accurate">VERIFIED ACCURATE</string>
+    <string name="verdict_uncertain">UNCERTAIN</string>
+    <string name="verdict_no_claim">NO CLAIM</string>
 
     <!-- Capture -->
-    <string name="capture_front_hint">Photograph the front of the pack.</string>
-    <string name="capture_front_sub">Include the main product claim clearly</string>
-    <string name="capture_front_step">Step 1 of 2 — Front</string>
-    <string name="capture_back_hint">Now the back — ingredients or nutrition label.</string>
-    <string name="capture_back_sub">Include the full ingredient list and nutrition table</string>
-    <string name="capture_back_step">Step 2 of 2 — Back</string>
-    <string name="capture_retake">Retake</string>
-    <string name="capture_use_photo">Use this photo</string>
-    <string name="capture_retake_front">Retake front</string>
+    <string name="capture_title">Scan Product</string>
+    <string name="capture_step1_sub">Step 1: Front Claim</string>
+    <string name="capture_step2_sub">Step 2: Back Evidence</string>
+    <string name="capture_step1_label">Front Claim</string>
+    <string name="capture_step2_label">Back Fine Print</string>
+    <string name="capture_align_front">Align Front Packaging Claim here</string>
+    <string name="capture_align_back">Align Ingredients List &amp; Nutrition Table here</string>
+    <string name="capture_live_ocr">LIVE OCR RECOGNITION</string>
+    <string name="capture_tip_front">Ensure the main product claim is centered and clear.</string>
+    <string name="capture_tip_back">Ensure ingredient list and nutrition table are in good lighting for instant OCR verification.</string>
 
     <!-- Processing -->
+    <string name="processing_auditing_title">Auditing Product Label</string>
+    <string name="processing_auditing_sub">Comparing front claims against statutory back-of-pack truth</string>
     <string name="processing_reading">Reading label…</string>
     <string name="processing_claims">Finding claims…</string>
     <string name="processing_evidence">Checking evidence…</string>
     <string name="processing_explanation">Preparing explanation…</string>
-    <string name="processing_privacy_note">On-device processing — your photos stay on your phone.</string>
+    <string name="processing_privacy_footer">⚡ On-device ML Kit OCR • 100% Private</string>
 
     <!-- Result -->
-    <string name="result_contradiction">Claim needs context</string>
-    <string name="result_consistent">No contradiction found for this claim.</string>
-    <string name="result_no_evidence">Not enough evidence to check this claim.</string>
-    <string name="result_no_claim">No prominent claim detected on this product.</string>
-    <string name="result_listen">🔊 Listen</string>
-    <string name="result_stop">Stop</string>
+    <string name="result_title">Claim Check</string>
+    <string name="result_subtitle">Label Evidence Check</string>
+    <string name="result_packaged_food_verified">Packaged Food • Verified Scan</string>
+    <string name="result_scanned_product">Scanned Product</string>
+    <string name="result_evidence_backed">Evidence-Backed Check</string>
+    <string name="result_dual_pack_comparison">DUAL-PACK CLAIM COMPARISON</string>
     <string name="result_health_context">What does this mean for me?</string>
-    <string name="result_scan_another">Scan another product</string>
-    <string name="result_what_means">WHAT THIS MEANS</string>
-    <string name="result_front_label">FRONT LABEL CLAIMS:</string>
+    <string name="result_health_context_sub">Check for diabetes, allergies, or diet goals</string>
+    <string name="result_scan_next">Scan Next Product</string>
+    <string name="result_report_forum">Report Misleading Claim to Consumer Forum (NCH)</string>
+    <string name="result_try_again">Try again</string>
     <string name="result_error">We couldn\'t read this clearly. Try another photo.</string>
 
-    <!-- Health context -->
-    <string name="health_title">What does this mean for me?</string>
-    <string name="health_prompt">Add a dietary goal, allergy, or health concern:</string>
-    <string name="health_check_cta">Check for me</string>
-    <string name="health_disclaimer">This ingredient may be relevant to the concern you mentioned. This is informational, not a medical determination.</string>
-    <string name="health_findings">FINDINGS</string>
-    <string name="health_no_context">No health context was provided.</string>
+    <!-- Dual Evidence Card -->
+    <string name="evidence_front_claim_assertion">FRONT CLAIM ASSERTION</string>
+    <string name="evidence_no_claim_detected">No claim detected</string>
+    <string name="evidence_statutory_ingredients">STATUTORY INGREDIENTS LIST</string>
+    <string name="evidence_nutritional_declaration">NUTRITIONAL DECLARATION</string>
+    <string name="evidence_mandatory_fine_print">MANDATORY FINE PRINT</string>
+    <string name="evidence_statutory_back_reality">STATUTORY BACK REALITY</string>
+    <string name="evidence_statutory_pack_decl">Statutory Pack Declaration</string>
+    <string name="evidence_matched_source">Matched Source: %1$s</string>
+    <string name="evidence_why_this_matters">WHY THIS MATTERS</string>
+    <string name="evidence_ingredient_absent">Ingredient Absent from Label</string>
 
-    <!-- Language select -->
-    <string name="lang_title">Choose your language</string>
+    <!-- Voice Verdict -->
+    <string name="voice_verdict_title">Voice Verdict</string>
+    <string name="voice_speaking_now">Speaking now in %1$s…</string>
+    <string name="voice_listen_in">Listen in %1$s (%2$s)</string>
+    <string name="voice_play">Play</string>
+    <string name="voice_stop">Stop</string>
+
+    <!-- History -->
+    <string name="history_title">Scan History</string>
+    <string name="history_subtitle">SachLabel • Past Audits</string>
+    <string name="history_search_placeholder">Search brand, claim or ingredient...</string>
+    <string name="history_empty_title">No Scans Recorded Yet</string>
+    <string name="history_empty_sub">Audits you perform on package labels will appear here offline.</string>
+    <string name="history_empty_cta">Scan a Food Product</string>
+    <string name="history_front_label">FRONT:</string>
+    <string name="history_back_label">BACK:</string>
+
+    <!-- Standards / What We Check -->
+    <string name="standards_title">Truth Standards</string>
+    <string name="standards_subtitle">Defined Checklist • 8 Patterns</string>
+    <string name="standards_scope_header">DEFINED SCOPE • NOT UNLIMITED AI</string>
+    <string name="standards_scope_desc">We check these specific front-label claims against statutory back-of-pack nutrition and ingredient tables. We don\'t guess arbitrary claims.</string>
+    <string name="standards_why_title">Why only these 8?</string>
+    <string name="standards_why_desc">Adding a new claim category requires establishing deterministic verification logic against label disclosure rules — not just asking an LLM to guess. We explicitly bound our scope to these 8 claim types so every check remains transparent and evidence-backed.</string>
+
+    <!-- More / Settings -->
+    <string name="settings_title">Settings &amp; More</string>
+    <string name="settings_subtitle">Preferences &amp; Truth Standards</string>
+    <string name="settings_app_language">App Language</string>
+    <string name="settings_truth_standards">Truth Standards</string>
+    <string name="settings_truth_standards_sub">8 Bounded claim audit categories</string>
+    <string name="settings_demo_scenarios">Demo Scenarios</string>
+    <string name="settings_demo_scenarios_sub">5 Pre-built product packages (no camera needed)</string>
+    <string name="settings_privacy_title">100% On-Device &amp; Private</string>
+    <string name="settings_privacy_desc">SachLabel processes product photos entirely on your device using ML Kit OCR. No photos or label data are uploaded to the cloud.</string>
+    <string name="settings_about_title">SachLabel v1.0 • India</string>
+    <string name="settings_about_desc">An independent food claim verification utility created to cross-reference front promotional assertions against statutory back-of-pack declarations.</string>
+
+    <!-- Health Context -->
+    <string name="health_screen_title">What This Means For You</string>
+    <string name="health_screen_subtitle">Dietary Relevance Audit</string>
+    <string name="health_section_goal">SELECT YOUR DIETARY GOAL OR CONCERN</string>
+    <string name="health_input_placeholder">Or enter custom allergy, goal or ingredient...</string>
+    <string name="health_check_btn">Check Ingredient Relevance</string>
+    <string name="health_findings_header">STATUTORY INGREDIENT AUDIT</string>
+    <string name="health_relevant_found">Relevant ingredients found on back label:</string>
+    <string name="health_notice_header">MANDATORY STATUTORY NOTICE</string>
+
+    <!-- Welcome & Language Selection -->
+    <string name="welcome_step">STEP 1 OF 2</string>
+    <string name="welcome_tagline">The Indian Grocery Label Investigator</string>
+    <string name="welcome_quote">We don\'t score how healthy a product is. We check whether what\'s printed on the front actually matches what\'s printed on the back — with direct statutory evidence.</string>
+    <string name="welcome_live_case">LIVE CASE STUDY</string>
+    <string name="welcome_feature1_title">Direct Evidence</string>
+    <string name="welcome_feature1_desc">Exact words from statutory back-of-pack ingredient lists highlighted with no vague algorithmic scores.</string>
+    <string name="welcome_feature2_title">In Your Voice</string>
+    <string name="welcome_feature2_desc">Audio breakdowns in Hindi, Tamil, Bengali, and English so everyone in the family shops with confidence.</string>
+    <string name="welcome_feature3_title">2-Second Clarity</string>
+    <string name="welcome_feature3_desc">Take photos right in the supermarket aisle for an unambiguous, evidence-first audit.</string>
+    <string name="welcome_start_scanning">Start Scanning Products</string>
+    <string name="welcome_see_demo">See How It Works (Demo)</string>
+    <string name="welcome_skip">Skip to Home</string>
+    <string name="welcome_trust_footer">Independent Label Auditor • Evidence-First • On-Device</string>
+    <string name="lang_title">Choose Your Language</string>
+    <string name="lang_subtitle">अपनी भाषा चुनें  •  மொழியைத் தேர்ந்தெடுங்கள்  •  আপনার ভাষা বেছে নিন</string>
     <string name="lang_continue">Continue</string>
 </resources>

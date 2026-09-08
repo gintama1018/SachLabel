@@ -18,9 +18,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.sachlabel.app.R
 import com.sachlabel.app.data.model.UserLanguage
 import com.sachlabel.app.tts.TtsManager
 import com.sachlabel.app.ui.theme.*
@@ -74,15 +76,15 @@ fun VoiceVerdictCard(
 
                 Column {
                     Text(
-                        text = "Voice Verdict",
+                        text = stringResource(R.string.voice_verdict_title),
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
                         color = TextPrimary
                     )
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        text = if (isSpeaking) "Speaking now in ${language.displayName}..."
-                               else "Listen in ${language.displayName} (${language.displayNameEn})",
+                        text = if (isSpeaking) stringResource(R.string.voice_speaking_now, language.displayName)
+                               else stringResource(R.string.voice_listen_in, language.displayName, language.displayNameEn),
                         fontSize = 12.sp,
                         color = TextSecondary
                     )
@@ -115,7 +117,7 @@ fun VoiceVerdictCard(
                             modifier = Modifier.size(14.dp)
                         )
                         Text(
-                            text = "Stop",
+                            text = stringResource(R.string.voice_stop),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
                             color = AlertCrimson
@@ -134,7 +136,7 @@ fun VoiceVerdictCard(
                             modifier = Modifier.size(14.dp)
                         )
                         Text(
-                            text = "Play",
+                            text = stringResource(R.string.voice_play),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
                             color = PrimaryGreen

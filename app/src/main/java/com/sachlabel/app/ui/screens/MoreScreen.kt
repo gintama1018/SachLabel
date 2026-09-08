@@ -18,9 +18,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.sachlabel.app.R
 import com.sachlabel.app.data.model.UserLanguage
 import com.sachlabel.app.ui.components.SachLabelHeader
 import com.sachlabel.app.ui.theme.*
@@ -41,8 +43,8 @@ fun MoreScreen(
             .background(BackgroundSurface)
     ) {
         SachLabelHeader(
-            title = "Settings & More",
-            subtitle = "Preferences & Truth Standards",
+            title = stringResource(R.string.settings_title),
+            subtitle = stringResource(R.string.settings_subtitle),
             selectedLanguage = selectedLanguage,
             onLanguageClick = onLanguageClick
         )
@@ -60,7 +62,7 @@ fun MoreScreen(
                     icon = Icons.Default.Translate,
                     iconBg = PrimaryFixed,
                     iconTint = PrimaryGreen,
-                    title = "App Language",
+                    title = stringResource(R.string.settings_app_language),
                     subtitle = "${selectedLanguage.displayName} (${selectedLanguage.displayNameEn})",
                     onClick = onLanguageClick
                 )
@@ -72,8 +74,8 @@ fun MoreScreen(
                     icon = Icons.Default.VerifiedUser,
                     iconBg = PrimaryFixed,
                     iconTint = PrimaryGreen,
-                    title = "Truth Standards",
-                    subtitle = "8 Bounded claim audit categories",
+                    title = stringResource(R.string.settings_truth_standards),
+                    subtitle = stringResource(R.string.settings_truth_standards_sub),
                     onClick = onStandardsClick
                 )
             }
@@ -84,8 +86,8 @@ fun MoreScreen(
                     icon = Icons.Default.PlayCircle,
                     iconBg = CautionAmberLow,
                     iconTint = CautionAmber,
-                    title = "Demo Scenarios",
-                    subtitle = "5 Pre-built product packages (no camera needed)",
+                    title = stringResource(R.string.settings_demo_scenarios),
+                    subtitle = stringResource(R.string.settings_demo_scenarios_sub),
                     onClick = onDemoClick
                 )
             }
@@ -104,10 +106,10 @@ fun MoreScreen(
                     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             Icon(Icons.Default.Security, contentDescription = null, tint = PrimaryGreen, modifier = Modifier.size(20.dp))
-                            Text("100% On-Device & Private", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+                            Text(stringResource(R.string.settings_privacy_title), fontSize = 14.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
                         }
                         Text(
-                            text = "SachLabel processes product photos entirely on your device using ML Kit OCR. No photos or label data are uploaded to the cloud.",
+                            text = stringResource(R.string.settings_privacy_desc),
                             fontSize = 12.sp,
                             color = TextSecondary,
                             lineHeight = 17.sp
@@ -126,9 +128,9 @@ fun MoreScreen(
                         .padding(16.dp)
                 ) {
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Text("SachLabel v1.0 • India", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+                        Text(stringResource(R.string.settings_about_title), fontSize = 13.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
                         Text(
-                            "An independent food claim verification utility created to cross-reference front promotional assertions against statutory back-of-pack declarations.",
+                            stringResource(R.string.settings_about_desc),
                             fontSize = 11.sp,
                             color = TextSecondary,
                             lineHeight = 16.sp

@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -35,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.sachlabel.app.R
 import com.sachlabel.app.ui.components.SachLabelHeader
 import com.sachlabel.app.ui.theme.*
 import java.io.File
@@ -53,10 +55,10 @@ fun CaptureFrontScreen(
 ) {
     StitchCameraScreen(
         stepNumber = 1,
-        stepLabel = "Front Claim",
-        alignmentHint = "Align Front Packaging Claim here",
+        stepLabel = stringResource(R.string.capture_step1_label),
+        alignmentHint = stringResource(R.string.capture_align_front),
         liveOcrSample = "“100% Whole Wheat / No Preservatives”",
-        tipText = "Ensure the main product claim is centered and clear.",
+        tipText = stringResource(R.string.capture_tip_front),
         onPhotoCaptured = onPhotoCaptured,
         onBack = onBack
     )
@@ -73,10 +75,10 @@ fun CaptureBackScreen(
 ) {
     StitchCameraScreen(
         stepNumber = 2,
-        stepLabel = "Back Fine Print",
-        alignmentHint = "Align Ingredients List & Nutrition Table here",
+        stepLabel = stringResource(R.string.capture_step2_label),
+        alignmentHint = stringResource(R.string.capture_align_back),
         liveOcrSample = "“Ingredients: Wheat Flour, Sugar, Palm Oil...”",
-        tipText = "Ensure ingredient list and nutrition table are in good lighting for instant OCR verification.",
+        tipText = stringResource(R.string.capture_tip_back),
         onPhotoCaptured = onPhotoCaptured,
         onRetakePrevious = onRetakeFront,
         onBack = onBack
@@ -112,8 +114,8 @@ private fun StitchCameraScreen(
     ) {
         // Stitch Top Header
         SachLabelHeader(
-            title = "Scan Product",
-            subtitle = if (stepNumber == 1) "Step 1: Front Claim" else "Step 2: Back Evidence",
+            title = stringResource(R.string.capture_title),
+            subtitle = if (stepNumber == 1) stringResource(R.string.capture_step1_sub) else stringResource(R.string.capture_step2_sub),
             showBackButton = true,
             onBackClick = onBack,
             trailingContent = {
@@ -157,14 +159,14 @@ private fun StitchCameraScreen(
             ) {
                 StepTabItem(
                     stepNum = "1",
-                    title = "Front Claim",
+                    title = stringResource(R.string.capture_step1_label),
                     isActive = stepNumber == 1,
                     modifier = Modifier.weight(1f),
                     onClick = { if (stepNumber == 2 && onRetakePrevious != null) onRetakePrevious() }
                 )
                 StepTabItem(
                     stepNum = "2",
-                    title = "Back Fine Print",
+                    title = stringResource(R.string.capture_step2_label),
                     isActive = stepNumber == 2,
                     modifier = Modifier.weight(1f),
                     onClick = {}
@@ -272,7 +274,7 @@ private fun StitchCameraScreen(
                         )
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "LIVE OCR RECOGNITION",
+                                text = stringResource(R.string.capture_live_ocr),
                                 fontSize = 9.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = PrimaryGreen,
@@ -323,10 +325,10 @@ private fun StitchCameraScreen(
                                 .border(1.dp, OutlineVariant.copy(alpha = 0.3f), CircleShape),
                             contentAlignment = Alignment.Center
                         ) {
-                            Icon(Icons.Default.FlipCameraIos, contentDescription = "Flip", tint = TextSecondary, modifier = Modifier.size(20.dp))
+                            Icon(Icons.Default.FlipCameraIos, contentDescription = stringResource(R.string.common_flip), tint = TextSecondary, modifier = Modifier.size(20.dp))
                         }
                         Spacer(modifier = Modifier.height(3.dp))
-                        Text("Flip", fontSize = 10.sp, color = TextSecondary, fontWeight = FontWeight.Medium)
+                        Text(stringResource(R.string.common_flip), fontSize = 10.sp, color = TextSecondary, fontWeight = FontWeight.Medium)
                     }
 
                     // Main Shutter Button with Pulsing Ring
@@ -389,10 +391,10 @@ private fun StitchCameraScreen(
                                 .border(1.dp, OutlineVariant.copy(alpha = 0.3f), CircleShape),
                             contentAlignment = Alignment.Center
                         ) {
-                            Icon(Icons.Default.PlayArrow, contentDescription = "Demo Snap", tint = PrimaryGreen, modifier = Modifier.size(20.dp))
+                            Icon(Icons.Default.PlayArrow, contentDescription = stringResource(R.string.common_demo), tint = PrimaryGreen, modifier = Modifier.size(20.dp))
                         }
                         Spacer(modifier = Modifier.height(3.dp))
-                        Text("Demo", fontSize = 10.sp, color = TextSecondary, fontWeight = FontWeight.Medium)
+                        Text(stringResource(R.string.common_demo), fontSize = 10.sp, color = TextSecondary, fontWeight = FontWeight.Medium)
                     }
                 }
             } else {
@@ -407,7 +409,7 @@ private fun StitchCameraScreen(
                         modifier = Modifier.weight(1f).height(48.dp),
                         shape = RoundedCornerShape(14.dp)
                     ) {
-                        Text("Retake Photo", fontWeight = FontWeight.SemiBold)
+                        Text(stringResource(R.string.common_retake), fontWeight = FontWeight.SemiBold)
                     }
 
                     Button(
@@ -416,7 +418,7 @@ private fun StitchCameraScreen(
                         shape = RoundedCornerShape(14.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen)
                     ) {
-                        Text("Use This Photo", fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.common_use_photo), fontWeight = FontWeight.Bold)
                     }
                 }
             }

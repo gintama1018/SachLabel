@@ -64,7 +64,7 @@ fun HomeScreen(
         // Sticky Signature Stitch Curved Header
         SachLabelHeader(
             title = "${stringResource(R.string.home_greeting)}, Amit",
-            subtitle = "SachLabel • सच परखें",
+            subtitle = stringResource(R.string.app_tagline),
             selectedLanguage = selectedLanguage,
             onLanguageClick = onLanguageClick,
             contentBelow = {
@@ -84,13 +84,13 @@ fun HomeScreen(
                         modifier = Modifier.size(15.dp)
                     )
                     Text(
-                        text = if (totalScans > 0) "$totalScans Products Checked" else "100% On-Device Food Check",
+                        text = if (totalScans > 0) stringResource(R.string.home_products_checked, totalScans) else stringResource(R.string.home_on_device_badge),
                         color = Color.White,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.SemiBold
                     )
                     Text(
-                        text = if (totalScans > 0) "• $totalFlagged flagged" else "• No Cloud Required",
+                        text = if (totalScans > 0) stringResource(R.string.home_flagged_count, totalFlagged) else stringResource(R.string.home_no_cloud_badge),
                         color = OnPrimaryContainer,
                         fontSize = 11.sp
                     )
@@ -181,9 +181,9 @@ fun HomeScreen(
                                 horizontalArrangement = Arrangement.SpaceAround,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text("Front", fontSize = 10.sp, color = TextSecondary, fontWeight = FontWeight.Bold)
+                                Text(stringResource(R.string.common_front), fontSize = 10.sp, color = TextSecondary, fontWeight = FontWeight.Bold)
                                 Icon(Icons.Default.SyncAlt, contentDescription = null, tint = PrimaryGreen, modifier = Modifier.size(16.dp))
-                                Text("Back", fontSize = 10.sp, color = PrimaryGreen, fontWeight = FontWeight.Bold)
+                                Text(stringResource(R.string.common_back), fontSize = 10.sp, color = PrimaryGreen, fontWeight = FontWeight.Bold)
                             }
                         }
 
@@ -236,7 +236,7 @@ fun HomeScreen(
                                 Icon(Icons.Default.History, contentDescription = null, tint = TextSecondary, modifier = Modifier.size(15.dp))
                             }
                             Text(
-                                text = if (todayScans.isNotEmpty()) "${todayScans.size} analyzed today" else "No scans today",
+                                text = if (todayScans.isNotEmpty()) stringResource(R.string.home_analyzed_today, todayScans.size) else stringResource(R.string.home_no_scans_today),
                                 fontSize = 10.sp,
                                 color = TextSecondary
                             )
@@ -251,7 +251,7 @@ fun HomeScreen(
                                                 .background(AlertCrimsonLow)
                                                 .padding(horizontal = 6.dp, vertical = 2.dp)
                                         ) {
-                                            Text("$alertsCount Alert", fontSize = 9.sp, fontWeight = FontWeight.Bold, color = AlertCrimson)
+                                            Text(stringResource(R.string.home_alert_count, alertsCount), fontSize = 9.sp, fontWeight = FontWeight.Bold, color = AlertCrimson)
                                         }
                                     }
                                     Box(
@@ -260,12 +260,12 @@ fun HomeScreen(
                                             .background(PrimaryFixed.copy(alpha = 0.5f))
                                             .padding(horizontal = 6.dp, vertical = 2.dp)
                                         ) {
-                                            Text("$safeCount Safe", fontSize = 9.sp, fontWeight = FontWeight.Bold, color = PrimaryGreen)
+                                            Text(stringResource(R.string.home_safe_count, safeCount), fontSize = 9.sp, fontWeight = FontWeight.Bold, color = PrimaryGreen)
                                         }
                                 }
                             } else {
                                 Text(
-                                    text = "Tap to scan",
+                                    text = stringResource(R.string.home_tap_to_scan),
                                     fontSize = 9.sp,
                                     fontWeight = FontWeight.SemiBold,
                                     color = PrimaryGreen
@@ -304,7 +304,7 @@ fun HomeScreen(
                                 horizontalArrangement = Arrangement.spacedBy(4.dp)
                             ) {
                                 Box(modifier = Modifier.size(6.dp).clip(CircleShape).background(PrimaryGreen))
-                                Text("Listen (42s)", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = PrimaryGreen)
+                                Text(stringResource(R.string.home_listen_duration), fontSize = 10.sp, fontWeight = FontWeight.Bold, color = PrimaryGreen)
                             }
                         }
                     }
@@ -340,8 +340,8 @@ fun HomeScreen(
                 // 3x2 Grid
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     ActionMatrixItem(
-                        title = "Sugar & Oil",
-                        subtitle = "Hidden fats",
+                        title = stringResource(R.string.home_sugar_oil_title),
+                        subtitle = stringResource(R.string.home_sugar_oil_sub),
                         badge = "ALERT",
                         badgeColor = AlertCrimson,
                         badgeBg = AlertCrimsonLow,
@@ -351,8 +351,8 @@ fun HomeScreen(
                         modifier = Modifier.weight(1f)
                     )
                     ActionMatrixItem(
-                        title = "Claim Match",
-                        subtitle = "Fact compare",
+                        title = stringResource(R.string.home_claim_match_title),
+                        subtitle = stringResource(R.string.home_claim_match_sub),
                         badge = "CORE",
                         badgeColor = PrimaryGreen,
                         badgeBg = PrimaryFixed,
@@ -362,8 +362,8 @@ fun HomeScreen(
                         modifier = Modifier.weight(1f)
                     )
                     ActionMatrixItem(
-                        title = "Atta / Maida",
-                        subtitle = "Grain purity",
+                        title = stringResource(R.string.home_atta_maida_title),
+                        subtitle = stringResource(R.string.home_atta_maida_sub),
                         badge = null,
                         badgeColor = CautionAmber,
                         badgeBg = CautionAmberLow,
@@ -376,8 +376,8 @@ fun HomeScreen(
 
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     ActionMatrixItem(
-                        title = "Kids Drinks",
-                        subtitle = "Growth myths",
+                        title = stringResource(R.string.home_kids_drinks_title),
+                        subtitle = stringResource(R.string.home_kids_drinks_sub),
                         badge = "Rules",
                         badgeColor = AlertCrimson,
                         badgeBg = AlertCrimsonLow,
@@ -387,8 +387,8 @@ fun HomeScreen(
                         modifier = Modifier.weight(1f)
                     )
                     ActionMatrixItem(
-                        title = "Offline OCR",
-                        subtitle = "Aisle ready",
+                        title = stringResource(R.string.home_offline_ocr_title),
+                        subtitle = stringResource(R.string.home_offline_ocr_sub),
                         badge = null,
                         badgeColor = PrimaryGreen,
                         badgeBg = PrimaryFixed,
@@ -398,8 +398,8 @@ fun HomeScreen(
                         modifier = Modifier.weight(1f)
                     )
                     ActionMatrixItem(
-                        title = "Demo Cases",
-                        subtitle = "5 Scenarios",
+                        title = stringResource(R.string.home_demo_cases_title),
+                        subtitle = stringResource(R.string.home_demo_cases_sub),
                         badge = "LIVE",
                         badgeColor = PrimaryGreen,
                         badgeBg = PrimaryFixed,
@@ -426,7 +426,7 @@ fun HomeScreen(
                         letterSpacing = 0.8.sp
                     )
                     Text(
-                        text = if (savedScans.isNotEmpty()) "Latest scan" else "Featured demo",
+                        text = if (savedScans.isNotEmpty()) stringResource(R.string.home_latest_scan) else stringResource(R.string.home_featured_demo),
                         fontSize = 11.sp,
                         color = TextMuted
                     )
@@ -491,7 +491,7 @@ fun HomeScreen(
                                     .padding(10.dp)
                             ) {
                                 Column {
-                                    Text("FRONT ASSERTION", fontSize = 9.sp, fontWeight = FontWeight.Bold, color = TextSecondary)
+                                    Text(stringResource(R.string.home_front_assertion), fontSize = 9.sp, fontWeight = FontWeight.Bold, color = TextSecondary)
                                     Text("“$frontText”", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
                                 }
                             }
@@ -504,7 +504,7 @@ fun HomeScreen(
                                     .padding(10.dp)
                             ) {
                                 Column {
-                                    Text("STATUTORY BACK TRUTH", fontSize = 9.sp, fontWeight = FontWeight.Bold, color = if (verdictVal == com.sachlabel.app.data.model.Verdict.MISLEADING) AlertCrimson else PrimaryGreen)
+                                    Text(stringResource(R.string.home_label_evidence), fontSize = 9.sp, fontWeight = FontWeight.Bold, color = if (verdictVal == com.sachlabel.app.data.model.Verdict.MISLEADING) AlertCrimson else PrimaryGreen)
                                     Text(backText, fontSize = 12.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
                                 }
                             }
@@ -526,7 +526,7 @@ fun HomeScreen(
                             Row(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text("Full Breakdown", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = PrimaryGreen)
+                                Text(stringResource(R.string.common_full_audit), fontSize = 11.sp, fontWeight = FontWeight.Bold, color = PrimaryGreen)
                                 Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null, tint = PrimaryGreen, modifier = Modifier.size(13.dp))
                             }
                         }

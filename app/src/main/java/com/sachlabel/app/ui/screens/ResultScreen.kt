@@ -19,10 +19,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.sachlabel.app.R
 import com.sachlabel.app.data.model.*
 import com.sachlabel.app.tts.TtsManager
 import com.sachlabel.app.ui.components.DualEvidenceCard
@@ -72,7 +74,7 @@ fun ResultScreen(
 
                 if (result == null) {
                     ErrorState(
-                        message = "We couldn't read this clearly. Try another photo.",
+                        message = stringResource(R.string.result_error),
                         onScanAnother = onScanAnother
                     )
                 } else {
@@ -119,8 +121,8 @@ private fun ResultContent(
     Column(modifier = Modifier.fillMaxSize()) {
         // Sticky Stitch Header
         SachLabelHeader(
-            title = "Claim Check",
-            subtitle = "Label Evidence Check",
+            title = stringResource(R.string.result_title),
+            subtitle = stringResource(R.string.result_subtitle),
             selectedLanguage = selectedLanguage,
             showBackButton = true,
             onBackClick = onBack,
@@ -134,7 +136,7 @@ private fun ResultContent(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Share,
-                        contentDescription = "Share",
+                        contentDescription = stringResource(R.string.common_share),
                         tint = Color.White,
                         modifier = Modifier.size(18.dp)
                     )
@@ -189,14 +191,14 @@ private fun ResultContent(
 
                         Column {
                             Text(
-                                text = "Packaged Food • Verified Scan",
+                                text = stringResource(R.string.result_packaged_food_verified),
                                 fontSize = 11.sp,
                                 color = PrimaryFixed,
                                 fontWeight = FontWeight.Medium
                             )
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
-                                text = if (result.frontText.isNotBlank()) result.frontText else "Scanned Product",
+                                text = if (result.frontText.isNotBlank()) result.frontText else stringResource(R.string.result_scanned_product),
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White,
@@ -205,7 +207,7 @@ private fun ResultContent(
                             )
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
-                                text = "Evidence-Backed Check",
+                                text = stringResource(R.string.result_evidence_backed),
                                 fontSize = 10.sp,
                                 color = Color.White.copy(alpha = 0.75f)
                             )
@@ -219,7 +221,7 @@ private fun ResultContent(
 
             // ── 2. DUAL-PACK CLAIM COMPARISON CARD ──────────────────────────────
             Text(
-                text = "DUAL-PACK CLAIM COMPARISON",
+                text = stringResource(R.string.result_dual_pack_comparison),
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
                 color = TextSecondary,
@@ -274,13 +276,13 @@ private fun ResultContent(
                         }
                         Column {
                             Text(
-                                text = "What does this mean for me?",
+                                text = stringResource(R.string.result_health_context),
                                 fontSize = 13.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = TextPrimary
                             )
                             Text(
-                                text = "Check for diabetes, allergies, or diet goals",
+                                text = stringResource(R.string.result_health_context_sub),
                                 fontSize = 11.sp,
                                 color = TextSecondary
                             )
@@ -313,7 +315,7 @@ private fun ResultContent(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Scan Next Product",
+                    text = stringResource(R.string.result_scan_next),
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -324,7 +326,7 @@ private fun ResultContent(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "Report Misleading Claim to Consumer Forum (NCH)",
+                    text = stringResource(R.string.result_report_forum),
                     fontSize = 11.sp,
                     color = AlertCrimson,
                     fontWeight = FontWeight.SemiBold
@@ -366,7 +368,7 @@ private fun ErrorState(message: String, onScanAnother: () -> Unit) {
             colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen),
             shape = RoundedCornerShape(14.dp)
         ) {
-            Text("Try again")
+            Text(stringResource(R.string.result_try_again))
         }
     }
 }

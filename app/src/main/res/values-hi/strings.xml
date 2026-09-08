@@ -1,8 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">सचलेबल</string>
+    <string name="app_tagline">सचलेबल • सच परखें</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">होम</string>
+    <string name="nav_history">इतिहास</string>
+    <string name="nav_scan">स्कैन</string>
+    <string name="nav_standards">नियम</string>
+    <string name="nav_more">अधिक</string>
+
+    <!-- Common UI -->
+    <string name="common_front">सामने</string>
+    <string name="common_back">पीछे</string>
+    <string name="common_flip">कैमरा पलटें</string>
+    <string name="common_demo">डेमो</string>
+    <string name="common_retake">फिर से फोटो लें</string>
+    <string name="common_use_photo">यह फोटो उपयोग करें</string>
+    <string name="common_full_audit">पूरी जाँच</string>
+    <string name="common_all">सभी</string>
+    <string name="common_alerts">⚠️ चेतावनियाँ</string>
+    <string name="common_verified">✅ सत्यापित</string>
+    <string name="common_share">शेयर करें</string>
+    <string name="common_step_of">चरण %1$d / %2$d</string>
+
+    <!-- Home -->
     <string name="home_greeting">नमस्कार</string>
-    <string name="home_tagline">हम जाँचते हैं कि उत्पाद के दावे उसके अपने लेबल से मेल खाते हैं।</string>
+    <string name="home_tagline">हम जाँचते हैं कि उत्पाद के दावे उसके अपने लेबल से मेल खाते हैं या नहीं।</string>
     <string name="home_smart_scan">स्मार्ट स्कैन</string>
     <string name="home_scan_product">उत्पाद स्कैन करें</string>
     <string name="home_scan_desc">सामने के दावे बनाम पीछे के बारीक अक्षरों की जाँच।</string>
@@ -16,27 +40,153 @@
     <string name="home_scan_cta">उत्पाद स्कैन करें</string>
     <string name="home_demo_cta">डेमो देखें</string>
     <string name="home_what_we_check">हम क्या जाँचते हैं</string>
-    <string name="home_on_device_note">डिवाइस पर · निजी · ऑफलाइन</string>
+    <string name="home_on_device_note">डिवाइस पर · निजी · ऑफलाइन सक्षम</string>
+    <string name="home_products_checked">%1$d उत्पाद जाँचे गए</string>
+    <string name="home_on_device_badge">100% ऑन-डिवाइस खाद्य जाँच</string>
+    <string name="home_flagged_count">• %1$d में गड़बड़ी</string>
+    <string name="home_no_cloud_badge">• क्लाउड की जरूरत नहीं</string>
+    <string name="home_analyzed_today">आज %1$d जाँचे गए</string>
+    <string name="home_no_scans_today">आज कोई स्कैन नहीं</string>
+    <string name="home_alert_count">%1$d चेतावनी</string>
+    <string name="home_safe_count">%1$d सुरक्षित</string>
+    <string name="home_tap_to_scan">स्कैन करने के लिए टैप करें</string>
+    <string name="home_listen_duration">सुनें (42 से.)</string>
+    <string name="home_sugar_oil_title">चीनी व तेल</string>
+    <string name="home_sugar_oil_sub">छिपे हुए फैट</string>
+    <string name="home_claim_match_title">दावा मिलान</string>
+    <string name="home_claim_match_sub">तथ्य तुलना</string>
+    <string name="home_atta_maida_title">आटा / मैदा</string>
+    <string name="home_atta_maida_sub">अनाज शुद्धता</string>
+    <string name="home_kids_drinks_title">बच्चों के पेय</string>
+    <string name="home_kids_drinks_sub">ग्रोथ के मिथक</string>
+    <string name="home_offline_ocr_title">ऑफलाइन OCR</string>
+    <string name="home_offline_ocr_sub">दुकान में तैयार</string>
+    <string name="home_demo_cases_title">डेमो केस</string>
+    <string name="home_demo_cases_sub">5 परिदृश्य</string>
+    <string name="home_front_assertion">सामने का दावा</string>
+    <string name="home_label_evidence">लेबल साक्ष्य जाँच</string>
+    <string name="home_back_reality">पीछे की सच्चाई</string>
+    <string name="home_featured_demo">विशेष डेमो</string>
+    <string name="home_latest_scan">नवीनतम स्कैन</string>
 
-    <!-- Bottom Nav -->
-    <string name="nav_home">होम</string>
-    <string name="nav_history">इतिहास</string>
-    <string name="nav_scan">स्कैन</string>
-    <string name="nav_standards">नियम</string>
-    <string name="nav_more">अधिक</string>
-    <string name="capture_front_hint">पैकेट का अगला हिस्सा फोटो लें।</string>
-    <string name="capture_back_hint">अब पीछे — सामग्री या पोषण लेबल।</string>
+    <!-- Verdicts -->
+    <string name="verdict_misleading">भ्रामक दावा</string>
+    <string name="verdict_needs_context">संदर्भ आवश्यक</string>
+    <string name="verdict_verified_accurate">सत्यापित सटीक</string>
+    <string name="verdict_uncertain">अनिश्चित</string>
+    <string name="verdict_no_claim">कोई दावा नहीं</string>
+
+    <!-- Capture -->
+    <string name="capture_title">उत्पाद स्कैन करें</string>
+    <string name="capture_step1_sub">चरण 1: सामने का दावा</string>
+    <string name="capture_step2_sub">चरण 2: पीछे का साक्ष्य</string>
+    <string name="capture_step1_label">सामने का दावा</string>
+    <string name="capture_step2_label">पीछे के बारीक अक्षर</string>
+    <string name="capture_align_front">पैकेट का मुख्य दावा यहाँ संरेखित करें</string>
+    <string name="capture_align_back">सामग्री सूची व पोषण तालिका यहाँ लाएं</string>
+    <string name="capture_live_ocr">लाइव OCR पहचान</string>
+    <string name="capture_tip_front">सुनिश्चित करें कि मुख्य उत्पाद दावा स्पष्ट और केंद्रित है।</string>
+    <string name="capture_tip_back">त्वरित OCR के लिए सुनिश्चित करें कि रोशनी अच्छी हो।</string>
+
+    <!-- Processing -->
+    <string name="processing_auditing_title">उत्पाद लेबल की जाँच हो रही है</string>
+    <string name="processing_auditing_sub">सामने के दावों की पीछे के वैधानिक सच से तुलना की जा रही है</string>
     <string name="processing_reading">लेबल पढ़ रहे हैं…</string>
     <string name="processing_claims">दावे ढूंढ रहे हैं…</string>
     <string name="processing_evidence">साक्ष्य जाँच रहे हैं…</string>
     <string name="processing_explanation">व्याख्या तैयार हो रही है…</string>
-    <string name="result_contradiction">दावे को संदर्भ की जरूरत है</string>
-    <string name="result_consistent">इस दावे में कोई विरोधाभास नहीं मिला।</string>
-    <string name="result_no_evidence">इस दावे की जाँच के लिए पर्याप्त साक्ष्य नहीं।</string>
-    <string name="result_no_claim">इस उत्पाद पर कोई प्रमुख दावा नहीं मिला।</string>
-    <string name="result_listen">🔊 सुनें</string>
+    <string name="processing_privacy_footer">⚡ ऑन-डिवाइस ML Kit OCR • 100% निजी</string>
+
+    <!-- Result -->
+    <string name="result_title">दावा जाँच</string>
+    <string name="result_subtitle">लेबल साक्ष्य जाँच</string>
+    <string name="result_packaged_food_verified">पैकेट बंद भोजन • सत्यापित स्कैन</string>
+    <string name="result_scanned_product">स्कैन किया गया उत्पाद</string>
+    <string name="result_evidence_backed">साक्ष्य-आधारित जाँच</string>
+    <string name="result_dual_pack_comparison">दोहरे लेबल दावों की तुलना</string>
     <string name="result_health_context">मेरे लिए इसका क्या मतलब है?</string>
-    <string name="result_scan_another">दूसरा उत्पाद स्कैन करें</string>
-    <string name="health_disclaimer">यह सामग्री आपकी बताई चिंता से संबंधित हो सकती है। यह जानकारी है, चिकित्सीय निर्धारण नहीं।</string>
+    <string name="result_health_context_sub">मधुमेह, एलर्जी या आहार लक्ष्यों के लिए जाँचें</string>
+    <string name="result_scan_next">अगला उत्पाद स्कैन करें</string>
+    <string name="result_report_forum">उपभोक्ता फोरम (NCH) में भ्रामक दावे की रिपोर्ट करें</string>
+    <string name="result_try_again">पुनः प्रयास करें</string>
     <string name="result_error">हम इसे स्पष्ट रूप से पढ़ नहीं सके। दूसरी फोटो लें।</string>
+
+    <!-- Dual Evidence Card -->
+    <string name="evidence_front_claim_assertion">सामने का प्रमुख दावा</string>
+    <string name="evidence_no_claim_detected">कोई प्रमुख दावा नहीं मिला</string>
+    <string name="evidence_statutory_ingredients">वैधानिक सामग्री सूची</string>
+    <string name="evidence_nutritional_declaration">पोषण घोषणा तालिका</string>
+    <string name="evidence_mandatory_fine_print">अनिवार्य बारीक अक्षर</string>
+    <string name="evidence_statutory_back_reality">पीछे की वैधानिक वास्तविकता</string>
+    <string name="evidence_statutory_pack_decl">पैकेट पर मुद्रित घोषणा</string>
+    <string name="evidence_matched_source">मिलान स्रोत: %1$s</string>
+    <string name="evidence_why_this_matters">यह क्यों महत्वपूर्ण है</string>
+    <string name="evidence_ingredient_absent">लेबल पर सामग्री अनुपस्थित</string>
+
+    <!-- Voice Verdict -->
+    <string name="voice_verdict_title">आवाज में परिणाम</string>
+    <string name="voice_speaking_now">%1$s में बोल रहे हैं…</string>
+    <string name="voice_listen_in">%1$s में सुनें (%2$s)</string>
+    <string name="voice_play">चलाएं</string>
+    <string name="voice_stop">रोकें</string>
+
+    <!-- History -->
+    <string name="history_title">स्कैन इतिहास</string>
+    <string name="history_subtitle">सचलेबल • पिछली जाँचें</string>
+    <string name="history_search_placeholder">ब्रांड, दावा या सामग्री खोजें...</string>
+    <string name="history_empty_title">अभी तक कोई स्कैन नहीं मिला</string>
+    <string name="history_empty_sub">पैकेट लेबलों पर आपके द्वारा की गई जाँचें यहाँ ऑफ़लाइन दिखेंगी।</string>
+    <string name="history_empty_cta">खाद्य उत्पाद स्कैन करें</string>
+    <string name="history_front_label">सामने:</string>
+    <string name="history_back_label">पीछे:</string>
+
+    <!-- Standards / What We Check -->
+    <string name="standards_title">सत्य मानक</string>
+    <string name="standards_subtitle">निर्धारित चेकलिस्ट • 8 श्रेणियाँ</string>
+    <string name="standards_scope_header">सीमित दायरा • कोई भ्रामक AI अनुमान नहीं</string>
+    <string name="standards_scope_desc">हम सामने के विशिष्ट दावों को पीछे की वैधानिक पोषण और सामग्री तालिकाओं से मिलाते हैं। हम मनमाने अनुमान नहीं लगाते।</string>
+    <string name="standards_why_title">केवल यही 8 क्यों?</string>
+    <string name="standards_why_desc">नई श्रेणी जोड़ने के लिए लेबल नियमों के तहत निश्चित सत्यापन तर्क आवश्यक है — केवल AI से अनुमान लगवाना नहीं। इसलिए हमारा दायरा पारदर्शी और साक्ष्य-आधारित है।</string>
+
+    <!-- More / Settings -->
+    <string name="settings_title">सेटिंग्स और अधिक</string>
+    <string name="settings_subtitle">प्राथमिकताएं और सत्य मानक</string>
+    <string name="settings_app_language">ऐप की भाषा</string>
+    <string name="settings_truth_standards">सत्य मानक</string>
+    <string name="settings_truth_standards_sub">8 निर्धारित दावा श्रेणियां</string>
+    <string name="settings_demo_scenarios">डेमो परिदृश्य</string>
+    <string name="settings_demo_scenarios_sub">5 पहले से लोड पैकेज (कैमरे की जरूरत नहीं)</string>
+    <string name="settings_privacy_title">100% ऑन-डिवाइस और निजी</string>
+    <string name="settings_privacy_desc">सचलेबल ML Kit OCR का उपयोग करके तस्वीरों को पूरी तरह आपके फोन पर प्रोसेस करता है। कोई डेटा क्लाउड पर अपलोड नहीं होता।</string>
+    <string name="settings_about_title">सचलेबल v1.0 • भारत</string>
+    <string name="settings_about_desc">सामने के प्रचार दावों की पीछे की वैधानिक घोषणाओं से तुलना करने के लिए बनाया गया एक स्वतंत्र खाद्य दावा सत्यापन उपकरण।</string>
+
+    <!-- Health Context -->
+    <string name="health_screen_title">आपके लिए इसका क्या मतलब है</string>
+    <string name="health_screen_subtitle">आहार प्रासंगिकता जाँच</string>
+    <string name="health_section_goal">अपना आहार लक्ष्य या चिंता चुनें</string>
+    <string name="health_input_placeholder">या कस्टम एलर्जी, लक्ष्य या सामग्री दर्ज करें...</string>
+    <string name="health_check_btn">सामग्री प्रासंगिकता जाँचें</string>
+    <string name="health_findings_header">वैधानिक सामग्री जाँच</string>
+    <string name="health_relevant_found">पीछे के लेबल पर मिली प्रासंगिक सामग्रियां:</string>
+    <string name="health_notice_header">अनिवार्य वैधानिक सूचना</string>
+
+    <!-- Welcome & Language Selection -->
+    <string name="welcome_step">चरण 1 / 2</string>
+    <string name="welcome_tagline">भारतीय किराना लेबल अन्वेषक</string>
+    <string name="welcome_quote">हम यह नहीं आंकते कि उत्पाद कितना स्वास्थ्यवर्धक है। हम जाँचते हैं कि सामने जो छपा है, क्या वह पीछे के सच से मेल खाता है — प्रत्यक्ष साक्ष्य के साथ।</string>
+    <string name="welcome_live_case">लाइव केस स्टडी</string>
+    <string name="welcome_feature1_title">प्रत्यक्ष साक्ष्य</string>
+    <string name="welcome_feature1_desc">पीछे की वैधानिक सामग्री सूची के सटीक शब्दों का मिलान, बिना किसी अस्पष्ट स्कोर के।</string>
+    <string name="welcome_feature2_title">आपकी अपनी भाषा में</string>
+    <string name="welcome_feature2_desc">हिंदी, तमिल, बांग्ला और अंग्रेजी में ऑडियो विश्लेषण ताकि पूरा परिवार विश्वास के साथ खरीदारी कर सके।</string>
+    <string name="welcome_feature3_title">2-सेकंड में स्पष्टता</string>
+    <string name="welcome_feature3_desc">सुपरमार्केट में सीधे फोटो लें और तुरंत स्पष्ट, साक्ष्य-आधारित जाँच पाएं।</string>
+    <string name="welcome_start_scanning">उत्पाद स्कैन करना शुरू करें</string>
+    <string name="welcome_see_demo">देखें यह कैसे काम करता है (डेमो)</string>
+    <string name="welcome_skip">होम पर जाएं</string>
+    <string name="welcome_trust_footer">स्वतंत्र लेबल परीक्षक • साक्ष्य-प्रथम • डिवाइस पर</string>
+    <string name="lang_title">अपनी भाषा चुनें</string>
+    <string name="lang_subtitle">अपनी भाषा चुनें  •  மொழியைத் தேர்ந்தெடுங்கள்  •  আপনার ভাষা বেছে নিন</string>
+    <string name="lang_continue">आगे बढ़ें</string>
 </resources>

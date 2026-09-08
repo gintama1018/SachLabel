@@ -19,10 +19,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.sachlabel.app.R
 import com.sachlabel.app.data.mock.MockProducts
 import com.sachlabel.app.data.mock.MockScenario
 import com.sachlabel.app.data.model.UserLanguage
@@ -91,10 +93,13 @@ fun HistoryScreen(
     onScanClick: () -> Unit,
     onLanguageClick: () -> Unit
 ) {
-    var searchQuery by remember { mutableStateOf("") }
-    var selectedFilter by remember { mutableStateOf("All") }
+    val filterAll = stringResource(R.string.common_all)
+    val filterAlerts = stringResource(R.string.common_alerts)
+    val filterVerified = stringResource(R.string.common_verified)
+    val filters = listOf(filterAll, filterAlerts, filterVerified)
 
-    val filters = listOf("All", "⚠️ Alerts", "✅ Verified")
+    var searchQuery by remember { mutableStateOf("") }
+    var selectedFilter by remember { mutableStateOf(filterAll) }
 
     val filteredSavedScans = remember(savedScans, searchQuery, selectedFilter) {
         savedScans.filter { item ->
@@ -104,8 +109,8 @@ fun HistoryScreen(
                 item.backTruth.contains(searchQuery, ignoreCase = true)
 
             val matchesFilter = when (selectedFilter) {
-                "⚠️ Alerts" -> item.verdict == Verdict.MISLEADING
-                "✅ Verified" -> item.verdict == Verdict.CONSISTENT
+                filterAlerts -> item.verdict == Verdict.MISLEADING
+                filterVerified -> item.verdict == Verdict.CONSISTENT
                 else -> true
             }
 
@@ -120,8 +125,8 @@ fun HistoryScreen(
     ) {
         // Sticky Stitch Header
         SachLabelHeader(
-            title = "Scan History",
-            subtitle = "SachLabel • पिछली जांचें",
+            title = stringResource(R.string.history_title),
+            subtitle = stringResource(R.string.history_subtitle),
             selectedLanguage = selectedLanguage,
             onLanguageClick = onLanguageClick
         )
@@ -143,7 +148,7 @@ fun HistoryScreen(
                     OutlinedTextField(
                         value = searchQuery,
                         onValueChange = { searchQuery = it },
-                        placeholder = { Text("Search brand, claim or ingredient...", fontSize = 13.sp, color = TextMuted) },
+                        placeholder = { Text(stringResource(R.string.history_search_placeholder), fontSize = 13.sp, color = TextMuted) },
                         leadingIcon = {
                             Icon(Icons.Default.Search, contentDescription = null, tint = OutlineColor, modifier = Modifier.size(20.dp))
                         },
@@ -171,7 +176,7 @@ fun HistoryScreen(
                             .clickable(onClick = onScanClick),
                         contentAlignment = Alignment.Center
                     ) {
-                        Icon(Icons.Default.DocumentScanner, contentDescription = "Scan", tint = PrimaryGreen, modifier = Modifier.size(22.dp))
+                        Icon(Icons.Default.DocumentScanner, contentDescription = stringResource(R.string.nav_scan), tint = PrimaryGreen, modifier = Modifier.size(22.dp))
                     }
                 }
             }
@@ -256,12 +261,12 @@ fun HistoryScreen(
                             ) {
                                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                                     Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                                        Text("FRONT:", fontSize = 9.sp, fontWeight = FontWeight.Bold, color = TextSecondary)
+                                        Text(stringResource(R.string.history_front_label), fontSize = 9.sp, fontWeight = FontWeight.Bold, color = TextSecondary)
                                         Text("“${audit.frontClaim}”", fontSize = 11.sp, fontWeight = FontWeight.SemiBold, color = TextPrimary)
                                     }
                                     HorizontalDivider(color = OutlineVariant.copy(alpha = 0.25f))
                                     Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                                        Text("BACK:", fontSize = 9.sp, fontWeight = FontWeight.Bold, color = AlertCrimson)
+                                        Text(stringResource(R.string.history_back_label), fontSize = 9.sp, fontWeight = FontWeight.Bold, color = AlertCrimson)
                                         Text(audit.backTruth, fontSize = 11.sp, fontFamily = FontFamily.Monospace, color = TextPrimary)
                                     }
                                 }
@@ -280,7 +285,7 @@ fun HistoryScreen(
                                     modifier = Modifier.weight(1f)
                                 )
                                 Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Text("Full Audit", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = PrimaryGreen)
+                                    Text(stringResource(R.string.common_full_audit), fontSize = 11.sp, fontWeight = FontWeight.Bold, color = PrimaryGreen)
                                     Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null, tint = PrimaryGreen, modifier = Modifier.size(13.dp))
                                 }
                             }
@@ -308,8 +313,8 @@ fun HistoryScreen(
                             ) {
                                 Icon(Icons.Default.History, contentDescription = null, tint = TextMuted, modifier = Modifier.size(28.dp))
                             }
-                            Text("No Scans Recorded Yet", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
-                            Text("Audits you perform on package labels will appear here offline.", fontSize = 12.sp, color = TextSecondary)
+                            Text(stringResource(R.string.history_empty_title), fontSize = 15.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+                            Text(stringResource(R.string.history_empty_sub), fontSize = 12.sp, color = TextSecondary)
                             Spacer(modifier = Modifier.height(4.dp))
                             Button(
                                 onClick = onScanClick,
@@ -318,7 +323,7 @@ fun HistoryScreen(
                             ) {
                                 Icon(Icons.Default.DocumentScanner, contentDescription = null, modifier = Modifier.size(16.dp))
                                 Spacer(modifier = Modifier.width(6.dp))
-                                Text("Scan a Food Product")
+                                Text(stringResource(R.string.history_empty_cta))
                             }
                         }
                     }

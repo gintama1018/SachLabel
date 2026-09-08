@@ -1,6 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">SachLabel</string>
+    <string name="app_tagline">SachLabel • உண்மையை அறிவோம்</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">முகப்பு</string>
+    <string name="nav_history">வரலாறு</string>
+    <string name="nav_scan">ஸ்கேன்</string>
+    <string name="nav_standards">விதிகள்</string>
+    <string name="nav_more">மேலும்</string>
+
+    <!-- Common UI -->
+    <string name="common_front">முன்பக்கம்</string>
+    <string name="common_back">பின்பக்கம்</string>
+    <string name="common_flip">கேமராவை மாற்று</string>
+    <string name="common_demo">டெமோ</string>
+    <string name="common_retake">மீண்டும் படம் எடு</string>
+    <string name="common_use_photo">இப்படத்தைப் பயன்படுத்து</string>
+    <string name="common_full_audit">முழு தணிக்கை</string>
+    <string name="common_all">அனைத்தும்</string>
+    <string name="common_alerts">⚠️ எச்சரிக்கைகள்</string>
+    <string name="common_verified">✅ சரிபார்க்கப்பட்டது</string>
+    <string name="common_share">பகிர்</string>
+    <string name="common_step_of">படி %1$d / %2$d</string>
+
+    <!-- Home -->
     <string name="home_greeting">வணக்கம்</string>
     <string name="home_tagline">ஒரு தயாரிப்பின் கோரிக்கைகள் அதன் சொந்த லேபிலுடன் பொருந்துகிறதா என்று நாங்கள் சரிபார்க்கிறோம்.</string>
     <string name="home_smart_scan">ஸ்மார்ட் ஸ்கேன்</string>
@@ -16,26 +40,153 @@
     <string name="home_scan_cta">தயாரிப்பை ஸ்கேன் செய்யுங்கள்</string>
     <string name="home_demo_cta">டெமோ காட்சிகளை முயற்சிக்கவும்</string>
     <string name="home_what_we_check">நாங்கள் என்ன சரிபார்க்கிறோம்</string>
+    <string name="home_on_device_note">சாதனத்தில் · தனிப்பட்டது · ஆஃப்லைன் வசதி</string>
+    <string name="home_products_checked">%1$d தயாரிப்புகள் சரிபார்க்கப்பட்டன</string>
+    <string name="home_on_device_badge">100% சாதனத்தில் உணவு சரிபார்ப்பு</string>
+    <string name="home_flagged_count">• %1$d முரண்பாடுகள்</string>
+    <string name="home_no_cloud_badge">• கிளவுட் தேவையில்லை</string>
+    <string name="home_analyzed_today">இன்று %1$d சரிபார்க்கப்பட்டன</string>
+    <string name="home_no_scans_today">இன்று ஸ்கேன் இல்லை</string>
+    <string name="home_alert_count">%1$d எச்சரிக்கை</string>
+    <string name="home_safe_count">%1$d பாதுகாப்பானது</string>
+    <string name="home_tap_to_scan">ஸ்கேன் செய்ய தட்டவும்</string>
+    <string name="home_listen_duration">கேளுங்கள் (42 வி.)</string>
+    <string name="home_sugar_oil_title">சர்க்கரை &amp; எண்ணெய்</string>
+    <string name="home_sugar_oil_sub">மறைக்கப்பட்ட கொழுப்புகள்</string>
+    <string name="home_claim_match_title">கோரிக்கை ஒப்பீடு</string>
+    <string name="home_claim_match_sub">உண்மை ஒப்பீடு</string>
+    <string name="home_atta_maida_title">ஆட்டா / மைதா</string>
+    <string name="home_atta_maida_sub">தானிய தூய்மை</string>
+    <string name="home_kids_drinks_title">குழந்தைகள் பானங்கள்</string>
+    <string name="home_kids_drinks_sub">வளர்ச்சி கட்டுக்கதைகள்</string>
+    <string name="home_offline_ocr_title">ஆஃப்லைன் OCR</string>
+    <string name="home_offline_ocr_sub">கடையில் தயார்</string>
+    <string name="home_demo_cases_title">டெமோ நிகழ்வுகள்</string>
+    <string name="home_demo_cases_sub">5 காட்சிகள்</string>
+    <string name="home_front_assertion">முன்பக்க உரிமை கோரல்</string>
+    <string name="home_label_evidence">லேபில் சான்று சரிபார்ப்பு</string>
+    <string name="home_back_reality">பின்பக்க உண்மை</string>
+    <string name="home_featured_demo">சிறப்பு டெமோ</string>
+    <string name="home_latest_scan">சமீபத்திய ஸ்கேன்</string>
 
-    <!-- Bottom Nav -->
-    <string name="nav_home">முகப்பு</string>
-    <string name="nav_history">வரலாறு</string>
-    <string name="nav_scan">ஸ்கேன்</string>
-    <string name="nav_standards">விதிகள்</string>
-    <string name="nav_more">மேலும்</string>
-    <string name="capture_front_hint">பொருளின் முன்பக்கத்தை புகைப்படம் எடுங்கள்.</string>
-    <string name="capture_back_hint">இப்போது பின்பக்கம் — பொருட்கள் அல்லது ஊட்டச்சத்து லேபில்.</string>
+    <!-- Verdicts -->
+    <string name="verdict_misleading">தவறான தகவல்</string>
+    <string name="verdict_needs_context">சூழல் தேவை</string>
+    <string name="verdict_verified_accurate">சரிபார்க்கப்பட்டது</string>
+    <string name="verdict_uncertain">தெளிவற்றது</string>
+    <string name="verdict_no_claim">கோரிக்கை இல்லை</string>
+
+    <!-- Capture -->
+    <string name="capture_title">தயாரிப்பை ஸ்கேன் செய்யுங்கள்</string>
+    <string name="capture_step1_sub">படி 1: முன்பக்க உரிமை கோரல்</string>
+    <string name="capture_step2_sub">படி 2: பின்பக்க சான்று</string>
+    <string name="capture_step1_label">முன்பக்க உரிமை கோரல்</string>
+    <string name="capture_step2_label">பின்பக்க விவரங்கள்</string>
+    <string name="capture_align_front">முக்கிய உரிமைகோரலை இங்கே பொருத்தவும்</string>
+    <string name="capture_align_back">பொருட்கள் பட்டியல் &amp; ஊட்டச்சத்து அட்டவணையைப் பொருத்தவும்</string>
+    <string name="capture_live_ocr">நேரலை OCR கண்டறிதல்</string>
+    <string name="capture_tip_front">முக்கிய உரிமை கோரல் மையமாகவும் தெளிவாகவும் இருப்பதை உறுதிசெய்க.</string>
+    <string name="capture_tip_back">விரைவான OCR-க்கு நல்ல வெளிச்சம் இருப்பதை உறுதிசெய்க.</string>
+
+    <!-- Processing -->
+    <string name="processing_auditing_title">தயாரிப்பு லேபில் தணிக்கை செய்யப்படுகிறது</string>
+    <string name="processing_auditing_sub">முன்பக்க உரிமை கோரல்கள் பின்பக்க சட்டப்பூர்வ உண்மையுடன் ஒப்பிடப்படுகின்றன</string>
     <string name="processing_reading">லேபில் படிக்கிறோம்…</string>
     <string name="processing_claims">கோரிக்கைகளைக் கண்டறிகிறோம்…</string>
     <string name="processing_evidence">சான்றுகளை சரிபார்க்கிறோம்…</string>
     <string name="processing_explanation">விளக்கம் தயாரிக்கிறோம்…</string>
-    <string name="result_contradiction">கோரிக்கைக்கு சூழல் தேவை</string>
-    <string name="result_consistent">இந்த கோரிக்கையில் முரண்பாடு இல்லை.</string>
-    <string name="result_no_evidence">இந்தக் கோரிக்கையை சரிபார்க்க போதுமான சான்று இல்லை.</string>
-    <string name="result_no_claim">இந்தப் பொருளில் முக்கியமான கோரிக்கை இல்லை.</string>
-    <string name="result_listen">🔊 கேளுங்கள்</string>
+    <string name="processing_privacy_footer">⚡ சாதனத்திலேயே ML Kit OCR • 100% தனிப்பட்டது</string>
+
+    <!-- Result -->
+    <string name="result_title">உரிமை கோரல் சரிபார்ப்பு</string>
+    <string name="result_subtitle">லேபில் சான்று சரிபார்ப்பு</string>
+    <string name="result_packaged_food_verified">பாக்கெட் உணவு • சரிபார்க்கப்பட்ட ஸ்கேன்</string>
+    <string name="result_scanned_product">ஸ்கேன் செய்யப்பட்ட தயாரிப்பு</string>
+    <string name="result_evidence_backed">சான்று அடிப்படையிலான சோதனை</string>
+    <string name="result_dual_pack_comparison">இரட்டை பேக் உரிமை கோரல் ஒப்பீடு</string>
     <string name="result_health_context">இது என்னால் என்ன அர்த்தம்?</string>
-    <string name="result_scan_another">மற்றொரு தயாரிப்பை ஸ்கேன் செய்யுங்கள்</string>
-    <string name="health_disclaimer">இந்த பொருள் நீங்கள் குறிப்பிட்ட கவலையுடன் தொடர்புடையதாக இருக்கலாம். இது தகவல் மட்டுமே, மருத்துவ தீர்மானம் அல்ல.</string>
+    <string name="result_health_context_sub">நீரிழிவு, ஒவ்வாமை அல்லது உணவு இலக்குகளை சரிபார்க்கவும்</string>
+    <string name="result_scan_next">அடுத்த தயாரிப்பை ஸ்கேன் செய்க</string>
+    <string name="result_report_forum">நுகர்வோர் மன்றத்தில் (NCH) தவறான தகவலைப் புகாரளிக்கவும்</string>
+    <string name="result_try_again">மீண்டும் முயற்சிக்கவும்</string>
     <string name="result_error">இதை தெளிவாக படிக்க முடியவில்லை. மற்றொரு புகைப்படத்தை முயற்சிக்கவும்.</string>
+
+    <!-- Dual Evidence Card -->
+    <string name="evidence_front_claim_assertion">முன்பக்க உரிமை கோரல்</string>
+    <string name="evidence_no_claim_detected">முக்கிய கோரிக்கை இல்லை</string>
+    <string name="evidence_statutory_ingredients">சட்டப்பூர்வ பொருட்கள் பட்டியல்</string>
+    <string name="evidence_nutritional_declaration">ஊட்டச்சத்து அறிவிப்பு அட்டவணை</string>
+    <string name="evidence_mandatory_fine_print">கட்டாய நுண்ணிய அச்சு</string>
+    <string name="evidence_statutory_back_reality">பின்பக்க சட்டப்பூர்வ உண்மை</string>
+    <string name="evidence_statutory_pack_decl">பாக்கெட்டில் அச்சிடப்பட்ட அறிவிப்பு</string>
+    <string name="evidence_matched_source">பொருந்திய ஆதாரம்: %1$s</string>
+    <string name="evidence_why_this_matters">இது ஏன் முக்கியம்</string>
+    <string name="evidence_ingredient_absent">லேபிளில் பொருள் இல்லை</string>
+
+    <!-- Voice Verdict -->
+    <string name="voice_verdict_title">குரல் தீர்ப்பு</string>
+    <string name="voice_speaking_now">%1$s மொழியில் பேசுகிறது…</string>
+    <string name="voice_listen_in">%1$s மொழியில் கேளுங்கள் (%2$s)</string>
+    <string name="voice_play">இயக்கு</string>
+    <string name="voice_stop">நிறுத்து</string>
+
+    <!-- History -->
+    <string name="history_title">ஸ்கேன் வரலாறு</string>
+    <string name="history_subtitle">SachLabel • கடந்த தணிக்கைகள்</string>
+    <string name="history_search_placeholder">பிராண்ட், உரிமை கோரல் அல்லது மூலப்பொருளைத் தேடுங்கள்...</string>
+    <string name="history_empty_title">இதுவரை ஸ்கேன்கள் எதுவும் இல்லை</string>
+    <string name="history_empty_sub">நீங்கள் செய்யும் தணிக்கைகள் இங்கே ஆஃப்லைனில் தோன்றும்.</string>
+    <string name="history_empty_cta">உணவு தயாரிப்பை ஸ்கேன் செய்யுங்கள்</string>
+    <string name="history_front_label">முன்பக்கம்:</string>
+    <string name="history_back_label">பின்பக்கம்:</string>
+
+    <!-- Standards / What We Check -->
+    <string name="standards_title">உண்மை தரநிலைகள்</string>
+    <string name="standards_subtitle">வரையறுக்கப்பட்ட சரிபார்ப்புப் பட்டியல் • 8 பிரிவுகள்</string>
+    <string name="standards_scope_header">வரையறுக்கப்பட்ட எல்லை • வெறும் AI யூகம் அல்ல</string>
+    <string name="standards_scope_desc">முன்பக்க குறிப்பிட்ட கோரிக்கைகளை பின்பக்க ஊட்டச்சத்து மற்றும் பொருட்கள் அட்டவணைகளுடன் ஒப்பிடுகிறோம். வெறும் யூகங்களை நம்புவதில்லை.</string>
+    <string name="standards_why_title">ஏன் இந்த 8 மட்டும்?</string>
+    <string name="standards_why_desc">ஒரு புதிய பிரிவைச் சேர்க்க துல்லியமான சரிபார்ப்பு விதிமுறைகள் தேவை. எனவே எங்கள் தணிக்கை வெளிப்படையானது மற்றும் சான்று சார்ந்தது.</string>
+
+    <!-- More / Settings -->
+    <string name="settings_title">அமைப்புகள் &amp; மேலும்</string>
+    <string name="settings_subtitle">விருப்பத்தேர்வுகள் &amp; உண்மை தரநிலைகள்</string>
+    <string name="settings_app_language">பயன்பாட்டு மொழி</string>
+    <string name="settings_truth_standards">உண்மை தரநிலைகள்</string>
+    <string name="settings_truth_standards_sub">8 வரையறுக்கப்பட்ட தணிக்கைப் பிரிவுகள்</string>
+    <string name="settings_demo_scenarios">டெமோ காட்சிகள்</string>
+    <string name="settings_demo_scenarios_sub">5 முன் ஏற்றப்பட்ட காட்சிகள் (கேமரா தேவையில்லை)</string>
+    <string name="settings_privacy_title">100% சாதனத்தில் &amp; தனிப்பட்டது</string>
+    <string name="settings_privacy_desc">SachLabel உங்கள் சாதனத்திலேயே ML Kit OCR மூலம் புகைப்படங்களைச் செயலாக்குகிறது. தரவு எங்கும் பதிவேற்றப்படாது.</string>
+    <string name="settings_about_title">SachLabel v1.0 • இந்தியா</string>
+    <string name="settings_about_desc">முன்பக்க விளம்பரங்களை பின்பக்க சட்டப்பூர்வ அறிவிப்புகளுடன் ஒப்பிடுவதற்காக உருவாக்கப்பட்ட சுயாதீன கருவி.</string>
+
+    <!-- Health Context -->
+    <string name="health_screen_title">இது உங்களுக்கு என்ன அர்த்தம்</string>
+    <string name="health_screen_subtitle">உணவு பொருத்தம் தணிக்கை</string>
+    <string name="health_section_goal">உங்கள் உணவு இலக்கு அல்லது கவலையைத் தேர்ந்தெடுக்கவும்</string>
+    <string name="health_input_placeholder">அல்லது ஒவ்வாமை, இலக்கு அல்லது மூலப்பொருளை உள்ளிடவும்...</string>
+    <string name="health_check_btn">பொருட்கள் பொருத்தத்தை சரிபார்க்கவும்</string>
+    <string name="health_findings_header">சட்டப்பூர்வ மூலப்பொருள் தணிக்கை</string>
+    <string name="health_relevant_found">பின்பக்க லேபிளில் கண்டறியப்பட்ட தொடர்புடைய பொருட்கள்:</string>
+    <string name="health_notice_header">கட்டாய சட்டப்பூர்வ அறிவிப்பு</string>
+
+    <!-- Welcome & Language Selection -->
+    <string name="welcome_step">படி 1 / 2</string>
+    <string name="welcome_tagline">இந்திய மளிகை லேபில் ஆய்வாளர்</string>
+    <string name="welcome_quote">தயாரிப்பு எவ்வளவு ஆரோக்கியமானது என்று நாங்கள் மதிப்பிடுவதில்லை. முன்பக்கம் அச்சிடப்பட்டவை பின்பக்க உண்மையுடன் பொருந்துகிறதா என்பதை நேரடி சான்றுகளுடன் சரிபார்க்கிறோம்.</string>
+    <string name="welcome_live_case">நேரலை ஆய்வு</string>
+    <string name="welcome_feature1_title">நேரடி சான்றுகள்</string>
+    <string name="welcome_feature1_desc">பின்பக்க பொருட்களின் துல்லியமான சொற்கள் சிறப்பம்சமாகக் காட்டப்படுகின்றன.</string>
+    <string name="welcome_feature2_title">உங்கள் சொந்த குரலில்</string>
+    <string name="welcome_feature2_desc">தமிழ், இந்தி, வங்காளி மற்றும் ஆங்கிலத்தில் ஆடியோ விளக்கம்.</string>
+    <string name="welcome_feature3_title">2-வினாடியில் தெளிவு</string>
+    <string name="welcome_feature3_desc">பல்பொருள் அங்காடியில் உடனே படம் எடுத்து தெளிவான சான்று சார்ந்த முடிவு பெறுங்கள்.</string>
+    <string name="welcome_start_scanning">ஸ்கேன் செய்யத் தொடங்குங்கள்</string>
+    <string name="welcome_see_demo">எப்படி செயல்படுகிறது எனப் பாருங்கள் (டெமோ)</string>
+    <string name="welcome_skip">முகப்புக்குச் செல்</string>
+    <string name="welcome_trust_footer">சுயாதீன லேபில் தணிக்கையாளர் • சான்றே முதல் • சாதனத்திலேயே</string>
+    <string name="lang_title">உங்கள் மொழியைத் தேர்ந்தெடுக்கவும்</string>
+    <string name="lang_subtitle">अपनी भाषा चुनें  •  மொழியைத் தேர்ந்தெடுங்கள்  •  আপনার ভাষা বেছে নিন</string>
+    <string name="lang_continue">தொடரவும்</string>
 </resources>

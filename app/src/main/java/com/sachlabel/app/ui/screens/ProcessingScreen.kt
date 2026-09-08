@@ -20,6 +20,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.sachlabel.app.R
 import com.sachlabel.app.ui.theme.*
 import com.sachlabel.app.viewmodel.ScanViewModel
 
@@ -64,14 +66,14 @@ fun ProcessingScreen(step: ScanViewModel.ProcessingStep) {
             Spacer(modifier = Modifier.height(28.dp))
 
             Text(
-                text = "Auditing Product Label",
+                text = stringResource(R.string.processing_auditing_title),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = TextPrimary
             )
 
             Text(
-                text = "Comparing front claims against statutory back-of-pack truth",
+                text = stringResource(R.string.processing_auditing_sub),
                 fontSize = 12.sp,
                 color = TextSecondary,
                 textAlign = TextAlign.Center,
@@ -137,7 +139,7 @@ fun ProcessingScreen(step: ScanViewModel.ProcessingStep) {
                             }
 
                             Text(
-                                text = stepItem.label,
+                                text = stringResource(stepItem.labelResId),
                                 fontSize = 13.sp,
                                 fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.Medium,
                                 color = if (isCurrent) TextPrimary else if (isComplete) PrimaryGreen else TextMuted
@@ -150,7 +152,7 @@ fun ProcessingScreen(step: ScanViewModel.ProcessingStep) {
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                text = "⚡ On-device ML Kit OCR • 100% Private",
+                text = stringResource(R.string.processing_privacy_footer),
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Medium,
                 color = TextSecondary

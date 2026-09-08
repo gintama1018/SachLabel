@@ -17,9 +17,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.sachlabel.app.R
 import com.sachlabel.app.data.model.UserLanguage
 import com.sachlabel.app.ui.components.SachLabelHeader
 import com.sachlabel.app.ui.theme.*
@@ -41,8 +43,8 @@ fun WhatWeCheckScreen(
     ) {
         // Sticky Header
         SachLabelHeader(
-            title = "Truth Standards",
-            subtitle = "Defined Checklist • 8 Patterns",
+            title = stringResource(R.string.standards_title),
+            subtitle = stringResource(R.string.standards_subtitle),
             selectedLanguage = selectedLanguage,
             showBackButton = true,
             onBackClick = onBack,
@@ -80,7 +82,7 @@ fun WhatWeCheckScreen(
                         }
                         Column {
                             Text(
-                                text = "DEFINED SCOPE • NOT UNLIMITED AI",
+                                text = stringResource(R.string.standards_scope_header),
                                 fontSize = 10.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = PrimaryGreen,
@@ -88,7 +90,7 @@ fun WhatWeCheckScreen(
                             )
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
-                                text = "We check these specific front-label claims against statutory back-of-pack nutrition and ingredient tables. We don't guess arbitrary claims.",
+                                text = stringResource(R.string.standards_scope_desc),
                                 fontSize = 12.sp,
                                 color = TextPrimary,
                                 lineHeight = 17.sp
@@ -159,10 +161,10 @@ fun WhatWeCheckScreen(
                     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                             Icon(Icons.Default.Shield, contentDescription = null, tint = PrimaryGreen, modifier = Modifier.size(16.dp))
-                            Text("Why only these 8?", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+                            Text(stringResource(R.string.standards_why_title), fontSize = 14.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
                         }
                         Text(
-                            text = "Adding a new claim category requires establishing deterministic verification logic against label disclosure rules — not just asking an LLM to guess. We explicitly bound our scope to these 8 claim types so every check remains transparent and evidence-backed.",
+                            text = stringResource(R.string.standards_why_desc),
                             fontSize = 12.sp,
                             color = TextSecondary,
                             lineHeight = 18.sp

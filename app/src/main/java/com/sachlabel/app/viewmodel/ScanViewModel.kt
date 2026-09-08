@@ -42,11 +42,11 @@ class ScanViewModel(application: Application) : AndroidViewModel(application) {
         data class Error(val message: String) : ScanUiState()
     }
 
-    enum class ProcessingStep(val label: String) {
-        READING_LABEL("Reading label…"),
-        FINDING_CLAIMS("Finding claims…"),
-        CHECKING_EVIDENCE("Checking evidence…"),
-        PREPARING_EXPLANATION("Preparing explanation…")
+    enum class ProcessingStep(val labelResId: Int, val label: String) {
+        READING_LABEL(com.sachlabel.app.R.string.processing_reading, "Reading label…"),
+        FINDING_CLAIMS(com.sachlabel.app.R.string.processing_claims, "Finding claims…"),
+        CHECKING_EVIDENCE(com.sachlabel.app.R.string.processing_evidence, "Checking evidence…"),
+        PREPARING_EXPLANATION(com.sachlabel.app.R.string.processing_explanation, "Preparing explanation…")
     }
 
     private val _uiState = MutableStateFlow<ScanUiState>(ScanUiState.Idle)

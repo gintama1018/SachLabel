@@ -16,10 +16,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.sachlabel.app.R
 import com.sachlabel.app.data.model.ClaimResult
 import com.sachlabel.app.data.model.Evidence
 import com.sachlabel.app.data.model.Verdict
@@ -66,7 +68,7 @@ fun DualEvidenceCard(
 
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "FRONT CLAIM ASSERTION",
+                        text = stringResource(R.string.evidence_front_claim_assertion),
                         fontSize = 10.sp,
                         fontWeight = FontWeight.Bold,
                         color = TextSecondary,
@@ -74,7 +76,7 @@ fun DualEvidenceCard(
                     )
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        text = "\u201C${result.frontText.ifBlank { result.claim?.rawText ?: "No claim detected" }}\u201D",
+                        text = "\u201C${result.frontText.ifBlank { result.claim?.rawText ?: stringResource(R.string.evidence_no_claim_detected) }}\u201D",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         color = TextPrimary,
@@ -101,10 +103,10 @@ fun DualEvidenceCard(
                         ) {
                             Text(
                                 text = when (result.evidence.sourceField) {
-                                    Evidence.SourceField.INGREDIENTS -> "STATUTORY INGREDIENTS LIST"
-                                    Evidence.SourceField.NUTRITION_TABLE -> "NUTRITIONAL DECLARATION"
-                                    Evidence.SourceField.FINE_PRINT -> "MANDATORY FINE PRINT"
-                                    else -> "STATUTORY BACK REALITY"
+                                    Evidence.SourceField.INGREDIENTS -> stringResource(R.string.evidence_statutory_ingredients)
+                                    Evidence.SourceField.NUTRITION_TABLE -> stringResource(R.string.evidence_nutritional_declaration)
+                                    Evidence.SourceField.FINE_PRINT -> stringResource(R.string.evidence_mandatory_fine_print)
+                                    else -> stringResource(R.string.evidence_statutory_back_reality)
                                 },
                                 fontSize = 10.sp,
                                 fontWeight = FontWeight.Bold,
@@ -112,7 +114,7 @@ fun DualEvidenceCard(
                                 letterSpacing = 0.8.sp
                             )
                             Text(
-                                text = "Statutory Pack Declaration",
+                                text = stringResource(R.string.evidence_statutory_pack_decl),
                                 fontSize = 10.sp,
                                 color = TextMuted,
                                 fontWeight = FontWeight.Medium
@@ -131,7 +133,7 @@ fun DualEvidenceCard(
                         HorizontalDivider(color = OutlineVariant.copy(alpha = 0.25f))
 
                         Text(
-                            text = "Matched Source: ${result.evidence.key}",
+                            text = stringResource(R.string.evidence_matched_source, result.evidence.key ?: ""),
                             fontSize = 11.sp,
                             color = TextSecondary,
                             fontWeight = FontWeight.Medium
@@ -173,7 +175,7 @@ fun DualEvidenceCard(
                     )
                     Column {
                         Text(
-                            text = "WHY THIS MATTERS",
+                            text = stringResource(R.string.evidence_why_this_matters),
                             fontSize = 10.sp,
                             fontWeight = FontWeight.Bold,
                             color = calloutTint,

@@ -18,10 +18,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.sachlabel.app.R
 import com.sachlabel.app.data.model.UserLanguage
 import com.sachlabel.app.ui.theme.*
 
@@ -65,7 +67,7 @@ fun LanguageSelectScreen(
         Spacer(modifier = Modifier.height(20.dp))
 
         Text(
-            text = "Choose Your Language",
+            text = stringResource(R.string.lang_title),
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold,
             color = TextPrimary
@@ -74,7 +76,7 @@ fun LanguageSelectScreen(
         Spacer(modifier = Modifier.height(4.dp))
 
         Text(
-            text = "अपनी भाषा चुनें  •  மொழியைத் தேர்ந்தெடுங்கள்  •  আপনার ভাষা বেছে নিন",
+            text = stringResource(R.string.lang_subtitle),
             fontSize = 12.sp,
             color = TextSecondary,
             textAlign = TextAlign.Center,
@@ -153,7 +155,7 @@ fun LanguageSelectScreen(
             colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen)
         ) {
             Text(
-                text = "Continue",
+                text = stringResource(R.string.lang_continue),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold
             )
