@@ -67,87 +67,227 @@ Existing commercial food scanner applications typically follow a **barcode-to-da
 
 ---
 
-## 3. System Architecture & Processing Pipeline
+## 3. System Design
 
-The end-to-end audit pipeline runs on-device without external server dependencies:
+SachLabel's system design is engineered around strict on-device predictability, immediate in-aisle latency, and zero cloud dependency.
 
-```
-┌───────────────────────────┐         ┌───────────────────────────┐
-│     Front-of-Pack Photo   │         │     Back-of-Pack Photo    │
-│    (Promotional Claim)    │         │  (Ingredients & Nutrition)│
-└─────────────┬─────────────┘         └─────────────┬─────────────┘
-              │                                     │
-              ▼                                     ▼
-┌─────────────────────────────────────────────────────────────────┐
-│           Google ML Kit On-Device Text Recognition v2           │
-│             (Dual Latin + Devanagari Script OCR)                │
-└─────────────┬─────────────────────────────────────┬─────────────┘
-              │                                     │
-              ▼                                     ▼
-┌───────────────────────────┐         ┌───────────────────────────┐
-│       Claim Matcher       │         │      Label Extractor      │
-│  - Heuristic size parsing │         │  - Section segmentation   │
-│  - Bounded regex matching │         │  - Ingredients tokenizer  │
-│  - 8 Canonical categories │         │  - Raw nutrition lines    │
-└─────────────┬─────────────┘         └─────────────┬─────────────┘
-              │                                     │
-              └───────────────┬─────────────────────┘
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│              Deterministic FSSAI Rule Engine                    │
-│      Evaluates canonical rules against extracted evidence       │
-└─────────────────────────────┬───────────────────────────────────┘
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                 Evidence Validator & Gatekeeper                 │
-│      Ensures zero synthetic quotes & verbatim package citations │
-└─────────────────────────────┬───────────────────────────────────┘
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                      Verdict & Presentation                     │
-│  ├── Dual Evidence Card (Side-by-side assertion vs reality)     │
-│  ├── Plain-Language Summary (Hedged, factual phrasing)          │
-│  ├── On-Device TTS Engine (Audio in EN, HI, TA, BN)             │
-│  └── Optional Health Context (Secondary dietary flags)          │
-└─────────────────────────────────────────────────────────────────┘
+```mermaid
+graph TD
+    subgraph UI_Layer [Presentation Layer - Main Thread]
+        A[CameraX Viewfinder] -->|Shutter Click| B[ScanViewModel]
+        B -->|StateFlow Updates| C[Jetpack Compose Screens]
+        C -->|Audio Request| D[Android TextToSpeech]
+    end
+
+    subgraph Background_Workers [Async Processing - IO / Default Dispatchers]
+        B -->|Dispatch Capture| E[Camera Executor]
+        E -->|Raw Image File| F[ML Kit Latin + Devanagari OCR]
+        F -->|Text Blocks| G[Label Extractor Engine]
+        G -->|Structured Label| H[Claim Matcher]
+        H -->|Claim + Evidence| I[Deterministic Rule Engine]
+        I -->|Proposed Verdict| J[Evidence Validator Gatekeeper]
+        J -->|Verified Verdict| K[Scan History Repository]
+    end
+
+    K -->|Persist JSON| L[(sachlabel_history.json)]
+    J -->|Emit ResultState| B
 ```
 
-### Component Breakdown
+### Core System Principles
 
-1. **Capture Layer ([`CaptureScreens.kt`](file:///c:/Users/hp/Downloads/IQOO/SachLabel/app/src/main/java/com/sachlabel/app/ui/screens/CaptureScreens.kt))**:
-   - CameraX integration with automatic lifecycle binding and flashlight control.
-   - Dual-step flow: Step 1 isolates front packaging claims; Step 2 isolates back ingredient lists and nutrition declarations.
-   - Dynamic alignment reticle with live feedback and tap-to-focus.
-
-2. **Computer Vision & OCR ([`OcrRecognizer.kt`](file:///c:/Users/hp/Downloads/IQOO/SachLabel/app/src/main/java/com/sachlabel/app/ocr/OcrRecognizer.kt))**:
-   - Google ML Kit On-Device Text Recognition v2.
-   - Simultaneous support for **Latin** and **Devanagari** scripts.
-   - Bounding-box text block sorting for logical top-to-bottom reading order.
-
-3. **Label Segmentation ([`LabelExtractor.kt`](file:///c:/Users/hp/Downloads/IQOO/SachLabel/app/src/main/java/com/sachlabel/app/ocr/LabelExtractor.kt))**:
-   - Identifies statutory keyword anchors (`"Ingredients:"`, `"सामग्री:"`, `"Nutrition Information"`, `"Nutrition Facts"`, `"Disclaimers"`).
-   - Extracts discrete ingredient tokens, preserving order of predominance.
-   - Captures raw, unparsed nutrition table lines (`nutritionRawLines`) for verbatim evidence quotation.
-
-4. **Claim Identification ([`ClaimMatcher.kt`](file:///c:/Users/hp/Downloads/IQOO/SachLabel/app/src/main/java/com/sachlabel/app/rules/ClaimMatcher.kt), [`ClaimRegistry.kt`](file:///c:/Users/hp/Downloads/IQOO/SachLabel/app/src/main/java/com/sachlabel/app/rules/ClaimRegistry.kt))**:
-   - Evaluates OCR text blocks against a bounded pattern library of recognized front claims in English and Hindi.
-   - Restricts claim detection strictly to the 8 canonical categories to prevent unverified heuristic hallucination.
-
-5. **Rule Execution ([`RuleEngine.kt`](file:///c:/Users/hp/Downloads/IQOO/SachLabel/app/src/main/java/com/sachlabel/app/rules/RuleEngine.kt))**:
-   - Pure Kotlin deterministic logic checking statutory conditions.
-   - Emits one of 5 standard verdict states: `VERIFIED ACCURATE`, `NEEDS CONTEXT`, `MISLEADING`, `UNCERTAIN`, or `NO CLAIM`.
-
-6. **Safety & Evidence Verification ([`EvidenceValidator.kt`](file:///c:/Users/hp/Downloads/IQOO/SachLabel/app/src/main/java/com/sachlabel/app/rules/EvidenceValidator.kt))**:
-   - Validates that every non-absent quotation in the emitted verdict exists verbatim within the extracted OCR lines.
-   - Rejects generated sentences, synthetic evidence, or invented quotes.
-
-7. **Voice Synthesis ([`TtsManager.kt`](file:///c:/Users/hp/Downloads/IQOO/SachLabel/app/src/main/java/com/sachlabel/app/tts/TtsManager.kt))**:
-   - Android native `android.speech.tts.TextToSpeech`.
-   - Generates regional voice explanations in English (`en-IN`), Hindi (`hi-IN`), Tamil (`ta-IN`), and Bengali (`bn-IN`).
+1. **Two-Photo Decoupling**: Rather than attempting complex panoramic 3D mesh stitching across curved packaging in a single frame, the system explicitly captures two dedicated shots:
+   - **Front Shot**: Maximizes optical resolution on bold promotional claims and brand badges.
+   - **Back Shot**: Optimizes contrast and alignment on dense ingredient lists and tabular nutritional declarations.
+2. **Deterministic Rules Over Generative Hallucination**: AI is employed strictly for sensory perception (OCR text block recognition and regex token extraction). The evaluation logic is 100% deterministic Kotlin code directly enforcing statutory FSSAI rules.
+3. **Strict Concurrency & Threading Model**:
+   - **Main Thread**: Renders 60 FPS declarative UI and drives Compose state transitions.
+   - **Camera Executor**: Single-threaded dedicated pool managing CameraX buffer capture.
+   - **Default Dispatcher (CPU-bound)**: Executes ML Kit recognition, string normalization, and regex rule matching.
+   - **IO Dispatcher (Disk-bound)**: Persists audit records to `sachlabel_history.json` on app-internal storage.
+4. **Zero-Cloud Privacy & Offline Execution**: Packaged food photos never leave the mobile device. No external analytics, tracking pixels, or LLM server endpoints are contacted.
 
 ---
 
-## 4. Canonical Claim Taxonomy (The Bounded 8 Rules)
+## 4. End-to-End Processing Pipeline
+
+The data transformation pipeline converts raw camera pixels into a legally defensible verdict in under 500 milliseconds:
+
+```
+[ FRONT PHOTO ] ──► [ ML Kit OCR ] ──► [ ClaimMatcher ] ────────┐
+                                                                 ▼
+                                                        [ RuleEngine ] ──► [ EvidenceValidator ] ──► [ UI & TTS ]
+                                                                 ▲
+[ BACK PHOTO ]  ──► [ ML Kit OCR ] ──► [ LabelExtractor ] ──────┘
+                                        ├── ingredientsTokens
+                                        └── nutritionRawLines
+```
+
+### Detailed Pipeline Stage Canvas
+
+```
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│ STAGE 1: DUAL IMAGE CAPTURE (CameraX)                                                  │
+│   • Step 1: Front frame capture -> cacheDir/sachlabel_front_TIMESTAMP.jpg              │
+│   • Step 2: Back frame capture  -> cacheDir/sachlabel_back_TIMESTAMP.jpg               │
+│   • Optical reticle guides alignment; flash toggle handles low-light supermarket aisles│
+└──────────────────────────────────────────┬─────────────────────────────────────────────┘
+                                           │
+                                           ▼
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│ STAGE 2: OPTICAL CHARACTER RECOGNITION (Google ML Kit v2)                              │
+│   • Dual Recognizer: TextRecognition.getClient(Latin + Devanagari)                     │
+│   • Extracts text blocks with bounding-box coordinates for topological sort           │
+│   • Preserves linebreaks and numeric indicators                                        │
+└──────────────────────────────────────────┬─────────────────────────────────────────────┘
+                                           │
+                                           ▼
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│ STAGE 3: HEURISTIC LABEL SEGMENTATION & EXTRACTION                                     │
+│   • Scans for statutory headers: "Ingredients:", "सामग्री:", "Nutritional Information"  │
+│   • Tokenizes comma-separated ingredients in mandatory order of predominance          │
+│   • Captures exact unparsed nutrition lines into nutritionRawLines                     │
+└──────────────────────────────────────────┬─────────────────────────────────────────────┘
+                                           │
+                                           ▼
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│ STAGE 4: CLAIM DETECTION & TAXONOMY ROUTING                                            │
+│   • Fuzzy regex matcher scans front text against 8 canonical categories                │
+│   • Identifies target category: e.g. CanonicalClaimCategory.WHOLE_WHEAT_ATTA           │
+│   • Rejects arbitrary claims outside canonical scope with NO_CLAIM_DETECTED            │
+└──────────────────────────────────────────┬─────────────────────────────────────────────┘
+                                           │
+                                           ▼
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│ STAGE 5: DETERMINISTIC RULE EVALUATION                                                 │
+│   • Invokes category-specific rule function in RuleEngine.kt                           │
+│   • Compares claim against back reality:                                               │
+│       - Checks first 3 ingredients for filler grains (Maida, Starch)                   │
+│       - Checks nutrition table for sugar threshold (> 0.5g/100g)                       │
+│       - Checks INS codes for Class II chemical preservatives                           │
+│   • Emits: Verdict + Verbatim Evidence Quote + Matched Source                          │
+└──────────────────────────────────────────┬─────────────────────────────────────────────┘
+                                           │
+                                           ▼
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│ STAGE 6: EVIDENCE GATEKEEPER & VALIDATION                                              │
+│   • EvidenceValidator verifies that non-absent quotes exist verbatim in OCR raw text  │
+│   • Rejects synthetic filler strings and hallucinated sentences                        │
+│   • Flags absent statutory declarations explicitly via Evidence.absent(...)            │
+└──────────────────────────────────────────┬─────────────────────────────────────────────┘
+                                           │
+                                           ▼
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│ STAGE 7: LOCALIZED PRESENTATION & AUDIO SYNTHESIS                                      │
+│   • Renders DualEvidenceCard with side-by-side front claim vs back fine print          │
+│   • Dynamically updates UI typography to selected locale (EN, HI, TA, BN)              │
+│   • Android TextToSpeech synthesizes voice verdict for hands-free listening            │
+└────────────────────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 5. Software Architecture & Clean MVVM Design
+
+The codebase strictly adheres to Clean MVVM principles, separating presentation, business logic, and infrastructure:
+
+```
+app/src/main/java/com/sachlabel/app/
+│
+├── data/
+│   ├── model/                  # Pure Kotlin Domain & Data Entities
+│   │   ├── CanonicalClaimCategory.kt  # The 8 canonical FSSAI claim types
+│   │   ├── Evidence.kt                # Verbatim quote carrier with absent flag
+│   │   ├── ProductScan.kt             # Aggregated scan audit model
+│   │   ├── StructuredLabel.kt         # Segmented ingredients & nutritionRawLines
+│   │   ├── UserContext.kt             # Secondary dietary health presets
+│   │   ├── UserLanguage.kt            # Supported locales (EN, HI, TA, BN)
+│   │   └── Verdict.kt                 # MISLEADING, NEEDS_CONTEXT, CONSISTENT, etc.
+│   │
+│   └── repository/             # Offline Persistence
+│       └── ScanHistoryRepository.kt   # JSON file-backed scan repository
+│
+├── health/                     # Secondary Dietary Relevance
+│   └── HealthContextEngine.kt  # Informational allergen/diet matcher
+│
+├── ocr/                        # Vision & Text Parsing
+│   ├── LabelExtractor.kt       # Statutory header segmentation & tokenizer
+│   └── OcrRecognizer.kt        # ML Kit Latin + Devanagari wrapper
+│
+├── rules/                      # Core Deterministic Business Logic
+│   ├── ClaimMatcher.kt         # Regex front-claim pattern detector
+│   ├── ClaimRegistry.kt        # Multilingual claim pattern repository
+│   ├── EvidenceValidator.kt    # Zero-synthetic-evidence enforcement gatekeeper
+│   └── RuleEngine.kt           # 8 Canonical FSSAI verification rules
+│
+├── tts/                        # Audio Voice Synthesis
+│   └── TtsManager.kt           # Native Android TextToSpeech engine
+│
+├── ui/                         # Presentation Layer (Jetpack Compose)
+│   ├── components/             # Reusable Design System Widgets
+│   │   ├── DualEvidenceCard.kt    # Side-by-side assertion vs reality card
+│   │   ├── SachLabelBottomNav.kt  # Floating pill navigation dock
+│   │   ├── SachLabelHeader.kt     # Signature curved gradient header
+│   │   ├── VerdictBadge.kt        # High-contrast status badges
+│   │   └── VoiceVerdictCard.kt    # Regional audio playback card
+│   │
+│   ├── navigation/             # App Navigation & Runtime Localization
+│   │   └── SachLabelNavGraph.kt   # Navigation graph with dynamic LocalContext
+│   │
+│   ├── screens/                # The 10 Canonical Stitch Screens
+│   │   ├── CaptureScreens.kt      # Screen 4 (Front) & Screen 5 (Back)
+│   │   ├── HealthContextScreen.kt # Screen 8 (Secondary Dietary Relevance)
+│   │   ├── HistoryScreen.kt       # Screen 9 (Past Audits & Search)
+│   │   ├── HomeScreen.kt          # Screen 3 (Dashboard & Action Matrix)
+│   │   ├── LanguageSelectScreen.kt# Screen 2 (Language Selection)
+│   │   ├── MoreScreen.kt          # Screen 10 (Settings & Privacy)
+│   │   ├── ProcessingScreen.kt    # Screen 6 (Staged Animated Checklist)
+│   │   ├── ResultScreen.kt        # Screen 7 (Product Investigation Verdict)
+│   │   ├── WelcomeScreen.kt       # Screen 1 (Onboarding & Mission)
+│   │   └── WhatWeCheckScreen.kt   # Standards (The 8 Bounded Patterns)
+│   │
+│   └── theme/                  # Stitch Color Tokens & Typography
+│       ├── Color.kt               # Mint canvas, forest green, crimson, amber
+│       └── Theme.kt               # Material3 Theme configuration
+│
+└── viewmodel/                  # Application State Machine
+    └── ScanViewModel.kt        # StateFlow driving UI state transitions
+```
+
+### UI State Machine Canvas
+
+The user experience transitions through an explicit state machine managed by `ScanViewModel`:
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                            UI STATE MACHINE                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+    [ IDLE ] 
+       │
+       ▼ (User taps "Start Scan")
+    [ CAPTURING_FRONT ] ─────────► User confirms front photo
+       │
+       ▼ (Step 1 complete)
+    [ CAPTURING_BACK ]  ─────────► User confirms back photo (or retakes front)
+       │
+       ▼ (Both photos acquired)
+    [ PROCESSING ]
+       ├── Step 1: Reading label… (ML Kit OCR)
+       ├── Step 2: Finding claims… (ClaimMatcher)
+       ├── Step 3: Checking evidence… (RuleEngine + EvidenceValidator)
+       └── Step 4: Preparing explanation… (Verdict formulation)
+       │
+       ▼ (Verification complete)
+    [ DISPLAYING_RESULT ]
+       ├── Dual Evidence Card (Front quote vs Back statutory line)
+       ├── Regional Audio Verdict (TTS playback in EN, HI, TA, BN)
+       ├── Option: "What does this mean for me?" -> [ HEALTH_CONTEXT ]
+       └── Option: "Scan Next Product" -> Reset to [ CAPTURING_FRONT ]
+```
+
+---
+
+## 6. Canonical Claim Taxonomy (The Bounded 8 Rules)
 
 To remain trustworthy, reproducible, and verifiable, SachLabel does not attempt open-ended AI interpretation. The v1 engine strictly enforces **8 canonical claim categories** derived from FSSAI labeling and display standards:
 
@@ -164,7 +304,7 @@ To remain trustworthy, reproducible, and verifiable, SachLabel does not attempt 
 
 ---
 
-## 5. What is Actually Implemented Today
+## 7. What is Actually Implemented Today
 
 The codebase contains a complete, functional Android implementation with zero mock stubs in the core verification pipeline:
 
@@ -181,7 +321,7 @@ The codebase contains a complete, functional Android implementation with zero mo
 
 ---
 
-## 6. Technology Stack
+## 8. Technology Stack
 
 | Layer | Library / Tool | Purpose |
 | :--- | :--- | :--- |
@@ -197,7 +337,7 @@ The codebase contains a complete, functional Android implementation with zero mo
 
 ---
 
-## 7. The Evidence-First Safety & Trust Model
+## 9. The Evidence-First Safety & Trust Model
 
 In domains touching consumer trust and brand claims, hallucination and unsubstantiated allegations carry serious risks. SachLabel enforces four non-negotiable safety principles:
 
@@ -220,7 +360,7 @@ The Health Context feature is strictly secondary, accessible only after the prim
 
 ---
 
-## 8. Building and Running the Project
+## 10. Building and Running the Project
 
 ### Prerequisites
 
@@ -261,7 +401,7 @@ The Health Context feature is strictly secondary, accessible only after the prim
 
 ---
 
-## 9. Current Limitations
+## 11. Current Limitations
 
 Honest engineering requires acknowledging real-world operational constraints:
 
@@ -273,7 +413,7 @@ Honest engineering requires acknowledging real-world operational constraints:
 
 ---
 
-## 10. Roadmap
+## 12. Roadmap
 
 * [ ] **Multi-Frame Live Detection**: Real-time bounding-box guidance overlaying text directly on the camera preview before shutter release.
 * [ ] **Cylindrical Pouch Stitching**: Multi-shot or sweep capture to assemble complete ingredient tables wrapped around round containers.
