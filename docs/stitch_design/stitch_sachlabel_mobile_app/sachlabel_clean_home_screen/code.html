@@ -1,0 +1,272 @@
+<!DOCTYPE html><html lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport">
+<title>SachLabel</title>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#004328",
+            "primary-container": "#0d5c3a",
+            "on-primary": "#ffffff",
+            "on-primary-container": "#8ad2a7",
+            "primary-fixed": "#a9f3c5",
+            "surface": "#f4fbf7",
+            "surface-container-lowest": "#ffffff",
+            "surface-container-low": "#edf6f0",
+            "surface-container": "#e6efe9",
+            "surface-container-high": "#dce6e0",
+            "on-surface": "#151d1a",
+            "on-surface-variant": "#4d5b54",
+            "outline": "#707971",
+            "outline-variant": "#bfc9c0",
+            "secondary": "#ac3311",
+            "secondary-container": "#ff6e48",
+            "tertiary": "#5a2e00",
+            "tertiary-fixed": "#ffdcc3",
+            "error": "#ba1a1a",
+            "error-container": "#ffdad6"
+          },
+          fontFamily: {
+            sans: ["Plus Jakarta Sans", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    @layer base {
+      html, body {
+        width: 100vw;
+        margin: 0;
+        padding: 0;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+      }
+      body {
+        overscroll-behavior-y: none;
+      }
+      .pb-safe {
+        padding-bottom: env(safe-area-inset-bottom, 16px);
+      }
+      .pt-safe {
+        padding-top: env(safe-area-inset-top, 24px);
+      }
+    }
+    ::-webkit-scrollbar {
+      display: none;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .material-symbols-outlined.fill-icon {
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface flex flex-col min-h-screen antialiased">
+<!-- Top Hero Header Area with warm gradient inspired by Reference Image -->
+<header class="relative bg-gradient-to-b from-[#00472b] via-[#0b5336] to-[#166342] text-on-primary pt-safe pb-8 px-5 rounded-b-[2.5rem] shadow-sm overflow-hidden">
+<!-- Subtle Ambient Circles like Reference Screen -->
+<div class="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-white/5 pointer-events-none blur-2xl"></div>
+<div class="absolute bottom-0 left-0 w-40 h-40 rounded-full bg-primary-fixed/10 pointer-events-none blur-xl"></div>
+<!-- Status Bar Spacer (Simulated for iOS) -->
+<div class="flex items-center justify-between text-white/80 text-xs font-semibold py-1 mb-4">
+<span class="">09:41</span>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[15px]">signal_cellular_alt</span>
+<span class="material-symbols-outlined text-[15px]">wifi</span>
+<span class="material-symbols-outlined text-[16px]">battery_full</span>
+</div>
+</div>
+<!-- Clean, Breathable User Info Row (Matching Reference Screen SB Avatar & Greeting) -->
+<div class="relative z-10 flex items-center justify-between gap-3 mb-6">
+<div class="flex items-center gap-3.5 min-w-0">
+<!-- Big Round Avatar -->
+<div class="w-14 h-14 rounded-full bg-white text-primary flex items-center justify-center font-bold text-lg shadow-md flex-shrink-0">
+          AK
+        </div>
+<!-- Greeting Text -->
+<div class="flex flex-col min-w-0">
+<span class="text-xs text-emerald-100 font-medium tracking-wide">Namaskar</span>
+<h1 class="text-xl font-bold text-white tracking-tight truncate leading-tight">Amit Kumar</h1>
+<span class="text-xs text-emerald-200/80 mt-0.5 truncate font-medium">SachLabel • सच परखें</span>
+</div>
+</div>
+<!-- Action Pill & Notification Bell -->
+<div class="flex items-center gap-2 flex-shrink-0">
+<button class="h-9 px-3 rounded-full bg-white/15 text-xs font-semibold text-white backdrop-blur-md border border-white/10 hover:bg-white/20 transition-all flex items-center gap-1">
+<span class="">EN/हिं</span>
+</button>
+<button class="relative w-11 h-11 rounded-full bg-white/15 backdrop-blur-md border border-white/10 flex items-center justify-center text-white hover:bg-white/25 transition-all">
+<span class="material-symbols-outlined text-[22px]">notifications</span>
+<span class="absolute top-2.5 right-2.5 w-2.5 h-2.5 rounded-full bg-[#ff6e48] ring-2 ring-[#0b5336]"></span>
+</button>
+</div>
+</div>
+<!-- HERO CARDS SECTION: Reference-identical Layout (Left Dominant + Right 2-Stacked) -->
+<div class="relative z-10 grid grid-cols-12 gap-3.5 pt-1"><!-- Left Dominant Card (High-Impact Primary Action) -->
+<div class="col-span-7 bg-white text-on-surface rounded-3xl p-4 flex flex-col justify-between min-h-[220px] shadow-lg relative overflow-hidden group active:scale-[0.98] transition-transform cursor-pointer border-2 border-white">
+  <div class="relative z-10"><h2 class="text-[20px] font-extrabold text-on-surface tracking-tight leading-tight">Scan Product</h2>
+    <p class="text-xs text-on-surface-variant mt-1.5 leading-snug font-medium">
+      Scan the front + back. We'll check the claim.
+    </p></div>
+  <!-- Visual Scanner Viewfinder -->
+  <div class="my-auto py-2 flex items-center justify-center relative z-10">
+    <div class="w-16 h-16 rounded-2xl bg-surface-container flex items-center justify-center text-primary shadow-sm border border-outline-variant/30 group-hover:scale-105 transition-transform">
+      <span class="material-symbols-outlined text-[36px]">document_scanner</span>
+    </div>
+  </div>
+  <!-- High-contrast Solid Primary CTA Button -->
+  <div class="relative z-10 w-full py-2.5 px-3 rounded-xl bg-primary text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-md shadow-primary/20">
+    <span class="material-symbols-outlined text-[18px]">photo_camera</span>
+    <span class="">Start Scan</span>
+  </div>
+</div>
+<!-- Right 2-Stacked Muted Secondary Cards -->
+<div class="col-span-5 flex flex-col gap-3">
+  <!-- Top Stacked Card: Recent Checks (Quiet & Supporting) -->
+  <div class="bg-white/10 backdrop-blur-md border border-white/10 rounded-3xl p-3 flex flex-col justify-between flex-1 shadow-sm opacity-90 active:scale-[0.98] transition-transform cursor-pointer">
+    <div>
+      <div class="flex items-center justify-between text-white/90">
+        <h3 class="text-xs font-bold tracking-tight">Recent Scans</h3>
+        <span class="material-symbols-outlined text-[16px] text-emerald-200/70">history</span>
+      </div>
+      <p class="text-[10px] text-emerald-100/70 mt-0.5">3 analyzed today</p>
+    </div>
+    <div class="mt-2 flex items-center gap-1 text-[10px] font-semibold text-white/90">
+      <span class="px-1.5 py-0.5 rounded bg-white/15">2 Match</span>
+      <span class="px-1.5 py-0.5 rounded bg-[#ff6e48]/80">1 Discrepancy</span>
+    </div>
+  </div>
+  <!-- Bottom Stacked Card: Voice Verdict (Quiet & Supporting) -->
+  <div class="bg-white/10 backdrop-blur-md border border-white/10 rounded-3xl p-3 flex flex-col justify-between flex-1 shadow-sm opacity-90 active:scale-[0.98] transition-transform cursor-pointer"><div>
+      <div class="flex items-center justify-between text-white/90">
+        <h3 class="text-xs font-bold tracking-tight">Audio Explanation</h3>
+        <span class="material-symbols-outlined text-[16px] text-emerald-200/70">volume_up</span>
+      </div>
+      <p class="text-[10px] text-emerald-100/70 mt-0.5">Audio breakdown in हिन्दी</p>
+    </div>
+    <div class="mt-2 flex items-center gap-1.5 text-[10px] text-white/80 font-medium">
+      <span class="w-1.5 h-1.5 rounded-full bg-primary-fixed"></span>
+      <span class="">Play (30s)</span>
+    </div></div>
+</div></div>
+</header>
+<!-- Main Content: Decluttered, Spacious & Calm -->
+<main class="flex flex-col flex-1 px-5 pt-6 pb-28 gap-6">
+<!-- ACTION CENTER (Decluttered to match Reference Image layout: Clean title, subhead, spacious circular targets) -->
+<section class="flex flex-col items-center text-center"><div class="flex items-center justify-between w-full px-1"><h2 class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Action Center</h2></div>
+<div class="grid grid-cols-3 gap-3 w-full mt-3">
+  <!-- Action 1: Claim Match -->
+  <div class="flex flex-col items-center p-3 rounded-2xl bg-surface-container-low border border-outline-variant/20 group cursor-pointer active:scale-95 transition-all">
+    <div class="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center text-primary mb-1.5 group-hover:bg-primary/10 transition-colors">
+      <span class="material-symbols-outlined text-[20px]">balance</span>
+    </div>
+    <span class="text-xs font-bold text-on-surface text-center leading-tight">Claim Match</span>
+    <span class="text-[10px] text-on-surface-variant text-center mt-0.5">Front vs back audit</span>
+  </div>
+  <!-- Action 2: What We Check -->
+  <div class="flex flex-col items-center p-3 rounded-2xl bg-surface-container-low border border-outline-variant/20 group cursor-pointer active:scale-95 transition-all">
+    <div class="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center text-primary mb-1.5 group-hover:bg-primary/10 transition-colors">
+      <span class="material-symbols-outlined text-[20px]">rule</span>
+    </div>
+    <span class="text-xs font-bold text-on-surface text-center leading-tight">What We Check</span>
+    <span class="text-[10px] text-on-surface-variant text-center mt-0.5">Rules &amp; limits</span>
+  </div>
+  <!-- Action 3: Label Help -->
+  <div class="flex flex-col items-center p-3 rounded-2xl bg-surface-container-low border border-outline-variant/20 group cursor-pointer active:scale-95 transition-all">
+    <div class="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center text-primary mb-1.5 group-hover:bg-primary/10 transition-colors">
+      <span class="material-symbols-outlined text-[20px]">manage_search</span>
+    </div>
+    <span class="text-xs font-bold text-on-surface text-center leading-tight">Label Help</span>
+    <span class="text-[10px] text-on-surface-variant text-center mt-0.5">Decipher fine print</span>
+  </div>
+</div></section>
+<!-- CALM RECENT INVESTIGATION CARD -->
+<section class="flex flex-col gap-2.5 pt-2"><div class="flex items-center justify-between px-0.5">
+  <h3 class="text-sm font-bold text-on-surface">Latest Investigation</h3>
+  <span class="text-xs text-on-surface-variant font-medium">10m ago</span>
+</div>
+<div class="bg-surface-container-lowest rounded-3xl p-5 shadow-[0_4px_20px_rgba(0,0,0,0.04)] border border-outline-variant/25 flex flex-col gap-3.5">
+  <!-- Product Meta & Result State Badge at Top -->
+  <div class="flex items-start justify-between gap-2">
+    <div class="flex items-center gap-3 min-w-0">
+      <div class="w-11 h-11 rounded-2xl bg-surface-container flex items-center justify-center text-primary flex-shrink-0">
+        <span class="material-symbols-outlined text-[24px]">local_cafe</span>
+      </div>
+      <div class="min-w-0">
+        <h4 class="text-sm font-bold text-on-surface leading-snug truncate">Malted Milk Chocolate Drink</h4>
+        <p class="text-xs text-on-surface-variant truncate">400g • Supermarket Brand</p>
+      </div>
+    </div>
+    <span class="px-2.5 py-1 rounded-full bg-error-container text-error text-[11px] font-bold uppercase tracking-wider flex items-center gap-1 flex-shrink-0">
+      <span class="material-symbols-outlined text-[13px]">warning</span>
+      Misleading Claim
+    </span>
+  </div>
+  <!-- Evidence Comparison: Front Claim vs Back Fine Print -->
+  <div class="rounded-2xl bg-surface-container-low/70 p-3.5 flex flex-col gap-2.5 text-xs border border-outline-variant/20">
+    <div class="flex items-start gap-2">
+      <span class="font-bold text-on-surface-variant min-w-[76px] flex-shrink-0 uppercase text-[10px] tracking-wider pt-0.5">Front Claim</span>
+      <span class="text-on-surface font-semibold">“100% Real California Almonds”</span>
+    </div>
+    <div class="flex items-start gap-2 pt-2 border-t border-outline-variant/20">
+      <span class="font-bold text-error min-w-[76px] flex-shrink-0 uppercase text-[10px] tracking-wider pt-0.5">Back Label</span>
+      <div class="flex flex-col gap-0.5 text-on-surface">
+        <span class="font-medium">Only <strong class="font-bold text-error">0.8% Almond Flour</strong>, <strong class="font-bold">42.4% Added Sugar</strong></span>
+        <span class="text-[11px] text-on-surface-variant">Statutory discrepancy: Ingredient rank #7 vs front graphic dominance</span>
+      </div>
+    </div>
+  </div>
+  <!-- Evidence Link & Statutory Delta -->
+  <div class="flex items-center justify-between pt-1">
+    <span class="text-xs text-on-surface-variant font-medium">Discrepancy: 99.2% non-almond solids</span>
+    <button class="text-xs text-primary font-bold inline-flex items-center gap-1 hover:underline">
+      <span class="">View Evidence</span>
+      <span class="material-symbols-outlined text-[15px]">arrow_forward</span>
+    </button>
+  </div>
+</div></section>
+</main>
+<!-- BOTTOM NAVIGATION: Clean, standard, roomy, matching the reference app rhythm -->
+<nav class="fixed bottom-5 inset-x-4 z-50 bg-white/95 backdrop-blur-xl rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.08)] border border-outline-variant/30 py-1.5 px-3">
+<div class="flex items-center justify-around h-14">
+<!-- Home (Active) -->
+<a class="flex flex-col items-center justify-center gap-0.5 flex-1 py-1 text-primary font-bold" href="#">
+<span class="material-symbols-outlined text-[24px] fill-icon">home</span>
+<span class="text-[10px] tracking-tight">Home</span>
+</a>
+<!-- Scans / History -->
+<a class="flex flex-col items-center justify-center gap-0.5 flex-1 py-1 text-on-surface-variant hover:text-on-surface transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]">history</span>
+<span class="text-[10px] tracking-tight">History</span>
+</a>
+<!-- Quick Scan Center Button Pop -->
+<div class="flex flex-col items-center justify-center flex-1 -mt-5">
+<a class="w-12 h-12 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-lg shadow-primary/30 ring-4 ring-surface active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined text-[24px]">photo_camera</span>
+</a>
+<span class="text-[10px] font-semibold text-primary mt-0.5">Scan</span>
+</div>
+<!-- Standards / Guidance -->
+<a class="flex flex-col items-center justify-center gap-0.5 flex-1 py-1 text-on-surface-variant hover:text-on-surface transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]">verified_user</span>
+<span class="text-[10px] tracking-tight">Standards</span>
+</a>
+<!-- More -->
+<a class="flex flex-col items-center justify-center gap-0.5 flex-1 py-1 text-on-surface-variant hover:text-on-surface transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]">grid_view</span>
+<span class="text-[10px] tracking-tight">More</span>
+</a>
+</div>
+</nav>
+
+
+</body></html>

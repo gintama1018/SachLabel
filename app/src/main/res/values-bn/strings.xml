@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SachLabel</string>
+    <string name="home_tagline">আমরা পরীক্ষা করি যে একটি পণ্যের দাবি তার নিজের লেবেলের সাথে মেলে কিনা।</string>
+    <string name="home_scan_cta">পণ্য স্ক্যান করুন</string>
+    <string name="home_demo_cta">ডেমো দেখুন</string>
+    <string name="home_what_we_check">আমরা কী পরীক্ষা করি</string>
+    <string name="capture_front_hint">প্যাকেটের সামনের দিক ফোটো তুলুন।</string>
+    <string name="capture_back_hint">এখন পেছনে — উপাদান বা পুষ্টি লেবেল।</string>
+    <string name="processing_reading">লেবেল পড়ছি…</string>
+    <string name="processing_claims">দাবি খুঁজছি…</string>
+    <string name="processing_evidence">প্রমাণ যাচাই করছি…</string>
+    <string name="processing_explanation">ব্যাখ্যা প্রস্তুত হচ্ছে…</string>
+    <string name="result_contradiction">দাবির জন্য প্রসঙ্গ দরকার</string>
+    <string name="result_consistent">এই দাবিতে কোনো বিরোধ পাওয়া যায়নি।</string>
+    <string name="result_no_evidence">এই দাবি যাচাই করতে যথেষ্ট প্রমাণ নেই।</string>
+    <string name="result_no_claim">এই পণ্যে কোনো বিশিষ্ট দাবি পাওয়া যায়নি।</string>
+    <string name="result_listen">🔊 শুনুন</string>
+    <string name="result_health_context">আমার জন্য এর মানে কী?</string>
+    <string name="result_scan_another">আরেকটি পণ্য স্ক্যান করুন</string>
+    <string name="health_disclaimer">এই উপাদানটি আপনার উল্লেখিত উদ্বেগের সাথে প্রাসঙ্গিক হতে পারে। এটি তথ্যমূলক, চিকিৎসা সিদ্ধান্ত নয়।</string>
+    <string name="result_error">এটি স্পষ্টভাবে পড়তে পারিনি। অন্য ছবি তুলুন।</string>
+</resources>

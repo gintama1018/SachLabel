@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><title>SachLabel</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "on-secondary": "#ffffff", "inverse-primary": "#8ed6aa", "on-primary-fixed-variant": "#005232", "secondary-container": "#ff6e48", "on-tertiary-container": "#ffb273", "surface-bright": "#f3fbf6", "primary-fixed-dim": "#8ed6aa", "on-tertiary": "#ffffff", "outline": "#707971", "surface-container-low": "#edf6f0", "on-primary-container": "#8ad2a7", "tertiary-fixed": "#ffdcc3", "surface-tint": "#226b47", "secondary-fixed": "#ffdbd1", "tertiary-fixed-dim": "#ffb77d", "on-primary-fixed": "#002111", "on-primary": "#ffffff", "background": "#f3fbf6", "on-error": "#ffffff", "on-tertiary-fixed": "#2f1500", "on-secondary-fixed-variant": "#881f00", "inverse-surface": "#2a322f", "surface": "#f3fbf6", "secondary-fixed-dim": "#ffb4a1", "on-background": "#151d1a", "primary": "#004328", "on-secondary-container": "#651400", "surface-container-lowest": "#ffffff", "primary-container": "#0d5c3a", "error": "#ba1a1a", "secondary": "#ac3311", "error-container": "#ffdad6", "outline-variant": "#bfc9c0", "on-tertiary-fixed-variant": "#6e3900", "surface-dim": "#d3dcd7", "on-secondary-fixed": "#3c0800", "on-surface": "#151d1a", "inverse-on-surface": "#eaf3ee", "surface-variant": "#dce5df", "surface-container-high": "#e2eae5", "on-surface-variant": "#404942", "surface-container": "#e7f0eb", "on-error-container": "#93000a", "tertiary": "#5a2e00", "surface-container-highest": "#dce5df", "primary-fixed": "#a9f3c5", "tertiary-container": "#7c4100" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "space-xs": "0.5rem", "space-sm": "0.75rem", "space-xl": "2rem", "gutter-mobile": "1rem", "space-2xs": "0.25rem", "space-2xl": "3rem", "space-md": "1rem", "margin-mobile": "1rem", "touch-target-min": "3rem", "space-lg": "1.5rem" }, fontFamily: { "headline-sm": ["Plus Jakarta Sans"], "body-md": ["Plus Jakarta Sans"], "body-lg": ["Plus Jakarta Sans"], "body-sm": ["Plus Jakarta Sans"], "label-md": ["Plus Jakarta Sans"], "headline-lg-mobile": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"], "data-metric": ["Plus Jakarta Sans"], "title-md": ["Plus Jakarta Sans"], "headline-md": ["Plus Jakarta Sans"], "label-lg": ["Plus Jakarta Sans"] }, fontSize: { "headline-sm": ["18px", { "lineHeight": "24px", "fontWeight": "600" }], "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }], "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }], "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }], "label-md": ["11px", { "lineHeight": "14px", "fontWeight": "600" }], "headline-lg-mobile": ["26px", { "lineHeight": "34px", "fontWeight": "700" }], "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "700" }], "data-metric": ["24px", { "lineHeight": "28px", "fontWeight": "800" }], "title-md": ["16px", { "lineHeight": "22px", "fontWeight": "600" }], "headline-md": ["22px", { "lineHeight": "28px", "fontWeight": "700" }], "label-lg": ["13px", { "lineHeight": "16px", "fontWeight": "700" }] } } } }</script><style>@layer base { html, body { width: 100vw; margin: 0; padding: 0; } body { overscroll-behavior-y: none; } .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); } .pt-safe { padding-top: env(safe-area-inset-top, 0px); } main > :first-child { margin-top: 0 !important; } main > :last-child { margin-bottom: 0 !important; } } ::-webkit-scrollbar { display: none; } .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }</style></head><body class="bg-surface text-on-surface font-body-md text-body-md flex flex-col min-h-screen pt-safe pb-safe antialiased"><main class="flex flex-col relative w-full bg-surface min-h-screen justify-between"><div class="flex flex-col w-full h-full min-h-screen px-6 py-4 justify-between">
+<!-- 1. Header / Top -->
+<div class="flex items-center justify-between w-full pt-1">
+<div class="flex items-center gap-1.5 bg-surface-container-low px-3 py-1 rounded-full border border-surface-container-high/60">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+<span class="font-label-md text-label-md text-primary font-bold tracking-wider uppercase">Step 1 of 2</span>
+</div>
+<div class="relative">
+<button class="flex items-center gap-1.5 bg-surface-container-lowest px-3 py-1 rounded-full text-on-surface-variant font-label-md text-label-md shadow-sm border border-outline-variant/30 active:scale-95 transition-transform" id="lang-btn" onclick="document.getElementById('lang-dropdown').classList.toggle('hidden')">
+<span class="material-symbols-outlined text-[15px] text-primary">translate</span>
+<span class="font-semibold text-on-surface" id="current-lang">English</span>
+<span class="material-symbols-outlined text-[14px]">expand_more</span>
+</button>
+<div class="hidden absolute right-0 mt-1.5 w-32 bg-surface-container-lowest rounded-xl shadow-lg border border-outline-variant/20 z-20 py-1" id="lang-dropdown">
+<button class="w-full text-left px-3 py-2 text-on-surface hover:bg-surface-container-low font-label-lg text-label-lg flex items-center justify-between" onclick="selectLang('English')">
+<span>English</span>
+<span class="material-symbols-outlined text-[14px] text-primary">check</span>
+</button>
+<button class="w-full text-left px-3 py-2 text-on-surface hover:bg-surface-container-low font-label-lg text-label-lg" onclick="selectLang('हिन्दी')">हिन्दी</button>
+<button class="w-full text-left px-3 py-2 text-on-surface hover:bg-surface-container-low font-label-lg text-label-lg" onclick="selectLang('தமிழ்')">தமிழ்</button>
+</div>
+</div>
+</div>
+<!-- Middle Section: Identity, Core Prop & Calm Visual -->
+<div class="flex flex-col items-center text-center my-auto py-4">
+<!-- 2. Product Identity -->
+<div class="w-20 h-20 mb-4 drop-shadow-sm transition-transform active:scale-95">
+<img alt="SachLabel Shield Logo" class="w-full h-full object-contain rounded-2xl" src="https://lh3.googleusercontent.com/aida/AEtjO1WmLLKENwV9w-kASGnSFlBJMX68d7zWIUQvp2_tjdZAX6Y2g2aCvnZ4RaSAJYQZ4AK8kHQmi1ogQad0I605Eo9P01PcLhwarJK4jJcdIhE4XH7jb34LzkMxPVw5H_yt5GmbEwL-SC4Sd6y0OkI3dhn1i_Ek-qrxB4qVfx5ti9U91HTxh6nQDMoefCXXuaWwLqjPzIKlwwgKA0IYLBTOC_JpD5MH1myDsRGhdfpuEn3a6DnBKkDpGwcsV80"/>
+</div>
+<h1 class="font-headline-lg-mobile text-[28px] leading-tight text-primary font-extrabold tracking-tight">
+      SachLabel
+    </h1>
+<p class="font-title-md text-[15px] text-primary-container font-medium mt-1">
+      सच परखें • The Indian Grocery Label Investigator
+    </p>
+<!-- 3. One-Line Core Value Prop -->
+<p class="font-body-md text-[15px] leading-relaxed text-on-surface-variant mt-6 px-3 max-w-[340px]">
+      We check whether what’s on the front matches the statutory fine print on the back — with direct evidence.
+    </p>
+<!-- 4. Simple & Calm Visual Element (Concept Pill) -->
+<div class="mt-8 w-full max-w-[330px]">
+<div class="bg-surface-container-lowest rounded-2xl p-3.5 shadow-sm border border-outline-variant/30 flex items-center justify-between gap-2">
+<div class="flex flex-col items-start text-left pl-1">
+<span class="font-label-md text-[10px] uppercase font-bold tracking-wider text-on-surface-variant/70">Front Claim</span>
+<span class="font-title-md text-[13px] font-semibold text-on-surface truncate max-w-[105px]">100% Wheat</span>
+</div>
+<div class="flex items-center justify-center text-outline-variant px-1">
+<span class="material-symbols-outlined text-[18px]">trending_flat</span>
+</div>
+<div class="flex flex-col items-start text-left">
+<span class="font-label-md text-[10px] uppercase font-bold tracking-wider text-on-surface-variant/70">Back Truth</span>
+<span class="font-title-md text-[13px] font-semibold text-secondary truncate max-w-[105px]">68% Maida</span>
+</div>
+<span class="bg-error-container text-on-error-container text-[11px] font-bold px-2 py-1 rounded-full uppercase tracking-tight shrink-0 ml-1">
+          Alert
+        </span>
+</div>
+</div>
+</div>
+<!-- 5. Clear Primary CTA & Secondary Links -->
+<div class="flex flex-col gap-3.5 pb-2 pt-2 w-full">
+<button class="w-full bg-primary hover:bg-primary-container active:scale-[0.98] transition-all text-on-primary py-4 rounded-xl font-title-md text-[16px] font-bold flex items-center justify-center gap-2.5 shadow-md shadow-primary/10 min-h-touch-target-min" id="cta-start-scan">
+<span class="material-symbols-outlined text-[22px]">barcode_scanner</span>
+<span>Start Scanning Products</span>
+</button>
+<div class="flex items-center justify-center gap-4 py-1">
+<button class="font-label-lg text-label-lg text-primary hover:text-primary-container font-semibold flex items-center gap-1.5 active:opacity-75">
+<span class="material-symbols-outlined text-[17px]">play_circle</span>
+<span>See How It Works (30s)</span>
+</button>
+<span class="w-1 h-1 rounded-full bg-outline-variant/60"></span>
+<button class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface active:opacity-75 font-medium">
+<span>Skip</span>
+</button>
+</div>
+</div>
+</div>
+<script>
+  function selectLang(lang) {
+    document.getElementById('current-lang').innerText = lang;
+    document.getElementById('lang-dropdown').classList.add('hidden');
+  }
+
+  document.addEventListener('click', function(event) {
+    const dropdown = document.getElementById('lang-dropdown');
+    const langBtn = document.getElementById('lang-btn');
+    if (dropdown && !dropdown.contains(event.target) && !langBtn.contains(event.target)) {
+      dropdown.classList.add('hidden');
+    }
+  });
+
+  const ctaBtn = document.getElementById('cta-start-scan');
+  if (ctaBtn) {
+    ctaBtn.addEventListener('click', function() {
+      ctaBtn.classList.add('opacity-90');
+      setTimeout(() => ctaBtn.classList.remove('opacity-90'), 150);
+    });
+  }
+</script></main></body></html>

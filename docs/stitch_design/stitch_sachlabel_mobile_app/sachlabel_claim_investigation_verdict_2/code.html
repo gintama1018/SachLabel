@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<title>Claim Investigation Verdict - SachLabel</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#004328",
+            "primary-container": "#0d5c3a",
+            "on-primary": "#ffffff",
+            "on-primary-container": "#8ad2a7",
+            "primary-fixed": "#a9f3c5",
+            "surface": "#f4fbf7",
+            "surface-container-lowest": "#ffffff",
+            "surface-container-low": "#edf6f0",
+            "surface-container": "#e6efe9",
+            "surface-container-high": "#dce6e0",
+            "on-surface": "#151d1a",
+            "on-surface-variant": "#4d5b54",
+            "outline": "#707971",
+            "outline-variant": "#bfc9c0",
+            "secondary": "#ac3311",
+            "secondary-container": "#ff6e48",
+            "tertiary": "#5a2e00",
+            "tertiary-fixed": "#ffdcc3",
+            "error": "#ba1a1a",
+            "error-container": "#ffdad6"
+          },
+          fontFamily: {
+            sans: ["Plus Jakarta Sans", "sans-serif"]
+          }
+        }
+      }
+    }
+</script>
+<style>
+    @layer base {
+      html, body {
+        width: 100vw;
+        margin: 0;
+        padding: 0;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+      }
+      body {
+        overscroll-behavior-y: none;
+      }
+      .pb-safe {
+        padding-bottom: env(safe-area-inset-bottom, 16px);
+      }
+      .pt-safe {
+        padding-top: env(safe-area-inset-top, 24px);
+      }
+    }
+    ::-webkit-scrollbar {
+      display: none;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .material-symbols-outlined.fill-icon {
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+</style>
+</head>
+<body class="bg-surface text-on-surface flex flex-col min-h-screen antialiased selection:bg-primary/20">
+<!-- Header Hero with Deep Emerald Gradient matching Home Screen -->
+<header class="relative bg-gradient-to-b from-[#00472b] via-[#0b5336] to-[#166342] text-on-primary pt-safe pb-7 px-5 rounded-b-[2.5rem] shadow-sm overflow-hidden">
+<!-- Subtle Ambient Glows -->
+<div class="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-white/5 pointer-events-none blur-2xl"></div>
+<div class="absolute bottom-0 left-0 w-40 h-40 rounded-full bg-primary-fixed/10 pointer-events-none blur-xl"></div>
+<!-- Status Bar Spacer (Simulated for iOS) -->
+<div class="flex items-center justify-between text-white/80 text-xs font-semibold py-1 mb-3">
+<span>09:41</span>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[15px]">signal_cellular_alt</span>
+<span class="material-symbols-outlined text-[15px]">wifi</span>
+<span class="material-symbols-outlined text-[16px]">battery_full</span>
+</div>
+</div>
+<!-- Navigation Bar: Back Button, Title, Language Toggle -->
+<div class="relative z-10 flex items-center justify-between gap-3 mb-5">
+<div class="flex items-center gap-2.5 min-w-0">
+<button aria-label="Go Back" class="w-10 h-10 -ml-1 rounded-full bg-white/15 backdrop-blur-md border border-white/10 flex items-center justify-center text-white hover:bg-white/25 active:scale-95 transition-all flex-shrink-0" onclick="history.back()">
+<span class="material-symbols-outlined text-[22px]">arrow_back</span>
+</button>
+<div class="flex flex-col min-w-0">
+<span class="text-[11px] text-emerald-200/90 font-medium tracking-wide uppercase">Claim Investigation</span>
+<h1 class="text-sm font-bold text-white tracking-tight truncate leading-tight">Malted Milk Food Drink</h1>
+</div>
+</div>
+<div class="flex items-center gap-2 flex-shrink-0">
+<button class="h-8 px-3 rounded-full bg-white/15 text-xs font-semibold text-white backdrop-blur-md border border-white/10 hover:bg-white/20 transition-all flex items-center gap-1">
+<span>EN/हिं</span>
+</button>
+<button class="w-8 h-8 rounded-full bg-white/15 backdrop-blur-md border border-white/10 flex items-center justify-center text-white hover:bg-white/25 transition-all">
+<span class="material-symbols-outlined text-[18px]">share</span>
+</button>
+</div>
+</div>
+<!-- Product Header Card in Brand Header -->
+<div class="relative z-10 bg-white/10 backdrop-blur-md border border-white/15 rounded-3xl p-4 flex items-center justify-between gap-3 shadow-inner">
+<div class="flex items-center gap-3.5 min-w-0">
+<div class="w-14 h-14 rounded-2xl bg-white/90 p-1.5 flex items-center justify-center flex-shrink-0 shadow-md">
+<img alt="Product Pack" class="w-full h-full object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBW3U3ZL3aPQxvYle7MrO-5Lr86wWWfF0oyLre6dyIGDkHBwE1nXdVgECrYYjyCtMaVJKhh3ZGQY3sJsAtZS_pKJBGP_vZkDAkWuBnpcJKGwEFi6CRDx6uQk3s0Axl0-8zpdbr16xCZwnQsKNbhztipKsx891cAkRp4u-4x2Au3VqJmBW11l27i8RcEM-1VfCcfoRp9uuVlyfNlhqHgFYBEzrQ7xcYkRGiqtnZlppY1VfGeL5z2e10wJw"/>
+</div>
+<div class="min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="text-[11px] text-emerald-200 font-medium">400g • Health Food Drink</span>
+</div>
+<h2 class="text-base font-bold text-white tracking-tight leading-snug truncate">NutriCrunch Almond Drink</h2>
+<span class="text-[10px] text-emerald-100/70 font-medium mt-0.5 block truncate">FSSAI Lic. 10014022002881</span>
+</div>
+</div>
+<span class="px-2.5 py-1 rounded-full bg-[#ff6e48] text-white text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 flex-shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-[12px]">warning</span>
+      MISLEADING
+    </span>
+</div>
+</header>
+<!-- Main Investigation Content -->
+<main class="flex flex-col flex-1 px-5 pt-5 pb-32 gap-4">
+<!-- Evidence Comparison Card: Identical to Home Screen Latest Investigation -->
+<section class="flex flex-col gap-2">
+<div class="flex items-center justify-between px-0.5">
+<h3 class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Statutory Verification</h3>
+<span class="text-xs text-secondary font-bold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Discrepancy Found
+      </span>
+</div>
+<div class="bg-surface-container-lowest rounded-3xl p-5 shadow-[0_4px_20px_rgba(0,0,0,0.04)] border border-outline-variant/25 flex flex-col gap-3.5">
+<!-- Product Meta & Result State Badge at Top -->
+<div class="flex items-start justify-between gap-2">
+<div class="flex items-center gap-2.5 min-w-0">
+<div class="w-9 h-9 rounded-xl bg-surface-container flex items-center justify-center text-primary flex-shrink-0">
+<span class="material-symbols-outlined text-[20px]">balance</span>
+</div>
+<div class="min-w-0">
+<h4 class="text-sm font-bold text-on-surface leading-tight">Front vs. Statutory Ingredient List</h4>
+<p class="text-[11px] text-on-surface-variant">Regulated under FSSAI Labelling Req. 2020</p>
+</div>
+</div>
+<span class="px-2.5 py-1 rounded-full bg-error-container text-error text-[11px] font-bold uppercase tracking-wider flex items-center gap-1 flex-shrink-0">
+<span class="material-symbols-outlined text-[13px]">warning</span>
+          MISLEADING CLAIM
+        </span>
+</div>
+<!-- Evidence Comparison Table -->
+<div class="rounded-2xl bg-surface-container-low/70 p-3.5 flex flex-col gap-2.5 text-xs border border-outline-variant/20">
+<div class="flex items-start gap-2">
+<span class="font-bold text-on-surface-variant min-w-[80px] flex-shrink-0 uppercase text-[10px] tracking-wider pt-0.5">FRONT CLAIM</span>
+<span class="text-on-surface font-semibold text-sm">“100% Real California Almonds”</span>
+</div>
+<div class="flex items-start gap-2 pt-2 border-t border-outline-variant/20">
+<span class="font-bold text-error min-w-[80px] flex-shrink-0 uppercase text-[10px] tracking-wider pt-0.5">BACK LABEL</span>
+<div class="flex flex-col gap-1 text-on-surface">
+<span class="font-medium">Only <strong class="font-bold text-error text-[13px]">0.8% Almond Flour</strong>, <strong class="font-bold text-on-surface text-[13px]">42.4% Added Sugar</strong></span>
+<span class="text-[11px] text-on-surface-variant leading-relaxed">Statutory discrepancy: Ingredient rank #7 vs front graphic dominance</span>
+</div>
+</div>
+</div>
+<!-- Discrepancy metric bar -->
+<div class="flex items-center justify-between pt-1 text-xs">
+<div class="flex items-center gap-1.5 text-on-surface-variant font-medium">
+<span class="material-symbols-outlined text-[16px] text-secondary">error</span>
+<span>Discrepancy: <strong class="text-secondary font-bold">99.2% non-almond solids</strong></span>
+</div>
+<span class="text-[11px] font-semibold px-2 py-0.5 bg-surface-container rounded-md text-on-surface-variant">Statutory Batch #K82</span>
+</div>
+</div>
+</section>
+<!-- Plain Reality & Breakdown: 3 Stat Chips & Takeaway -->
+<section class="flex flex-col gap-2">
+<div class="flex items-center justify-between px-0.5">
+<h3 class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Plain Reality Breakdown</h3>
+<span class="text-[11px] text-on-surface-variant">Per 100g / Serving</span>
+</div>
+<!-- 3 Clean Stat Chips -->
+<div class="grid grid-cols-3 gap-2.5">
+<div class="bg-surface-container-lowest p-3 rounded-2xl border border-outline-variant/25 text-center flex flex-col items-center justify-center shadow-sm">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Sugar / Serve</span>
+<span class="text-base font-extrabold text-secondary mt-0.5">2.4 Tsp</span>
+<span class="text-[10px] text-on-surface-variant mt-0.5 font-medium">~12g sugar</span>
+</div>
+<div class="bg-surface-container-lowest p-3 rounded-2xl border border-outline-variant/25 text-center flex flex-col items-center justify-center shadow-sm">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Real Almonds</span>
+<span class="text-base font-extrabold text-error mt-0.5">0.8%</span>
+<span class="text-[10px] text-on-surface-variant mt-0.5 font-medium">&lt; 1/4th nut</span>
+</div>
+<div class="bg-surface-container-lowest p-3 rounded-2xl border border-outline-variant/25 text-center flex flex-col items-center justify-center shadow-sm">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Added Sugar</span>
+<span class="text-base font-extrabold text-on-surface mt-0.5">42.4%</span>
+<span class="text-[10px] text-on-surface-variant mt-0.5 font-medium">Rank #1 Solid</span>
+</div>
+</div>
+<!-- Takeaway Banner -->
+<div class="rounded-2xl bg-surface-container-low p-3.5 border border-outline-variant/20 flex items-start gap-2.5">
+<span class="material-symbols-outlined text-primary text-[20px] flex-shrink-0 mt-0.5">fact_check</span>
+<p class="text-xs text-on-surface leading-relaxed font-medium">
+        Front packaging emphasizes nutritious almonds, but statutory ingredient list reveals sugar and malt extract as the primary bulk ingredients.
+      </p>
+</div>
+</section>
+<!-- Audio Explanation Card matching Home Screen rhythm -->
+<section class="bg-surface-container-lowest rounded-3xl p-4 shadow-[0_4px_20px_rgba(0,0,0,0.04)] border border-outline-variant/25 flex items-center justify-between gap-3 active:scale-[0.98] transition-transform cursor-pointer">
+<div class="flex items-center gap-3.5 min-w-0">
+<div class="w-11 h-11 rounded-2xl bg-primary text-on-primary flex items-center justify-center shadow-md flex-shrink-0">
+<span class="material-symbols-outlined text-[22px]">volume_up</span>
+</div>
+<div class="flex flex-col min-w-0">
+<h4 class="text-sm font-bold text-on-surface tracking-tight">Audio Explanation</h4>
+<p class="text-xs text-on-surface-variant mt-0.5 truncate">Audio breakdown in हिंदी • Play (30s)</p>
+</div>
+</div>
+<div class="px-3.5 py-1.5 rounded-full bg-primary-fixed text-primary font-bold text-xs flex items-center gap-1.5 flex-shrink-0 hover:bg-primary-fixed/80 transition-colors shadow-sm">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span>Play</span>
+</div>
+</section>
+<!-- Statutory Action Buttons -->
+<div class="flex flex-col gap-2.5 pt-2">
+<!-- Primary Button: prominent dark emerald styling matching Home Screen Start Scan -->
+<button class="w-full py-3.5 px-4 rounded-xl bg-primary hover:bg-primary-container text-white text-sm font-bold flex items-center justify-center gap-2 shadow-lg shadow-primary/20 active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined text-[20px]">photo_camera</span>
+<span>Scan Another Product</span>
+</button>
+<!-- Secondary Button -->
+<button class="w-full py-3 px-4 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface text-xs font-bold flex items-center justify-center gap-2 border border-outline-variant/30 active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined text-[18px]">download</span>
+<span>Download Evidence Report (PDF)</span>
+</button>
+</div>
+</main>
+<!-- Persistent Floating Navigation Pill Dock: rigorously matching Home Screen -->
+<nav class="fixed bottom-5 inset-x-4 max-w-sm mx-auto z-40 bg-white/95 backdrop-blur-xl border border-emerald-950/10 rounded-full py-2.5 px-5 shadow-2xl flex items-center justify-between">
+<!-- Home -->
+<a class="flex flex-col items-center justify-center gap-0.5 flex-1 py-1 text-on-surface-variant hover:text-on-surface transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]">home</span>
+<span class="text-[10px] tracking-tight">Home</span>
+</a>
+<!-- History (Active Context for past scans/verdicts) -->
+<a class="flex flex-col items-center justify-center gap-0.5 flex-1 py-1 text-primary font-bold" href="#">
+<span class="material-symbols-outlined text-[24px] fill-icon">history</span>
+<span class="text-[10px] tracking-tight">History</span>
+</a>
+<!-- Quick Scan Center Button Pop -->
+<div class="flex flex-col items-center justify-center flex-1 -mt-6">
+<a class="w-12 h-12 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-lg shadow-primary/30 ring-4 ring-surface active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined text-[24px]">photo_camera</span>
+</a>
+<span class="text-[10px] font-semibold text-primary mt-0.5">Scan</span>
+</div>
+<!-- Standards -->
+<a class="flex flex-col items-center justify-center gap-0.5 flex-1 py-1 text-on-surface-variant hover:text-on-surface transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]">verified_user</span>
+<span class="text-[10px] tracking-tight">Standards</span>
+</a>
+<!-- More -->
+<a class="flex flex-col items-center justify-center gap-0.5 flex-1 py-1 text-on-surface-variant hover:text-on-surface transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]">grid_view</span>
+<span class="text-[10px] tracking-tight">More</span>
+</a>
+</nav>
+</body></html>

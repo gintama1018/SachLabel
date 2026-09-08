@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><title>SachLabel</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "on-secondary": "#ffffff", "inverse-primary": "#8ed6aa", "on-primary-fixed-variant": "#005232", "secondary-container": "#ff6e48", "on-tertiary-container": "#ffb273", "surface-bright": "#f3fbf6", "primary-fixed-dim": "#8ed6aa", "on-tertiary": "#ffffff", "outline": "#707971", "surface-container-low": "#edf6f0", "on-primary-container": "#8ad2a7", "tertiary-fixed": "#ffdcc3", "surface-tint": "#226b47", "secondary-fixed": "#ffdbd1", "tertiary-fixed-dim": "#ffb77d", "on-primary-fixed": "#002111", "on-primary": "#ffffff", "background": "#f3fbf6", "on-error": "#ffffff", "on-tertiary-fixed": "#2f1500", "on-secondary-fixed-variant": "#881f00", "inverse-surface": "#2a322f", "surface": "#f3fbf6", "secondary-fixed-dim": "#ffb4a1", "on-background": "#151d1a", "primary": "#004328", "on-secondary-container": "#651400", "surface-container-lowest": "#ffffff", "primary-container": "#0d5c3a", "error": "#ba1a1a", "secondary": "#ac3311", "error-container": "#ffdad6", "outline-variant": "#bfc9c0", "on-tertiary-fixed-variant": "#6e3900", "surface-dim": "#d3dcd7", "on-secondary-fixed": "#3c0800", "on-surface": "#151d1a", "inverse-on-surface": "#eaf3ee", "surface-variant": "#dce5df", "surface-container-high": "#e2eae5", "on-surface-variant": "#404942", "surface-container": "#e7f0eb", "on-error-container": "#93000a", "tertiary": "#5a2e00", "surface-container-highest": "#dce5df", "primary-fixed": "#a9f3c5", "tertiary-container": "#7c4100" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "space-xs": "0.5rem", "space-sm": "0.75rem", "space-xl": "2rem", "gutter-mobile": "1rem", "space-2xs": "0.25rem", "space-2xl": "3rem", "space-md": "1rem", "margin-mobile": "1rem", "touch-target-min": "3rem", "space-lg": "1.5rem" }, fontFamily: { "headline-sm": ["Plus Jakarta Sans"], "body-md": ["Plus Jakarta Sans"], "body-lg": ["Plus Jakarta Sans"], "body-sm": ["Plus Jakarta Sans"], "label-md": ["Plus Jakarta Sans"], "headline-lg-mobile": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"], "data-metric": ["Plus Jakarta Sans"], "title-md": ["Plus Jakarta Sans"], "headline-md": ["Plus Jakarta Sans"], "label-lg": ["Plus Jakarta Sans"] }, fontSize: { "headline-sm": ["18px", { "lineHeight": "24px", "fontWeight": "600" }], "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }], "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }], "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }], "label-md": ["11px", { "lineHeight": "14px", "fontWeight": "600" }], "headline-lg-mobile": ["26px", { "lineHeight": "34px", "fontWeight": "700" }], "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "700" }], "data-metric": ["24px", { "lineHeight": "28px", "fontWeight": "800" }], "title-md": ["16px", { "lineHeight": "22px", "fontWeight": "600" }], "headline-md": ["22px", { "lineHeight": "28px", "fontWeight": "700" }], "label-lg": ["13px", { "lineHeight": "16px", "fontWeight": "700" }] } } } }</script><style>@layer base { html, body { width: 100vw; margin: 0; padding: 0; } body { overscroll-behavior-y: none; } .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); } .pt-safe { padding-top: env(safe-area-inset-top, 0px); } main > :first-child { margin-top: 0 !important; } main > :last-child { margin-bottom: 0 !important; } } ::-webkit-scrollbar { display: none; } .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface text-on-surface font-body-md text-body-md flex flex-col min-h-screen antialiased"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-24 px-gutter-mobile flex flex-col justify-between py-space-xs"><div class="flex items-center justify-between text-on-surface-variant font-label-md text-label-md"><span class="tracking-tight font-semibold text-on-surface">09:41</span><div class="flex items-center gap-space-xs"><span class="material-symbols-outlined text-[15px]">signal_cellular_alt</span><span class="material-symbols-outlined text-[15px]">wifi</span><span class="material-symbols-outlined text-[16px]">battery_full</span></div></div><div class="flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-xs min-w-0 flex-1"><div class="w-9 h-9 rounded-xl bg-primary flex items-center justify-center flex-shrink-0 shadow-[0_2px_6px_rgba(0,67,40,0.2)]"><span class="material-symbols-outlined text-on-primary text-[20px]">verified</span></div><div class="flex flex-col min-w-0"><div class="flex items-baseline gap-space-xs"><span class="font-headline-sm text-headline-sm text-primary tracking-tight font-bold truncate">SachLabel</span><span class="hidden sm:inline-block font-label-md text-label-md text-secondary uppercase font-bold tracking-wider">India</span></div><span class="font-label-md text-label-md text-on-surface-variant truncate">सच परखें • Truth on the label</span></div></div><div class="flex items-center gap-space-xs flex-shrink-0"><button class="h-9 px-space-xs rounded-full bg-surface-container flex items-center gap-space-2xs text-on-surface min-h-[44px] hover:bg-surface-container-high transition-colors"><span class="font-label-md text-label-md font-semibold">EN/हिं</span><span class="material-symbols-outlined text-[16px] text-on-surface-variant">arrow_drop_down</span></button><button class="w-11 h-11 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors min-w-[44px] min-h-[44px]"><span class="material-symbols-outlined text-[22px]">notifications</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></div></header><main class="flex flex-col relative w-full pt-24 pb-28 px-gutter-mobile bg-surface min-h-screen"><div class="flex flex-col w-full gap-space-md">
+<!-- Top Identity & Greeting Curved Banner -->
+<section class="relative w-full rounded-2xl bg-gradient-to-br from-primary via-primary-container to-surface-tint p-space-md text-on-primary shadow-sm overflow-hidden">
+<div class="absolute -right-10 -bottom-10 w-36 h-36 rounded-full bg-surface-bright/10 blur-xl pointer-events-none"></div>
+<div class="absolute -left-6 -top-6 w-28 h-28 rounded-full bg-primary-fixed/10 blur-lg pointer-events-none"></div>
+<div class="relative z-10 flex items-start justify-between gap-space-sm mb-space-sm">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-12 h-12 rounded-full bg-surface-container-lowest text-primary flex items-center justify-center font-headline-sm text-headline-sm font-bold shadow-sm flex-shrink-0">
+          AK
+        </div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-headline-sm text-headline-sm text-on-primary font-bold truncate">Namaskar, Amit</span>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-label-md text-label-md uppercase">PRO</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-primary-container truncate">Preferred Language: हिन्दी / English</p>
+</div>
+</div>
+<div class="relative flex-shrink-0">
+<button class="w-10 h-10 rounded-full bg-surface-container-lowest/15 flex items-center justify-center text-on-primary hover:bg-surface-container-lowest/25 transition-colors">
+<span class="material-symbols-outlined text-[20px]">notifications_active</span>
+</button>
+<span class="absolute 1.5 -top-0.5 -right-0.5 w-3 h-3 rounded-full bg-secondary-container"></span>
+</div>
+</div>
+<!-- Quick Status Metric Pill -->
+<div class="relative z-10 inline-flex items-center gap-space-xs px-space-sm py-1.5 rounded-full bg-surface-container-lowest/20 backdrop-blur-md text-on-primary">
+<span class="material-symbols-outlined text-[16px] text-primary-fixed">verified_user</span>
+<span class="font-label-lg text-label-lg font-semibold">14 Products Verified this Month</span>
+<span class="text-on-primary-container font-body-sm text-body-sm">• 3 flagged</span>
+</div>
+</section>
+<!-- Hero Split Block (Left Dominant + Right 2-Stacked) -->
+<section class="grid grid-cols-12 gap-space-sm w-full">
+<!-- Tall Dominant Card (58% width col-span-7) -->
+<div class="col-span-7 bg-surface-container-lowest rounded-2xl p-space-sm shadow-sm flex flex-col justify-between relative overflow-hidden min-h-[220px]">
+<div class="flex flex-col gap-1 z-10">
+<div class="flex items-center gap-1 text-primary">
+<span class="material-symbols-outlined text-[18px]">document_scanner</span>
+<span class="font-label-md text-label-md uppercase tracking-wider font-bold">Smart Scan</span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold leading-tight">Scan New Product</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">Front claim vs back fine print verification.</p>
+</div>
+<!-- Viewfinder Graphic representation -->
+<div class="my-space-xs relative w-full h-20 rounded-xl bg-surface-container-low flex items-center justify-center overflow-hidden">
+<div class="absolute inset-2 rounded-lg bg-surface-container-lowest/80 flex items-center justify-around px-2">
+<div class="flex flex-col items-center">
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant">featured_play_list</span>
+<span class="font-label-md text-label-md text-on-surface-variant">Front</span>
+</div>
+<span class="material-symbols-outlined text-primary text-[18px]">sync_alt</span>
+<div class="flex flex-col items-center">
+<span class="material-symbols-outlined text-[20px] text-primary">receipt_long</span>
+<span class="font-label-md text-label-md text-primary font-semibold">Back</span>
+</div>
+</div>
+<div class="absolute inset-x-4 top-1/2 h-0.5 bg-secondary-container shadow-[0_0_8px_rgba(255,110,72,0.8)]"></div>
+</div>
+<!-- Instant CTA -->
+<button class="w-full h-11 rounded-xl bg-primary text-on-primary font-label-lg text-label-lg flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[20px]">photo_camera</span>
+<span>Tap to Scan</span>
+</button>
+</div>
+<!-- Right Stacked Cards (42% width col-span-5) -->
+<div class="col-span-5 flex flex-col gap-space-sm">
+<!-- Top Stacked: Recent Scans -->
+<div class="bg-surface-container-lowest rounded-2xl p-space-sm shadow-sm flex flex-col justify-between flex-1">
+<div>
+<div class="flex items-center justify-between">
+<span class="font-label-lg text-label-lg font-bold text-on-surface">Recent Scans</span>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">history</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">3 analyzed today</p>
+</div>
+<div class="mt-2 pt-2 flex items-center justify-between">
+<span class="px-2 py-0.5 rounded-full bg-error-container text-on-error-container font-label-md text-label-md font-bold truncate">1 Alert</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-low text-primary font-label-md text-label-md font-bold">2 Safe</span>
+</div>
+</div>
+<!-- Bottom Stacked: Audio Summary -->
+<div class="bg-surface-container-lowest rounded-2xl p-space-sm shadow-sm flex flex-col justify-between flex-1">
+<div>
+<div class="flex items-center justify-between">
+<span class="font-label-lg text-label-lg font-bold text-on-surface">Audio Verdict</span>
+<span class="material-symbols-outlined text-[16px] text-secondary">volume_up</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">हिन्दी • தமிழ் • తెలుగు</p>
+</div>
+<div class="mt-2 flex items-center gap-1.5 text-primary">
+<span class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span>
+<span class="font-label-md text-label-md font-bold">Listen (42s)</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Section Header -->
+<div class="flex items-baseline justify-between pt-1">
+<div class="flex flex-col">
+<h3 class="font-title-md text-title-md font-bold text-on-surface">Action Center</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Essential food transparency checks at your fingertips</p>
+</div>
+<button class="font-label-md text-label-md text-primary font-bold">View All</button>
+</div>
+<!-- 3x2 Action Matrix (Tactile circular targets inspired by civic app layouts) -->
+<section class="grid grid-cols-3 gap-space-sm w-full">
+<!-- Action 1: Sugar & Palm Oil -->
+<div class="bg-surface-container-lowest rounded-2xl p-space-sm flex flex-col items-center text-center shadow-sm relative group cursor-pointer active:scale-95 transition-transform">
+<span class="absolute top-2 right-2 px-1.5 py-0.5 rounded-full bg-error text-on-error font-label-md text-[10px] font-extrabold uppercase">Alert</span>
+<div class="w-12 h-12 rounded-full bg-error-container/60 text-secondary flex items-center justify-center my-1">
+<span class="material-symbols-outlined text-[24px]">oil_barrel</span>
+</div>
+<span class="font-label-lg text-label-lg font-bold text-on-surface mt-1">Sugar &amp; Palm Oil</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Hidden fats</span>
+</div>
+<!-- Action 2: Front vs Back Match -->
+<div class="bg-surface-container-lowest rounded-2xl p-space-sm flex flex-col items-center text-center shadow-sm relative group cursor-pointer active:scale-95 transition-transform">
+<span class="absolute top-2 right-2 px-1.5 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-label-md text-[10px] font-extrabold uppercase">Core</span>
+<div class="w-12 h-12 rounded-full bg-surface-container-low text-primary flex items-center justify-center my-1">
+<span class="material-symbols-outlined text-[24px]">balance</span>
+</div>
+<span class="font-label-lg text-label-lg font-bold text-on-surface mt-1">Claim Match</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Fact compare</span>
+</div>
+<!-- Action 3: Atta vs Maida -->
+<div class="bg-surface-container-lowest rounded-2xl p-space-sm flex flex-col items-center text-center shadow-sm cursor-pointer active:scale-95 transition-transform">
+<div class="w-12 h-12 rounded-full bg-tertiary-fixed text-tertiary flex items-center justify-center my-1">
+<span class="material-symbols-outlined text-[24px]">grain</span>
+</div>
+<span class="font-label-lg text-label-lg font-bold text-on-surface mt-1">Atta vs Maida</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Grain purity</span>
+</div>
+<!-- Action 4: Kids & Health Claims -->
+<div class="bg-surface-container-lowest rounded-2xl p-space-sm flex flex-col items-center text-center shadow-sm relative group cursor-pointer active:scale-95 transition-transform">
+<span class="absolute top-2 right-2 px-1.5 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-md text-[10px] font-extrabold uppercase">FSSAI</span>
+<div class="w-12 h-12 rounded-full bg-secondary-fixed text-secondary flex items-center justify-center my-1">
+<span class="material-symbols-outlined text-[24px]">child_care</span>
+</div>
+<span class="font-label-lg text-label-lg font-bold text-on-surface mt-1">Kids Drinks</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Growth myths</span>
+</div>
+<!-- Action 5: Offline OCR -->
+<div class="bg-surface-container-lowest rounded-2xl p-space-sm flex flex-col items-center text-center shadow-sm cursor-pointer active:scale-95 transition-transform">
+<div class="w-12 h-12 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center my-1">
+<span class="material-symbols-outlined text-[24px]">cloud_off</span>
+</div>
+<span class="font-label-lg text-label-lg font-bold text-on-surface mt-1">Offline OCR</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Aisle ready</span>
+</div>
+<!-- Action 6: Report False Claim -->
+<div class="bg-surface-container-lowest rounded-2xl p-space-sm flex flex-col items-center text-center shadow-sm cursor-pointer active:scale-95 transition-transform">
+<div class="w-12 h-12 rounded-full bg-error-container text-error flex items-center justify-center my-1">
+<span class="material-symbols-outlined text-[24px]">flag</span>
+</div>
+<span class="font-label-lg text-label-lg font-bold text-on-surface mt-1">Report Label</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Grievance portal</span>
+</div>
+</section>
+<!-- Recent Evidence Card Strip -->
+<section class="flex flex-col gap-space-xs pt-1">
+<div class="flex items-center justify-between">
+<h3 class="font-title-md text-title-md font-bold text-on-surface">Latest Investigation</h3>
+<span class="font-label-md text-label-md text-on-surface-variant">Updated 10m ago</span>
+</div>
+<!-- Dual Evidence Card -->
+<div class="bg-surface-container-lowest rounded-2xl p-space-md shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs min-w-0">
+<div class="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center flex-shrink-0 text-primary">
+<span class="material-symbols-outlined text-[22px]">local_cafe</span>
+</div>
+<div class="flex flex-col min-w-0">
+<h4 class="font-label-lg text-label-lg font-bold text-on-surface truncate">Malted Milk Chocolate Drink 400g</h4>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Popular Supermarket Brand</span>
+</div>
+</div>
+<span class="px-2.5 py-1 rounded-full bg-secondary-container text-on-secondary-container font-label-md text-label-md font-bold uppercase tracking-wider flex-shrink-0 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">warning</span>
+          Misleading
+        </span>
+</div>
+<!-- Split Claim vs Reality Panel -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-xs pt-1">
+<!-- Front Claim -->
+<div class="p-space-sm rounded-xl bg-surface-container-low flex flex-col justify-between">
+<div>
+<span class="font-label-md text-label-md text-on-surface-variant uppercase font-bold">Front Assertion</span>
+<p class="font-title-md text-title-md font-semibold text-on-surface mt-1">"Power Packed with 100% Real California Almonds"</p>
+</div>
+<span class="font-body-sm text-body-sm text-primary font-medium mt-2">Prominent front typography</span>
+</div>
+<!-- Back Reality -->
+<div class="p-space-sm rounded-xl bg-error-container/40 flex flex-col justify-between">
+<div>
+<span class="font-label-md text-label-md text-error uppercase font-bold">Statutory Back Truth</span>
+<p class="font-title-md text-title-md font-semibold text-on-surface mt-1">Contains only 0.8% Almond Powder, 42.4% Added Refined Sugar</p>
+</div>
+<span class="font-body-sm text-body-sm text-secondary font-medium mt-2">FSSAI Ingr. Order #1 &amp; #6</span>
+</div>
+</div>
+<!-- Bottom Delta Strip -->
+<div class="flex items-center justify-between pt-1 font-body-sm text-body-sm">
+<span class="text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-secondary">insights</span>
+          Delta: 99.2% Non-Almond Fillers
+        </span>
+<button class="font-label-lg text-label-lg text-primary font-bold inline-flex items-center gap-0.5 hover:underline">
+          Full Breakdown
+          <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</div>
+</div>
+</section>
+</div></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-4px_16px_rgba(21,29,26,0.06)]" data-active-classes="text-primary font-semibold"><div class="relative flex justify-around items-end h-20 px-space-xs"><a aria-current="page" class="flex flex-col items-center justify-center gap-1 flex-1 h-full min-h-[48px] transition-colors text-primary font-semibold" data-path="home" href="#"><span class="material-symbols-outlined text-[24px]">home</span><span class="font-label-md text-label-md">Home</span></a><a class="flex flex-col items-center justify-center gap-1 flex-1 h-full min-h-[48px] text-on-surface-variant hover:text-on-surface transition-colors" data-path="scans-history" href="#"><span class="material-symbols-outlined text-[24px]">history</span><span class="font-label-md text-label-md">Scans</span></a><div class="relative flex flex-col items-center justify-center flex-1"><a class="absolute -top-6 w-14 h-14 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-[0_8px_20px_rgba(0,67,40,0.35)] hover:scale-105 active:scale-95 transition-all min-h-[48px] min-w-[48px]" data-path="quick-scan" href="#"><span class="material-symbols-outlined text-[28px]">photo_camera</span></a><span class="font-label-md text-label-md text-on-surface-variant pt-10">Quick Scan</span></div><a class="flex flex-col items-center justify-center gap-1 flex-1 h-full min-h-[48px] text-on-surface-variant hover:text-on-surface transition-colors" data-path="what-we-check" href="#"><span class="material-symbols-outlined text-[24px]">verified_user</span><span class="font-label-md text-label-md">Truth Standards</span></a><a class="flex flex-col items-center justify-center gap-1 flex-1 h-full min-h-[48px] text-on-surface-variant hover:text-on-surface transition-colors" data-path="profile-more" href="#"><span class="material-symbols-outlined text-[24px]">widgets</span><span class="font-label-md text-label-md">More</span></a></div></nav></body></html>

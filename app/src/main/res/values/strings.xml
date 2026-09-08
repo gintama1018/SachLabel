@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SachLabel</string>
+
+    <!-- Home -->
+    <string name="home_tagline">We check if a product\'s claims match its own label.</string>
+    <string name="home_scan_cta">Scan a product</string>
+    <string name="home_demo_cta">Try demo scenarios</string>
+    <string name="home_what_we_check">What we check for</string>
+    <string name="home_on_device_note">On-device · Private · Offline-capable</string>
+
+    <!-- Capture -->
+    <string name="capture_front_hint">Photograph the front of the pack.</string>
+    <string name="capture_front_sub">Include the main product claim clearly</string>
+    <string name="capture_front_step">Step 1 of 2 — Front</string>
+    <string name="capture_back_hint">Now the back — ingredients or nutrition label.</string>
+    <string name="capture_back_sub">Include the full ingredient list and nutrition table</string>
+    <string name="capture_back_step">Step 2 of 2 — Back</string>
+    <string name="capture_retake">Retake</string>
+    <string name="capture_use_photo">Use this photo</string>
+    <string name="capture_retake_front">Retake front</string>
+
+    <!-- Processing -->
+    <string name="processing_reading">Reading label…</string>
+    <string name="processing_claims">Finding claims…</string>
+    <string name="processing_evidence">Checking evidence…</string>
+    <string name="processing_explanation">Preparing explanation…</string>
+    <string name="processing_privacy_note">On-device processing — your photos stay on your phone.</string>
+
+    <!-- Result -->
+    <string name="result_contradiction">Claim needs context</string>
+    <string name="result_consistent">No contradiction found for this claim.</string>
+    <string name="result_no_evidence">Not enough evidence to check this claim.</string>
+    <string name="result_no_claim">No prominent claim detected on this product.</string>
+    <string name="result_listen">🔊 Listen</string>
+    <string name="result_stop">Stop</string>
+    <string name="result_health_context">What does this mean for me?</string>
+    <string name="result_scan_another">Scan another product</string>
+    <string name="result_what_means">WHAT THIS MEANS</string>
+    <string name="result_front_label">FRONT LABEL CLAIMS:</string>
+    <string name="result_error">We couldn\'t read this clearly. Try another photo.</string>
+
+    <!-- Health context -->
+    <string name="health_title">What does this mean for me?</string>
+    <string name="health_prompt">Add a dietary goal, allergy, or health concern:</string>
+    <string name="health_check_cta">Check for me</string>
+    <string name="health_disclaimer">This ingredient may be relevant to the concern you mentioned. This is informational, not a medical determination.</string>
+    <string name="health_findings">FINDINGS</string>
+    <string name="health_no_context">No health context was provided.</string>
+
+    <!-- Language select -->
+    <string name="lang_title">Choose your language</string>
+    <string name="lang_continue">Continue</string>
+</resources>

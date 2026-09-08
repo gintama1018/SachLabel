@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><title>SachLabel</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "on-secondary": "#ffffff", "inverse-primary": "#8ed6aa", "on-primary-fixed-variant": "#005232", "secondary-container": "#ff6e48", "on-tertiary-container": "#ffb273", "surface-bright": "#f3fbf6", "primary-fixed-dim": "#8ed6aa", "on-tertiary": "#ffffff", "outline": "#707971", "surface-container-low": "#edf6f0", "on-primary-container": "#8ad2a7", "tertiary-fixed": "#ffdcc3", "surface-tint": "#226b47", "secondary-fixed": "#ffdbd1", "tertiary-fixed-dim": "#ffb77d", "on-primary-fixed": "#002111", "on-primary": "#ffffff", "background": "#f3fbf6", "on-error": "#ffffff", "on-tertiary-fixed": "#2f1500", "on-secondary-fixed-variant": "#881f00", "inverse-surface": "#2a322f", "surface": "#f3fbf6", "secondary-fixed-dim": "#ffb4a1", "on-background": "#151d1a", "primary": "#004328", "on-secondary-container": "#651400", "surface-container-lowest": "#ffffff", "primary-container": "#0d5c3a", "error": "#ba1a1a", "secondary": "#ac3311", "error-container": "#ffdad6", "outline-variant": "#bfc9c0", "on-tertiary-fixed-variant": "#6e3900", "surface-dim": "#d3dcd7", "on-secondary-fixed": "#3c0800", "on-surface": "#151d1a", "inverse-on-surface": "#eaf3ee", "surface-variant": "#dce5df", "surface-container-high": "#e2eae5", "on-surface-variant": "#404942", "surface-container": "#e7f0eb", "on-error-container": "#93000a", "tertiary": "#5a2e00", "surface-container-highest": "#dce5df", "primary-fixed": "#a9f3c5", "tertiary-container": "#7c4100" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "space-xs": "0.5rem", "space-sm": "0.75rem", "space-xl": "2rem", "gutter-mobile": "1rem", "space-2xs": "0.25rem", "space-2xl": "3rem", "space-md": "1rem", "margin-mobile": "1rem", "touch-target-min": "3rem", "space-lg": "1.5rem" }, fontFamily: { "headline-sm": ["Plus Jakarta Sans"], "body-md": ["Plus Jakarta Sans"], "body-lg": ["Plus Jakarta Sans"], "body-sm": ["Plus Jakarta Sans"], "label-md": ["Plus Jakarta Sans"], "headline-lg-mobile": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"], "data-metric": ["Plus Jakarta Sans"], "title-md": ["Plus Jakarta Sans"], "headline-md": ["Plus Jakarta Sans"], "label-lg": ["Plus Jakarta Sans"] }, fontSize: { "headline-sm": ["18px", { "lineHeight": "24px", "fontWeight": "600" }], "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }], "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }], "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }], "label-md": ["11px", { "lineHeight": "14px", "fontWeight": "600" }], "headline-lg-mobile": ["26px", { "lineHeight": "34px", "fontWeight": "700" }], "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "700" }], "data-metric": ["24px", { "lineHeight": "28px", "fontWeight": "800" }], "title-md": ["16px", { "lineHeight": "22px", "fontWeight": "600" }], "headline-md": ["22px", { "lineHeight": "28px", "fontWeight": "700" }], "label-lg": ["13px", { "lineHeight": "16px", "fontWeight": "700" }] } } } }</script><style>@layer base { html, body { width: 100vw; margin: 0; padding: 0; } body { overscroll-behavior-y: none; } .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); } .pt-safe { padding-top: env(safe-area-inset-top, 0px); } main > :first-child { margin-top: 0 !important; } main > :last-child { margin-bottom: 0 !important; } } ::-webkit-scrollbar { display: none; } .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }</style></head><body class="bg-surface text-on-surface font-body-md text-body-md flex flex-col min-h-screen pt-safe pb-safe antialiased"><main class="flex flex-col relative w-full bg-surface min-h-screen"><div class="flex flex-col w-full px-margin-mobile pb-space-2xl">
+<div class="flex items-center justify-between py-space-xs">
+<div class="flex items-center gap-space-2xs bg-surface-container-low px-space-xs py-1 rounded-full">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="font-label-md text-label-md text-primary font-bold tracking-wider uppercase">Step 1 of 2</span>
+</div>
+<div class="relative">
+<button class="flex items-center gap-1 bg-surface-container px-space-xs py-1 rounded-full text-on-surface-variant font-label-md text-label-md active:scale-95 transition-transform" id="lang-btn" onclick="document.getElementById('lang-dropdown').classList.toggle('hidden')">
+<span class="material-symbols-outlined text-[16px] text-primary">translate</span>
+<span class="font-semibold text-on-surface" id="current-lang">English</span>
+<span class="material-symbols-outlined text-[14px]">expand_more</span>
+</button>
+<div class="hidden absolute right-0 mt-1 w-36 bg-surface-container-lowest rounded-xl shadow-xl z-20 py-1" id="lang-dropdown">
+<button class="w-full text-left px-3 py-2 text-on-surface hover:bg-surface-container-low font-label-lg text-label-lg flex items-center justify-between" onclick="selectLang('English')">
+<span>English</span>
+<span class="material-symbols-outlined text-[14px] text-primary">check</span>
+</button>
+<button class="w-full text-left px-3 py-2 text-on-surface hover:bg-surface-container-low font-label-lg text-label-lg" onclick="selectLang('हिन्दी')">हिन्दी</button>
+<button class="w-full text-left px-3 py-2 text-on-surface hover:bg-surface-container-low font-label-lg text-label-lg" onclick="selectLang('தமிழ்')">தமிழ்</button>
+<button class="w-full text-left px-3 py-2 text-on-surface hover:bg-surface-container-low font-label-lg text-label-lg" onclick="selectLang('বাংলা')">বাংলা</button>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-center text-center mt-space-sm mb-space-md">
+<div class="relative mb-space-xs">
+<div class="w-20 h-20 bg-primary-fixed rounded-2xl flex items-center justify-center p-2 shadow-sm">
+<img alt="SachLabel Shield Logo" class="w-full h-full object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1WmLLKENwV9w-kASGnSFlBJMX68d7zWIUQvp2_tjdZAX6Y2g2aCvnZ4RaSAJYQZ4AK8kHQmi1ogQad0I605Eo9P01PcLhwarJK4jJcdIhE4XH7jb34LzkMxPVw5H_yt5GmbEwL-SC4Sd6y0OkI3dhn1i_Ek-qrxB4qVfx5ti9U91HTxh6nQDMoefCXXuaWwLqjPzIKlwwgKA0IYLBTOC_JpD5MH1myDsRGhdfpuEn3a6DnBKkDpGwcsV80"/>
+</div>
+<div class="absolute -bottom-1 -right-1 bg-primary-container text-on-primary rounded-full p-1 shadow-sm flex items-center justify-center">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+</div>
+<div class="flex items-baseline gap-2">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary tracking-tight">SachLabel</h1>
+<span class="font-title-md text-title-md text-primary-container font-semibold">सच परखें</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 max-w-[280px]">
+      The Indian Grocery Label Investigator
+    </p>
+</div>
+<div class="bg-surface-container-low rounded-xl p-space-sm mb-space-md shadow-sm">
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-primary text-[20px] shrink-0 mt-0.5" style="font-variation-settings: 'FILL' 1;">format_quote</span>
+<p class="font-body-sm text-body-sm text-on-surface italic leading-snug">
+        We don't score how healthy a product is. We check whether what's printed on the <strong class="text-primary font-semibold">front</strong> actually matches what's printed on the <strong class="text-secondary font-semibold">back</strong> — with direct statutory evidence.
+      </p>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-xl p-space-sm shadow-md mb-space-lg">
+<div class="flex items-center justify-between pb-space-2xs mb-space-xs">
+<span class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-secondary">visibility</span> Live Case Study
+      </span>
+<span class="bg-secondary-fixed text-on-secondary-fixed font-label-md text-label-md px-2 py-0.5 rounded-full font-bold">Packaged Rusk</span>
+</div>
+<div class="bg-surface-container-high rounded-lg p-space-sm mb-space-xs relative overflow-hidden">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-md text-label-md uppercase font-bold text-on-surface-variant">Front Of Pack Claim</span>
+<span class="bg-surface-container-lowest text-secondary font-label-md text-label-md px-1.5 py-0.2 rounded font-bold">Big Gold Badge</span>
+</div>
+<p class="font-title-md text-title-md font-bold text-primary flex items-center gap-1.5">
+<span>“100% Whole Wheat &amp; No Added Sugar”</span>
+</p>
+</div>
+<div class="flex justify-center -my-2 relative z-10">
+<div class="w-7 h-7 bg-primary rounded-full flex items-center justify-center text-on-primary shadow-sm">
+<span class="material-symbols-outlined text-[16px]">south</span>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-lg p-space-sm mt-space-xs mb-space-sm">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-md text-label-md uppercase font-bold text-on-surface-variant">Back Of Pack Statutory Reality</span>
+<span class="text-error font-label-md text-label-md font-semibold">FSSAI Declaration</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface font-mono leading-tight">
+        Ingredients: <span class="bg-error-container text-on-error-container px-1 rounded font-bold">Refined Wheat Flour (Maida) 68%</span>, Liquid Glucose, <span class="bg-error-container text-on-error-container px-1 rounded font-bold">Sugar (18g)</span>, Hydrogenated Palm Fat.
+      </p>
+</div>
+<div class="bg-secondary text-on-secondary rounded-lg px-space-sm py-2 flex items-center justify-between">
+<div class="flex items-center gap-1.5 min-w-0">
+<span class="material-symbols-outlined text-[18px] shrink-0" style="font-variation-settings: 'FILL' 1;">warning</span>
+<span class="font-label-lg text-label-lg uppercase tracking-wide truncate">Misleading Claim • 68% Maida</span>
+</div>
+<span class="bg-surface-container-lowest text-secondary font-label-md text-label-md px-2 py-0.5 rounded-full font-bold shrink-0">Verdict</span>
+</div>
+</div>
+<div class="flex flex-col gap-space-xs mb-space-lg">
+<div class="flex items-start gap-space-sm bg-surface-container-lowest p-space-sm rounded-xl shadow-sm">
+<div class="w-10 h-10 rounded-lg bg-primary-fixed flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[22px]" style="font-variation-settings: 'FILL' 1;">highlight</span>
+</div>
+<div class="flex flex-col min-w-0">
+<h2 class="font-title-md text-title-md text-on-surface font-bold">Direct Evidence</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5 leading-snug">Exact words from statutory back-of-pack ingredient lists highlighted with no vague algorithmic scores.</p>
+</div>
+</div>
+<div class="flex items-start gap-space-sm bg-surface-container-lowest p-space-sm rounded-xl shadow-sm">
+<div class="w-10 h-10 rounded-lg bg-secondary-fixed flex items-center justify-center text-secondary shrink-0">
+<span class="material-symbols-outlined text-[22px]" style="font-variation-settings: 'FILL' 1;">record_voice_over</span>
+</div>
+<div class="flex flex-col min-w-0">
+<h2 class="font-title-md text-title-md text-on-surface font-bold">In Your Voice</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5 leading-snug">Audio breakdowns in Hindi, Tamil, Telugu, and more so everyone in the family shops with confidence.</p>
+</div>
+</div>
+<div class="flex items-start gap-space-sm bg-surface-container-lowest p-space-sm rounded-xl shadow-sm">
+<div class="w-10 h-10 rounded-lg bg-tertiary-fixed flex items-center justify-center text-tertiary shrink-0">
+<span class="material-symbols-outlined text-[22px]" style="font-variation-settings: 'FILL' 1;">speed</span>
+</div>
+<div class="flex flex-col min-w-0">
+<h2 class="font-title-md text-title-md text-on-surface font-bold">2-Second Clarity</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5 leading-snug">Scan barcode or front label right in the aisle for an unambiguous, immediate pass or alert signal.</p>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-space-xs mt-auto">
+<button class="w-full bg-primary hover:bg-primary-container active:scale-[0.98] transition-all text-on-primary py-space-sm rounded-xl font-title-md text-title-md font-bold flex items-center justify-center gap-2 shadow-md min-h-touch-target-min" id="cta-start-scan">
+<span class="material-symbols-outlined text-[22px]">barcode_scanner</span>
+<span>Start Scanning Products</span>
+</button>
+<div class="flex items-center justify-center gap-4 py-1">
+<button class="font-label-lg text-label-lg text-primary hover:text-primary-container font-semibold flex items-center gap-1 active:opacity-75">
+<span class="material-symbols-outlined text-[16px]">play_circle</span>
+<span>See How It Works (30s Demo)</span>
+</button>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<button class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface active:opacity-75">
+<span>Skip</span>
+</button>
+</div>
+<div class="flex items-center justify-center gap-2 pt-space-xs text-center">
+<span class="material-symbols-outlined text-primary text-[14px]" style="font-variation-settings: 'FILL' 1;">shield</span>
+<p class="font-label-md text-label-md text-on-surface-variant font-medium">
+        Independent • FSSAI Label Standards Aligned • Evidence-First
+      </p>
+</div>
+</div>
+</div>
+<script>
+  function selectLang(lang) {
+    document.getElementById('current-lang').innerText = lang;
+    document.getElementById('lang-dropdown').classList.add('hidden');
+  }
+
+  document.addEventListener('click', function(event) {
+    const dropdown = document.getElementById('lang-dropdown');
+    const langBtn = document.getElementById('lang-btn');
+    if (dropdown && !dropdown.contains(event.target) && !langBtn.contains(event.target)) {
+      dropdown.classList.add('hidden');
+    }
+  });
+
+  const ctaBtn = document.getElementById('cta-start-scan');
+  if (ctaBtn) {
+    ctaBtn.addEventListener('click', function() {
+      ctaBtn.classList.add('opacity-90');
+      setTimeout(() => ctaBtn.classList.remove('opacity-90'), 150);
+    });
+  }
+</script></main></body></html>

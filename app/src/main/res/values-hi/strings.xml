@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">सचलेबल</string>
+    <string name="home_tagline">हम जाँचते हैं कि उत्पाद के दावे उसके अपने लेबल से मेल खाते हैं।</string>
+    <string name="home_scan_cta">उत्पाद स्कैन करें</string>
+    <string name="home_demo_cta">डेमो देखें</string>
+    <string name="home_what_we_check">हम क्या जाँचते हैं</string>
+    <string name="home_on_device_note">डिवाइस पर · निजी · ऑफलाइन</string>
+    <string name="capture_front_hint">पैकेट का अगला हिस्सा फोटो लें।</string>
+    <string name="capture_back_hint">अब पीछे — सामग्री या पोषण लेबल।</string>
+    <string name="processing_reading">लेबल पढ़ रहे हैं…</string>
+    <string name="processing_claims">दावे ढूंढ रहे हैं…</string>
+    <string name="processing_evidence">साक्ष्य जाँच रहे हैं…</string>
+    <string name="processing_explanation">व्याख्या तैयार हो रही है…</string>
+    <string name="result_contradiction">दावे को संदर्भ की जरूरत है</string>
+    <string name="result_consistent">इस दावे में कोई विरोधाभास नहीं मिला।</string>
+    <string name="result_no_evidence">इस दावे की जाँच के लिए पर्याप्त साक्ष्य नहीं।</string>
+    <string name="result_no_claim">इस उत्पाद पर कोई प्रमुख दावा नहीं मिला।</string>
+    <string name="result_listen">🔊 सुनें</string>
+    <string name="result_health_context">मेरे लिए इसका क्या मतलब है?</string>
+    <string name="result_scan_another">दूसरा उत्पाद स्कैन करें</string>
+    <string name="health_disclaimer">यह सामग्री आपकी बताई चिंता से संबंधित हो सकती है। यह जानकारी है, चिकित्सीय निर्धारण नहीं।</string>
+    <string name="result_error">हम इसे स्पष्ट रूप से पढ़ नहीं सके। दूसरी फोटो लें।</string>
+</resources>
