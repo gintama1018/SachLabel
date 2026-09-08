@@ -11,4 +11,7 @@ data class Claim(
     val rawText: String,
     val patternKey: String,
     val prominenceScore: Float = 0f
-)
+) {
+    val category: CanonicalClaimCategory?
+        get() = CanonicalClaimCategory.fromId(patternKey)
+}

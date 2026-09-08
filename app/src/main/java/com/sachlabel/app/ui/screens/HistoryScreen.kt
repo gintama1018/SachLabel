@@ -85,20 +85,23 @@ private val SAMPLE_HISTORY = listOf(
 @Composable
 fun HistoryScreen(
     selectedLanguage: UserLanguage,
-    onAuditSelected: (MockScenario) -> Unit,
+    savedScans: List<com.sachlabel.app.data.repository.SavedScanItem> = emptyList(),
+    onSavedScanClick: (com.sachlabel.app.data.repository.SavedScanItem) -> Unit = {},
+    onAuditSelected: (MockScenario) -> Unit = {},
     onScanClick: () -> Unit,
     onLanguageClick: () -> Unit
 ) {
     var searchQuery by remember { mutableStateOf("") }
     var selectedFilter by remember { mutableStateOf("All") }
 
-    val filters = listOf("All", "⚠️ Alerts", "✅ Verified", "Atta vs Maida", "Sugar Checks")
+    val filters = listOf("All", "⚠️ Alerts", "✅ Verified")
 
-    val filteredItems = remember(searchQuery, selectedFilter) {
-        SAMPLE_HISTORY.filter { item ->
+    val filteredSavedScans = remember(savedScans, searchQuery, selectedFilter) {
+        savedScans.filter { item ->
             val matchesQuery = searchQuery.isBlank() ||
                 item.brandName.contains(searchQuery, ignoreCase = true) ||
-                item.frontClaim.contains(searchQuery, ignoreCase = true)
+                item.frontClaim.contains(searchQuery, ignoreCase = true) ||
+                item.backTruth.contains(searchQuery, ignoreCase = true)
 
             val matchesFilter = when (selectedFilter) {
                 "⚠️ Alerts" -> item.verdict == Verdict.MISLEADING
@@ -200,113 +203,122 @@ fun HistoryScreen(
                 }
             }
 
-            // Pantry Truth Score Banner
-            item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(18.dp))
-                        .background(SurfaceContainerLow)
-                        .border(1.dp, OutlineVariant.copy(alpha = 0.3f), RoundedCornerShape(18.dp))
-                        .padding(14.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+
+            // History Audit Cards
+            if (filteredSavedScans.isNotEmpty()) {
+                items(filteredSavedScans) { audit ->
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .shadow(6.dp, RoundedCornerShape(22.dp), ambientColor = Color(0x0A151D1A), spotColor = Color(0x14151D1A))
+                            .clip(RoundedCornerShape(22.dp))
+                            .background(SurfaceContainerLowest)
+                            .border(1.dp, OutlineVariant.copy(alpha = 0.3f), RoundedCornerShape(22.dp))
+                            .clickable { onSavedScanClick(audit) }
+                            .padding(16.dp)
                     ) {
-                        Column {
-                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                                Icon(Icons.Default.AutoGraph, contentDescription = null, tint = PrimaryGreen, modifier = Modifier.size(18.dp))
-                                Text("Pantry Truth Summary", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = PrimaryGreen)
+                        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.Top
+                            ) {
+                                Row(
+                                    modifier = Modifier.weight(1f),
+                                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(44.dp)
+                                            .clip(RoundedCornerShape(14.dp))
+                                            .background(SurfaceContainerLow),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Icon(Icons.Default.LocalCafe, contentDescription = null, tint = PrimaryGreen, modifier = Modifier.size(22.dp))
+                                    }
+                                    Column {
+                                        Text(audit.brandName, fontSize = 13.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+                                        Text("${audit.timestampFormatted} • ${audit.packInfo}", fontSize = 10.sp, color = TextSecondary)
+                                    }
+                                }
+
+                                VerdictBadge(verdict = audit.verdict)
                             }
-                            Spacer(modifier = Modifier.height(2.dp))
-                            Text("3 disguised ingredients detected this week", fontSize = 11.sp, color = TextSecondary)
-                        }
-                        Box(
-                            modifier = Modifier
-                                .clip(CircleShape)
-                                .background(PrimaryFixed)
-                                .padding(horizontal = 10.dp, vertical = 4.dp)
-                        ) {
-                            Text("78% Clean", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = PrimaryGreen)
+
+                            // Split Comparison
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clip(RoundedCornerShape(14.dp))
+                                    .background(SurfaceContainerLow)
+                                    .padding(10.dp)
+                            ) {
+                                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                                        Text("FRONT:", fontSize = 9.sp, fontWeight = FontWeight.Bold, color = TextSecondary)
+                                        Text("“${audit.frontClaim}”", fontSize = 11.sp, fontWeight = FontWeight.SemiBold, color = TextPrimary)
+                                    }
+                                    HorizontalDivider(color = OutlineVariant.copy(alpha = 0.25f))
+                                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                                        Text("BACK:", fontSize = 9.sp, fontWeight = FontWeight.Bold, color = AlertCrimson)
+                                        Text(audit.backTruth, fontSize = 11.sp, fontFamily = FontFamily.Monospace, color = TextPrimary)
+                                    }
+                                }
+                            }
+
+                            // Bottom Link
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = audit.explanationEn.take(60) + if (audit.explanationEn.length > 60) "…" else "",
+                                    fontSize = 10.sp,
+                                    color = TextSecondary,
+                                    modifier = Modifier.weight(1f)
+                                )
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text("Full Audit", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = PrimaryGreen)
+                                    Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null, tint = PrimaryGreen, modifier = Modifier.size(13.dp))
+                                }
+                            }
                         }
                     }
                 }
-            }
-
-            // History Audit Cards
-            items(filteredItems) { audit ->
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .shadow(6.dp, RoundedCornerShape(22.dp), ambientColor = Color(0x0A151D1A), spotColor = Color(0x14151D1A))
-                        .clip(RoundedCornerShape(22.dp))
-                        .background(SurfaceContainerLowest)
-                        .border(1.dp, OutlineVariant.copy(alpha = 0.3f), RoundedCornerShape(22.dp))
-                        .clickable { onAuditSelected(audit.mockScenario) }
-                        .padding(16.dp)
-                ) {
-                    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.Top
+            } else {
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 24.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
-                            Row(
-                                modifier = Modifier.weight(1f),
-                                horizontalArrangement = Arrangement.spacedBy(10.dp),
-                                verticalAlignment = Alignment.CenterVertically
+                            Box(
+                                modifier = Modifier
+                                    .size(56.dp)
+                                    .clip(CircleShape)
+                                    .background(SurfaceContainerLow),
+                                contentAlignment = Alignment.Center
                             ) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(44.dp)
-                                        .clip(RoundedCornerShape(14.dp))
-                                        .background(SurfaceContainerLow),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Icon(Icons.Default.LocalCafe, contentDescription = null, tint = PrimaryGreen, modifier = Modifier.size(22.dp))
-                                }
-                                Column {
-                                    Text(audit.brandName, fontSize = 13.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
-                                    Text("${audit.timestamp} • ${audit.packInfo}", fontSize = 10.sp, color = TextSecondary)
-                                }
+                                Icon(Icons.Default.History, contentDescription = null, tint = TextMuted, modifier = Modifier.size(28.dp))
                             }
-
-                            VerdictBadge(verdict = audit.verdict)
-                        }
-
-                        // Split Comparison
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(14.dp))
-                                .background(SurfaceContainerLow)
-                                .padding(10.dp)
-                        ) {
-                            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                                    Text("FRONT:", fontSize = 9.sp, fontWeight = FontWeight.Bold, color = TextSecondary)
-                                    Text("“${audit.frontClaim}”", fontSize = 11.sp, fontWeight = FontWeight.SemiBold, color = TextPrimary)
-                                }
-                                HorizontalDivider(color = OutlineVariant.copy(alpha = 0.25f))
-                                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                                    Text("BACK:", fontSize = 9.sp, fontWeight = FontWeight.Bold, color = AlertCrimson)
-                                    Text(audit.backTruth, fontSize = 11.sp, fontFamily = FontFamily.Monospace, color = TextPrimary)
-                                }
-                            }
-                        }
-
-                        // Bottom Link
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(audit.statutoryDiscrepancy, fontSize = 10.sp, color = TextSecondary, modifier = Modifier.weight(1f))
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text("Full Audit", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = PrimaryGreen)
-                                Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null, tint = PrimaryGreen, modifier = Modifier.size(13.dp))
+                            Text("No Scans Recorded Yet", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+                            Text("Audits you perform on package labels will appear here offline.", fontSize = 12.sp, color = TextSecondary)
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Button(
+                                onClick = onScanClick,
+                                colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen),
+                                shape = RoundedCornerShape(12.dp)
+                            ) {
+                                Icon(Icons.Default.DocumentScanner, contentDescription = null, modifier = Modifier.size(16.dp))
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text("Scan a Food Product")
                             }
                         }
                     }

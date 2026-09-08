@@ -1,11 +1,22 @@
 package com.sachlabel.app.ui.navigation
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -15,7 +26,9 @@ import com.sachlabel.app.data.mock.MockProducts
 import com.sachlabel.app.ui.components.BottomTab
 import com.sachlabel.app.ui.components.SachLabelBottomNav
 import com.sachlabel.app.ui.screens.*
+import com.sachlabel.app.ui.theme.AlertCrimson
 import com.sachlabel.app.ui.theme.BackgroundSurface
+import com.sachlabel.app.ui.theme.PrimaryGreen
 import com.sachlabel.app.viewmodel.ScanViewModel
 import com.sachlabel.app.viewmodel.SettingsViewModel
 
@@ -42,6 +55,7 @@ fun SachLabelNavGraph() {
 
     val selectedLanguage by settingsViewModel.selectedLanguage.collectAsState()
     val isFirstLaunch by settingsViewModel.isFirstLaunch.collectAsState()
+    val savedScans by scanViewModel.savedScans.collectAsState()
 
     // Keep scanViewModel's language in sync
     LaunchedEffect(selectedLanguage) {
@@ -60,9 +74,21 @@ fun SachLabelNavGraph() {
 
     val startDestination = if (isFirstLaunch) Routes.WELCOME else Routes.HOME
 
-    Scaffold(
-        containerColor = BackgroundSurface,
-        bottomBar = {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val localizedContext = remember(selectedLanguage) {
+        val locale = java.util.Locale(selectedLanguage.code)
+        java.util.Locale.setDefault(locale)
+        val config = android.content.res.Configuration(context.resources.configuration)
+        config.setLocale(locale)
+        context.createConfigurationContext(config)
+    }
+
+    CompositionLocalProvider(
+        androidx.compose.ui.platform.LocalContext provides localizedContext
+    ) {
+        Scaffold(
+            containerColor = BackgroundSurface,
+            bottomBar = {
             if (showBottomBar) {
                 SachLabelBottomNav(
                     currentRoute = currentRoute,
@@ -147,12 +173,17 @@ fun SachLabelNavGraph() {
                 composable(Routes.HOME) {
                     HomeScreen(
                         selectedLanguage = selectedLanguage,
+                        savedScans = savedScans,
                         onScanClick = {
                             scanViewModel.startScan()
                             navController.navigate(Routes.CAPTURE_FRONT)
                         },
                         onHistoryClick = { navController.navigate(Routes.HISTORY) },
                         onMockDemoClick = { navController.navigate(Routes.MOCK_SELECT) },
+                        onSavedScanClick = { item ->
+                            scanViewModel.showSavedScan(item)
+                            navController.navigate(Routes.RESULT)
+                        },
                         onLanguageClick = { navController.navigate(Routes.LANGUAGE_SELECT) },
                         onWhatWeCheckClick = { navController.navigate(Routes.WHAT_WE_CHECK) }
                     )
@@ -162,6 +193,11 @@ fun SachLabelNavGraph() {
                 composable(Routes.HISTORY) {
                     HistoryScreen(
                         selectedLanguage = selectedLanguage,
+                        savedScans = savedScans,
+                        onSavedScanClick = { item ->
+                            scanViewModel.showSavedScan(item)
+                            navController.navigate(Routes.RESULT)
+                        },
                         onAuditSelected = { scenario ->
                             scanViewModel.runMockScenario(scenario)
                             navController.navigate(Routes.RESULT)
@@ -190,8 +226,8 @@ fun SachLabelNavGraph() {
                     CaptureBackScreen(
                         onPhotoCaptured = { imagePath ->
                             scanViewModel.onBackCaptured(imagePath)
-                            navController.navigate(Routes.RESULT) {
-                                popUpTo(Routes.HOME)
+                            navController.navigate(Routes.PROCESSING) {
+                                popUpTo(Routes.CAPTURE_FRONT) { inclusive = true }
                             }
                         },
                         onRetakeFront = {
@@ -202,7 +238,62 @@ fun SachLabelNavGraph() {
                     )
                 }
 
-                // Stitch Screen 7: Product Verdict / Result Screen
+                // Stitch Screen 6: Processing Screen
+                composable(Routes.PROCESSING) {
+                    val uiState by scanViewModel.uiState.collectAsState()
+
+                    LaunchedEffect(uiState) {
+                        if (uiState is ScanViewModel.ScanUiState.Result) {
+                            navController.navigate(Routes.RESULT) {
+                                popUpTo(Routes.PROCESSING) { inclusive = true }
+                            }
+                        }
+                    }
+
+                    when (val state = uiState) {
+                        is ScanViewModel.ScanUiState.Processing -> {
+                            ProcessingScreen(step = state.step)
+                        }
+                        is ScanViewModel.ScanUiState.Error -> {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(BackgroundSurface)
+                                    .padding(24.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                                ) {
+                                    Text(
+                                        text = state.message,
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = AlertCrimson,
+                                        textAlign = TextAlign.Center
+                                    )
+                                    Button(
+                                        onClick = {
+                                            scanViewModel.reset()
+                                            navController.navigate(Routes.HOME) {
+                                                popUpTo(Routes.HOME) { inclusive = true }
+                                            }
+                                        },
+                                        colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen)
+                                    ) {
+                                        Text("Return to Home")
+                                    }
+                                }
+                            }
+                        }
+                        else -> {
+                            ProcessingScreen(step = ScanViewModel.ProcessingStep.READING_LABEL)
+                        }
+                    }
+                }
+
+                // Stitch Screen 7: Claim Check / Result Screen
                 composable(Routes.RESULT) {
                     val uiState by scanViewModel.uiState.collectAsState()
                     ResultScreen(
@@ -253,12 +344,13 @@ fun SachLabelNavGraph() {
                         scenarios = MockProducts.ALL,
                         onScenarioSelected = { scenario ->
                             scanViewModel.runMockScenario(scenario)
-                            navController.navigate(Routes.RESULT)
+                            navController.navigate(Routes.PROCESSING)
                         },
                         onBack = { navController.popBackStack() }
                     )
                 }
             }
         }
+    }
     }
 }

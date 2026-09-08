@@ -12,7 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,6 +23,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.sachlabel.app.R
 import com.sachlabel.app.data.model.UserLanguage
 import com.sachlabel.app.ui.components.SachLabelHeader
 import com.sachlabel.app.ui.theme.*
@@ -34,12 +36,26 @@ import com.sachlabel.app.ui.theme.*
 @Composable
 fun HomeScreen(
     selectedLanguage: UserLanguage,
+    savedScans: List<com.sachlabel.app.data.repository.SavedScanItem> = emptyList(),
     onScanClick: () -> Unit,
     onHistoryClick: () -> Unit,
     onMockDemoClick: () -> Unit,
+    onSavedScanClick: (com.sachlabel.app.data.repository.SavedScanItem) -> Unit = {},
     onLanguageClick: () -> Unit,
     onWhatWeCheckClick: () -> Unit
 ) {
+    val todayStart = remember {
+        java.util.Calendar.getInstance().apply {
+            set(java.util.Calendar.HOUR_OF_DAY, 0)
+            set(java.util.Calendar.MINUTE, 0)
+            set(java.util.Calendar.SECOND, 0)
+            set(java.util.Calendar.MILLISECOND, 0)
+        }.timeInMillis
+    }
+    val todayScans = remember(savedScans) { savedScans.filter { it.timestampEpoch >= todayStart } }
+    val totalScans = savedScans.size
+    val totalFlagged = savedScans.count { it.verdict == com.sachlabel.app.data.model.Verdict.MISLEADING }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -47,7 +63,7 @@ fun HomeScreen(
     ) {
         // Sticky Signature Stitch Curved Header
         SachLabelHeader(
-            title = "Namaskar, Amit",
+            title = "${stringResource(R.string.home_greeting)}, Amit",
             subtitle = "SachLabel • सच परखें",
             selectedLanguage = selectedLanguage,
             onLanguageClick = onLanguageClick,
@@ -68,13 +84,13 @@ fun HomeScreen(
                         modifier = Modifier.size(15.dp)
                     )
                     Text(
-                        text = "14 Products Verified this Month",
+                        text = if (totalScans > 0) "$totalScans Products Checked" else "100% On-Device Food Check",
                         color = Color.White,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.SemiBold
                     )
                     Text(
-                        text = "• 3 flagged",
+                        text = if (totalScans > 0) "• $totalFlagged flagged" else "• No Cloud Required",
                         color = OnPrimaryContainer,
                         fontSize = 11.sp
                     )
@@ -126,7 +142,7 @@ fun HomeScreen(
                                     modifier = Modifier.size(15.dp)
                                 )
                                 Text(
-                                    text = "SMART SCAN",
+                                    text = stringResource(R.string.home_smart_scan),
                                     fontSize = 10.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = PrimaryGreen,
@@ -135,13 +151,13 @@ fun HomeScreen(
                             }
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "Scan Product",
+                                text = stringResource(R.string.home_scan_product),
                                 fontSize = 17.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = TextPrimary
                             )
                             Text(
-                                text = "Front claim vs back fine print verification.",
+                                text = stringResource(R.string.home_scan_desc),
                                 fontSize = 11.sp,
                                 color = TextSecondary,
                                 lineHeight = 15.sp,
@@ -183,7 +199,7 @@ fun HomeScreen(
                         ) {
                             Icon(Icons.Default.PhotoCamera, contentDescription = null, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(6.dp))
-                            Text("Start Scan", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                            Text(stringResource(R.string.home_start_scan), fontSize = 12.sp, fontWeight = FontWeight.Bold)
                         }
                     }
                 }
@@ -216,27 +232,44 @@ fun HomeScreen(
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text("Recent Scans", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+                                Text(stringResource(R.string.home_recent_scans), fontSize = 12.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
                                 Icon(Icons.Default.History, contentDescription = null, tint = TextSecondary, modifier = Modifier.size(15.dp))
                             }
-                            Text("3 analyzed today", fontSize = 10.sp, color = TextSecondary)
-                            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                                Box(
-                                    modifier = Modifier
-                                        .clip(CircleShape)
-                                        .background(AlertCrimsonLow)
-                                        .padding(horizontal = 6.dp, vertical = 2.dp)
-                                ) {
-                                    Text("1 Alert", fontSize = 9.sp, fontWeight = FontWeight.Bold, color = AlertCrimson)
+                            Text(
+                                text = if (todayScans.isNotEmpty()) "${todayScans.size} analyzed today" else "No scans today",
+                                fontSize = 10.sp,
+                                color = TextSecondary
+                            )
+                            if (todayScans.isNotEmpty()) {
+                                val alertsCount = todayScans.count { it.verdict == com.sachlabel.app.data.model.Verdict.MISLEADING }
+                                val safeCount = todayScans.count { it.verdict == com.sachlabel.app.data.model.Verdict.CONSISTENT }
+                                Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                                    if (alertsCount > 0) {
+                                        Box(
+                                            modifier = Modifier
+                                                .clip(CircleShape)
+                                                .background(AlertCrimsonLow)
+                                                .padding(horizontal = 6.dp, vertical = 2.dp)
+                                        ) {
+                                            Text("$alertsCount Alert", fontSize = 9.sp, fontWeight = FontWeight.Bold, color = AlertCrimson)
+                                        }
+                                    }
+                                    Box(
+                                        modifier = Modifier
+                                            .clip(CircleShape)
+                                            .background(PrimaryFixed.copy(alpha = 0.5f))
+                                            .padding(horizontal = 6.dp, vertical = 2.dp)
+                                        ) {
+                                            Text("$safeCount Safe", fontSize = 9.sp, fontWeight = FontWeight.Bold, color = PrimaryGreen)
+                                        }
                                 }
-                                Box(
-                                    modifier = Modifier
-                                        .clip(CircleShape)
-                                        .background(PrimaryFixed.copy(alpha = 0.5f))
-                                        .padding(horizontal = 6.dp, vertical = 2.dp)
-                                ) {
-                                    Text("2 Safe", fontSize = 9.sp, fontWeight = FontWeight.Bold, color = PrimaryGreen)
-                                }
+                            } else {
+                                Text(
+                                    text = "Tap to scan",
+                                    fontSize = 9.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = PrimaryGreen
+                                )
                             }
                         }
                     }
@@ -262,7 +295,7 @@ fun HomeScreen(
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text("Audio Verdict", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+                                Text(stringResource(R.string.home_audio_verdict), fontSize = 12.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
                                 Icon(Icons.Default.VolumeUp, contentDescription = null, tint = CautionAmber, modifier = Modifier.size(15.dp))
                             }
                             Text("हिन्दी • தமிழ் • বাংলা", fontSize = 10.sp, color = TextSecondary)
@@ -287,20 +320,20 @@ fun HomeScreen(
                 ) {
                     Column {
                         Text(
-                            text = "ACTION CENTER",
+                            text = stringResource(R.string.home_action_center),
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
                             color = TextSecondary,
                             letterSpacing = 0.8.sp
                         )
                         Text(
-                            text = "Essential food transparency checks",
+                            text = stringResource(R.string.home_action_sub),
                             fontSize = 11.sp,
                             color = TextMuted
                         )
                     }
                     TextButton(onClick = onWhatWeCheckClick) {
-                        Text("View Rules", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = PrimaryGreen)
+                        Text(stringResource(R.string.home_view_rules), fontSize = 12.sp, fontWeight = FontWeight.Bold, color = PrimaryGreen)
                     }
                 }
 
@@ -345,7 +378,7 @@ fun HomeScreen(
                     ActionMatrixItem(
                         title = "Kids Drinks",
                         subtitle = "Growth myths",
-                        badge = "FSSAI",
+                        badge = "Rules",
                         badgeColor = AlertCrimson,
                         badgeBg = AlertCrimsonLow,
                         icon = Icons.Default.ChildCare,
@@ -386,14 +419,26 @@ fun HomeScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "LATEST INVESTIGATION",
+                        text = stringResource(R.string.home_latest_investigation),
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
                         color = TextSecondary,
                         letterSpacing = 0.8.sp
                     )
-                    Text("Updated 10m ago", fontSize = 11.sp, color = TextMuted)
+                    Text(
+                        text = if (savedScans.isNotEmpty()) "Latest scan" else "Featured demo",
+                        fontSize = 11.sp,
+                        color = TextMuted
+                    )
                 }
+
+                val latestScan = savedScans.firstOrNull()
+                val brandText = latestScan?.brandName ?: "Malted Milk Chocolate Drink"
+                val packInfoText = latestScan?.let { "${it.timestampFormatted} • ${it.packInfo}" } ?: "400g • Supermarket Brand"
+                val frontText = latestScan?.frontClaim ?: "Power Packed with 100% Real California Almonds"
+                val backText = latestScan?.backTruth ?: "Contains only 0.8% Almond Powder, 42.4% Added Refined Sugar"
+                val verdictVal = latestScan?.verdict ?: com.sachlabel.app.data.model.Verdict.MISLEADING
+                val explanationText = latestScan?.explanationEn ?: "Delta: 99.2% Non-Almond Fillers"
 
                 Box(
                     modifier = Modifier
@@ -402,6 +447,9 @@ fun HomeScreen(
                         .clip(RoundedCornerShape(22.dp))
                         .background(SurfaceContainerLowest)
                         .border(1.dp, OutlineVariant.copy(alpha = 0.3f), RoundedCornerShape(22.dp))
+                        .clickable {
+                            if (latestScan != null) onSavedScanClick(latestScan) else onMockDemoClick()
+                        }
                         .padding(16.dp)
                 ) {
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -425,25 +473,12 @@ fun HomeScreen(
                                     Icon(Icons.Default.LocalCafe, contentDescription = null, tint = PrimaryGreen, modifier = Modifier.size(20.dp))
                                 }
                                 Column {
-                                    Text("Malted Milk Chocolate Drink", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = TextPrimary, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                                    Text("400g • Supermarket Brand", fontSize = 11.sp, color = TextSecondary)
+                                    Text(brandText, fontSize = 13.sp, fontWeight = FontWeight.Bold, color = TextPrimary, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                    Text(packInfoText, fontSize = 11.sp, color = TextSecondary)
                                 }
                             }
 
-                            Box(
-                                modifier = Modifier
-                                    .clip(CircleShape)
-                                    .background(AlertCrimsonContainer)
-                                    .padding(horizontal = 8.dp, vertical = 4.dp)
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(3.dp)
-                                ) {
-                                    Icon(Icons.Default.Warning, contentDescription = null, tint = Color.White, modifier = Modifier.size(11.dp))
-                                    Text("MISLEADING", fontSize = 9.sp, fontWeight = FontWeight.Bold, color = Color.White)
-                                }
-                            }
+                            com.sachlabel.app.ui.components.VerdictBadge(verdict = verdictVal)
                         }
 
                         // Split Box
@@ -457,7 +492,7 @@ fun HomeScreen(
                             ) {
                                 Column {
                                     Text("FRONT ASSERTION", fontSize = 9.sp, fontWeight = FontWeight.Bold, color = TextSecondary)
-                                    Text("“Power Packed with 100% Real California Almonds”", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+                                    Text("“$frontText”", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
                                 }
                             }
 
@@ -465,13 +500,12 @@ fun HomeScreen(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .clip(RoundedCornerShape(12.dp))
-                                    .background(AlertCrimsonLow)
+                                    .background(if (verdictVal == com.sachlabel.app.data.model.Verdict.MISLEADING) AlertCrimsonLow else PrimaryFixed.copy(alpha = 0.3f))
                                     .padding(10.dp)
                             ) {
                                 Column {
-                                    Text("STATUTORY BACK TRUTH", fontSize = 9.sp, fontWeight = FontWeight.Bold, color = AlertCrimson)
-                                    Text("Contains only 0.8% Almond Powder, 42.4% Added Refined Sugar", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
-                                    Text("Rank #1 Added Sugar • Rank #6 Almonds", fontSize = 10.sp, color = TextSecondary)
+                                    Text("STATUTORY BACK TRUTH", fontSize = 9.sp, fontWeight = FontWeight.Bold, color = if (verdictVal == com.sachlabel.app.data.model.Verdict.MISLEADING) AlertCrimson else PrimaryGreen)
+                                    Text(backText, fontSize = 12.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
                                 }
                             }
                         }
@@ -482,10 +516,15 @@ fun HomeScreen(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text("Delta: 99.2% Non-Almond Fillers", fontSize = 11.sp, color = AlertCrimson, fontWeight = FontWeight.SemiBold)
+                            Text(
+                                text = explanationText.take(50) + if (explanationText.length > 50) "…" else "",
+                                fontSize = 11.sp,
+                                color = if (verdictVal == com.sachlabel.app.data.model.Verdict.MISLEADING) AlertCrimson else PrimaryGreen,
+                                fontWeight = FontWeight.SemiBold,
+                                modifier = Modifier.weight(1f)
+                            )
                             Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.clickable(onClick = onMockDemoClick)
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text("Full Breakdown", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = PrimaryGreen)
                                 Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null, tint = PrimaryGreen, modifier = Modifier.size(13.dp))

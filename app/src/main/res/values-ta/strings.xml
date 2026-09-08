@@ -1,10 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">SachLabel</string>
+    <string name="home_greeting">வணக்கம்</string>
     <string name="home_tagline">ஒரு தயாரிப்பின் கோரிக்கைகள் அதன் சொந்த லேபிலுடன் பொருந்துகிறதா என்று நாங்கள் சரிபார்க்கிறோம்.</string>
+    <string name="home_smart_scan">ஸ்மார்ட் ஸ்கேன்</string>
+    <string name="home_scan_product">தயாரிப்பை ஸ்கேன் செய்யுங்கள்</string>
+    <string name="home_scan_desc">முன்பக்க உரிமை கோரல் vs பின்பக்க உண்மை சரிபார்ப்பு.</string>
+    <string name="home_start_scan">ஸ்கேன் தொடங்கவும்</string>
+    <string name="home_recent_scans">சமீபத்திய ஸ்கேன்கள்</string>
+    <string name="home_audio_verdict">ஆடியோ தீர்ப்பு</string>
+    <string name="home_action_center">செயல் மையம்</string>
+    <string name="home_action_sub">அத்தியாவசிய உணவு வெளிப்படைத்தன்மை சரிபார்ப்புகள்</string>
+    <string name="home_view_rules">விதிகளைப் பார்க்கவும்</string>
+    <string name="home_latest_investigation">சமீபத்திய விசாரணை</string>
     <string name="home_scan_cta">தயாரிப்பை ஸ்கேன் செய்யுங்கள்</string>
     <string name="home_demo_cta">டெமோ காட்சிகளை முயற்சிக்கவும்</string>
     <string name="home_what_we_check">நாங்கள் என்ன சரிபார்க்கிறோம்</string>
+
+    <!-- Bottom Nav -->
+    <string name="nav_home">முகப்பு</string>
+    <string name="nav_history">வரலாறு</string>
+    <string name="nav_scan">ஸ்கேன்</string>
+    <string name="nav_standards">விதிகள்</string>
+    <string name="nav_more">மேலும்</string>
     <string name="capture_front_hint">பொருளின் முன்பக்கத்தை புகைப்படம் எடுங்கள்.</string>
     <string name="capture_back_hint">இப்போது பின்பக்கம் — பொருட்கள் அல்லது ஊட்டச்சத்து லேபில்.</string>
     <string name="processing_reading">லேபில் படிக்கிறோம்…</string>

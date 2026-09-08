@@ -1,5 +1,6 @@
 package com.sachlabel.app.engine
 
+import com.sachlabel.app.data.model.CanonicalClaimCategory
 import org.junit.Assert.*
 import org.junit.Test
 
@@ -29,10 +30,39 @@ class ClaimMatcherTest {
     }
 
     @Test
-    fun `100 percent natural matches`() {
+    fun `100 percent natural matches natural_or_pure category`() {
         val result = ClaimMatcher.match("100% Natural")
         assertNotNull(result)
-        assertEquals("100_percent_natural", result!!.patternKey)
+        assertEquals(CanonicalClaimCategory.NATURAL_OR_PURE.id, result!!.patternKey)
+    }
+
+    @Test
+    fun `pure honey matches natural_or_pure category`() {
+        val result = ClaimMatcher.match("100% Pure Honey")
+        assertNotNull(result)
+        assertEquals(CanonicalClaimCategory.NATURAL_OR_PURE.id, result!!.patternKey)
+    }
+
+    @Test
+    fun `sugar free strictly matches sugar_free and not no_added_sugar`() {
+        val result = ClaimMatcher.match("Sugar Free")
+        assertNotNull(result)
+        assertEquals("sugar_free", result!!.patternKey)
+        assertNotEquals("no_added_sugar", result!!.patternKey)
+    }
+
+    @Test
+    fun `zero sugar matches sugar_free`() {
+        val result = ClaimMatcher.match("Zero Sugar")
+        assertNotNull(result)
+        assertEquals("sugar_free", result!!.patternKey)
+    }
+
+    @Test
+    fun `no added sugar matches no_added_sugar`() {
+        val result = ClaimMatcher.match("No Added Sugar")
+        assertNotNull(result)
+        assertEquals("no_added_sugar", result!!.patternKey)
     }
 
     @Test
@@ -40,6 +70,13 @@ class ClaimMatcherTest {
         val result = ClaimMatcher.match("No Preservatives")
         assertNotNull(result)
         assertEquals("no_preservatives", result!!.patternKey)
+    }
+
+    @Test
+    fun `organic matches canonical organic category`() {
+        val result = ClaimMatcher.match("Certified 100% Organic")
+        assertNotNull(result)
+        assertEquals("organic", result!!.patternKey)
     }
 
     @Test
@@ -57,17 +94,26 @@ class ClaimMatcherTest {
     }
 
     @Test
-    fun `immunity booster matches`() {
+    fun `immunity booster matches vague_wellness`() {
         val result = ClaimMatcher.match("Immunity Booster")
         assertNotNull(result)
-        assertEquals("immunity_booster", result!!.patternKey)
+        assertEquals("vague_wellness", result!!.patternKey)
     }
 
     @Test
-    fun `gluten free matches`() {
-        val result = ClaimMatcher.match("Gluten Free")
+    fun `sliding window matches claim embedded in long noisy package text`() {
+        val text = "Super Crunch Breakfast Cereals With No Added Sugar Made From Whole Oats"
+        val result = ClaimMatcher.match(text)
         assertNotNull(result)
-        assertEquals("gluten_free", result!!.patternKey)
+        assertEquals("no_added_sugar", result!!.patternKey)
+    }
+
+    @Test
+    fun `sliding window matches sugar free in long slogan`() {
+        val text = "Refreshing Lemonade 100% Sugar Free Beverage"
+        val result = ClaimMatcher.match(text)
+        assertNotNull(result)
+        assertEquals("sugar_free", result!!.patternKey)
     }
 
     @Test

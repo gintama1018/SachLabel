@@ -5,16 +5,19 @@ import com.sachlabel.app.data.model.Evidence
 import com.sachlabel.app.data.model.Verdict
 
 /**
- * Post-rule / post-LLM guardrail: verify that any evidence_quote is an exact
- * substring of the source text before displaying a result.
+ * Evidence-first guardrail: verifies that every cited evidence_quote actually
+ * exists verbatim in the raw back-label OCR text before any result is displayed.
  *
- * Architecture requirement (PROMPT_TEMPLATES.md, §4/5):
- * "After receiving this response, verify evidence_quote is an exact substring
- *  of the concatenated ingredients/nutrition/fine_print text. If it isn't,
- *  discard the LLM's verdict and fall back to NOT_ENOUGH_EVIDENCE."
+ * Architecture requirement (Non-negotiable):
+ * "Every verdict shown to a user must cite an exact quoted snippet that
+ *  actually exists in the OCR text. Never show a verdict the system can't
+ *  point to evidence for — show 'Not enough evidence' instead."
  *
- * This validator runs on every ClaimResult, not just LLM-produced ones,
- * to guarantee the evidence-first principle holds across the whole pipeline.
+ * Zero synthetic evidence policy:
+ * - No bypasses for nutrition table entries.
+ * - No bypasses for synthetic "No ..." absence notes.
+ * - If an evidence quote is not found in rawBackText, the verdict is discarded
+ *   and downgraded to NOT_ENOUGH_EVIDENCE.
  */
 object EvidenceValidator {
 
@@ -26,57 +29,65 @@ object EvidenceValidator {
      * @return the original result if valid, or a NOT_ENOUGH_EVIDENCE result if not
      */
     fun validate(result: ClaimResult, rawBackText: String): ClaimResult {
-        // NO_CLAIM_DETECTED and NOT_ENOUGH_EVIDENCE don't have quotes to verify
+        // NO_CLAIM_DETECTED and NOT_ENOUGH_EVIDENCE don't require text verification
         if (result.verdict == Verdict.NO_CLAIM_DETECTED ||
             result.verdict == Verdict.NOT_ENOUGH_EVIDENCE) {
             return result
         }
 
-        val quote = result.evidence.quote
+        val quote = result.evidence.quote.trim()
         val sourceField = result.evidence.sourceField
 
-        // Absent sentinel — no quote to validate
+        // Absent evidence handling
         if (sourceField == Evidence.SourceField.ABSENT || quote.isBlank()) {
-            // If verdict requires evidence but there's none, downgrade
-            return if (result.verdict in setOf(Verdict.MISLEADING, Verdict.NEEDS_CONTEXT)) {
-                result.copy(
+            // A claim cannot be flagged as MISLEADING without citing contradictory text from the label
+            if (result.verdict == Verdict.MISLEADING) {
+                return result.copy(
                     verdict = Verdict.NOT_ENOUGH_EVIDENCE,
-                    explanationEn = "Not enough evidence to check this claim from the back label."
+                    evidence = Evidence.absent(),
+                    explanationEn = "Not enough clear evidence to verify this claim from the back label."
                 )
-            } else {
-                result
             }
-        }
-
-        // For nutrition table entries (e.g. "Sugars: 8.0g per 100g"), we verify
-        // that the underlying key and value are plausible from raw text
-        if (sourceField == Evidence.SourceField.NUTRITION_TABLE) {
-            return result  // Nutrition values come from structured parsing, not raw substring
-        }
-
-        // For synthetic "absence" notes (e.g., "No certification found"), skip raw check
-        if (quote.startsWith("No ") || quote.startsWith("A protein-source")) {
+            // For NEEDS_CONTEXT, only unverified absence rules (organic without cert mark, vague wellness without nutrients)
+            // are allowed without a quote. Contradiction-style checks require a quote.
+            if (result.verdict == Verdict.NEEDS_CONTEXT &&
+                result.ruleKey !in setOf("organic", "vague_wellness", "immunity_booster")) {
+                return result.copy(
+                    verdict = Verdict.NOT_ENOUGH_EVIDENCE,
+                    evidence = Evidence.absent(),
+                    explanationEn = "Not enough clear evidence to verify this claim from the back label."
+                )
+            }
             return result
         }
 
-        // Core guardrail: evidence quote must be exact substring of back-label raw text
-        val isValid = rawBackText.contains(quote, ignoreCase = true)
+        // Exact substring verification
+        val isDirectSubstring = rawBackText.contains(quote, ignoreCase = true)
 
-        return if (isValid) {
+        // Internal whitespace-collapsed match (to accommodate OCR line-break formatting)
+        val isWhitespaceNormalizedMatch = if (!isDirectSubstring) {
+            val collapsedRaw = rawBackText.replace(Regex("\\s+"), " ")
+            val collapsedQuote = quote.replace(Regex("\\s+"), " ")
+            collapsedRaw.contains(collapsedQuote, ignoreCase = true)
+        } else {
+            true
+        }
+
+        return if (isDirectSubstring || isWhitespaceNormalizedMatch) {
             result
         } else {
-            // Guardrail fired — discard verdict, return NOT_ENOUGH_EVIDENCE
+            // Guardrail fired: evidence does not exist in the raw back label text
             result.copy(
                 verdict = Verdict.NOT_ENOUGH_EVIDENCE,
                 evidence = Evidence.absent(),
-                explanationEn = "Not enough evidence to check this claim. " +
-                    "The back label text could not be verified against the claimed evidence."
+                explanationEn = "Not enough clear evidence to check this claim. " +
+                    "The cited evidence could not be verified in the scanned label text."
             )
         }
     }
 
     /**
-     * Convenience: validate a list of results, discarding any that fail validation.
+     * Convenience: validate a list of results.
      */
     fun validateAll(results: List<ClaimResult>, rawBackText: String): List<ClaimResult> =
         results.map { validate(it, rawBackText) }

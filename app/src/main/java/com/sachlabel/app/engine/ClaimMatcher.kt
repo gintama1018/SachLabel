@@ -1,48 +1,120 @@
 package com.sachlabel.app.engine
 
+import com.sachlabel.app.data.model.CanonicalClaimCategory
 import com.sachlabel.app.data.model.Claim
 
 /**
- * Fuzzy claim matcher for front-label text detection.
+ * Robust fuzzy claim matcher for front-label text detection.
  *
- * Architecture.md §3.2: v1 uses heuristic matching (not ML) against a hardcoded
- * claim pattern list. Handles OCR noise via normalized comparison + keyword containment.
- *
- * Claim prominence: combines bounding-box text size + vertical position + claim-pattern match.
- * A small "100% Natural" badge is not ignored just because a giant brand name fills more pixels.
+ * Sourced directly from [CanonicalClaimCategory] (8 documented v1 categories).
+ * Uses token/span-based sliding window fuzzy matching to tolerate OCR noise
+ * (e.g. mid-phrase typos, extra punctuation, embedded marketing text) without
+ * relying solely on whole-block equality or whole-block Levenshtein.
  */
 object ClaimMatcher {
 
     /**
-     * Attempt to match a raw OCR text string to a known claim pattern.
+     * Attempt to match a raw OCR text string to a known canonical claim category.
      *
      * @param text  raw OCR text from one region of the front label
      * @param prominenceScore  from OcrRegion (size + position combined)
-     * @return matched [Claim] or null if no pattern matches
+     * @return matched [Claim] with verbatim rawText, or null if no pattern matches
      */
     fun match(text: String, prominenceScore: Float = 0f): Claim? {
-        val normalized = normalize(text)
-        for (pattern in CLAIM_PATTERNS) {
-            if (pattern.matches(normalized)) {
-                return Claim(
-                    rawText = text.trim(),
-                    patternKey = pattern.key,
-                    prominenceScore = prominenceScore
-                )
+        val trimmed = text.trim()
+        if (trimmed.isBlank()) return null
+
+        val normalized = normalize(trimmed)
+        val candidateTokens = normalized.split(" ").filter { it.isNotBlank() }
+        if (candidateTokens.isEmpty()) return null
+
+        // Check canonical categories in order
+        for (category in CanonicalClaimCategory.values()) {
+            for (trigger in category.triggers) {
+                if (matchesTrigger(normalized, candidateTokens, trigger)) {
+                    return Claim(
+                        rawText = trimmed,
+                        patternKey = category.id,
+                        prominenceScore = prominenceScore
+                    )
+                }
             }
         }
         return null
     }
 
     /**
-     * Find the best claim from a list of candidate regions.
-     * Scoring: claim-pattern match is required; then rank by prominenceScore.
-     * This avoids the "largest bounding box wins" failure mode for small badge claims.
+     * Find the best claim from candidate front regions.
+     * Ranks matched claims by prominenceScore (bounding box size + position weight).
      */
     fun findBestClaim(candidates: List<Pair<String, Float>>): Claim? {
         return candidates
             .mapNotNull { (text, score) -> match(text, score) }
             .maxByOrNull { it.prominenceScore }
+    }
+
+    /**
+     * Match a candidate against a trigger phrase using:
+     * 1. Direct normalized containment
+     * 2. Sliding window token matching with character edit-distance tolerance
+     */
+    fun matchesTrigger(
+        normalizedCandidate: String,
+        candidateTokens: List<String>,
+        trigger: String
+    ): Boolean {
+        val normTrigger = normalize(trigger)
+        if (normTrigger.isBlank()) return false
+
+        // 1. Direct containment check
+        if (normalizedCandidate.contains(normTrigger)) return true
+
+        val triggerTokens = normTrigger.split(" ").filter { it.isNotBlank() }
+        if (triggerTokens.isEmpty()) return false
+
+        val windowSize = triggerTokens.size
+        if (candidateTokens.size < windowSize) {
+            // If candidate has fewer words than trigger, test entire string similarity
+            return isTokenSequenceFuzzyMatch(candidateTokens, triggerTokens)
+        }
+
+        // 2. Sliding window across candidate tokens
+        for (i in 0..(candidateTokens.size - windowSize)) {
+            val window = candidateTokens.subList(i, i + windowSize)
+            if (isTokenSequenceFuzzyMatch(window, triggerTokens)) {
+                return true
+            }
+        }
+
+        return false
+    }
+
+    private fun isTokenSequenceFuzzyMatch(
+        candidateSeq: List<String>,
+        targetSeq: List<String>
+    ): Boolean {
+        if (candidateSeq.size != targetSeq.size) return false
+
+        for (i in candidateSeq.indices) {
+            val c = candidateSeq[i]
+            val t = targetSeq[i]
+
+            if (c == t) continue
+
+            // Allow OCR character substitution for 0 vs o / O
+            val cNormalized = c.replace('0', 'o')
+            val tNormalized = t.replace('0', 'o')
+            if (cNormalized == tNormalized) continue
+
+            // For short tokens (<= 3 chars), require exact match
+            if (t.length <= 3) return false
+
+            // For longer tokens (>= 4 chars), tolerate edit distance of 1
+            if (levenshtein(c, t) > 1) {
+                return false
+            }
+        }
+        return true
     }
 
     /**
@@ -56,8 +128,7 @@ object ClaimMatcher {
             .trim()
 
     /**
-     * Levenshtein distance — for fuzzy matching short phrases against OCR noise.
-     * Only used for short strings (< 30 chars) where edit distance is meaningful.
+     * Levenshtein edit distance for comparing short tokens.
      */
     fun levenshtein(a: String, b: String): Int {
         val m = a.length
@@ -72,123 +143,5 @@ object ClaimMatcher {
             }
         }
         return dp[m][n]
-    }
-
-    /**
-     * Returns true if [candidate] is a fuzzy match for [target]:
-     * either contained within, or within edit distance threshold.
-     */
-    fun fuzzyContains(candidate: String, target: String, threshold: Int = 2): Boolean {
-        val normCandidate = normalize(candidate)
-        val normTarget = normalize(target)
-        if (normCandidate.contains(normTarget)) return true
-        if (normTarget.length <= 5) return normCandidate.contains(normTarget)
-        return levenshtein(normCandidate, normTarget) <= threshold
-    }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // Claim pattern definitions
-    // Each entry: key (used by rule engine), list of trigger phrases
-    // ─────────────────────────────────────────────────────────────────────────
-
-    private val CLAIM_PATTERNS: List<ClaimPattern> = listOf(
-
-        ClaimPattern(
-            key = "no_added_sugar",
-            triggers = listOf(
-                "no added sugar", "no added sugars",
-                "sugar free", "sugar-free", "zero sugar", "0% sugar",
-                "without added sugar"
-            )
-        ),
-
-        ClaimPattern(
-            key = "100_percent_natural",
-            triggers = listOf(
-                "100% natural", "100% pure", "100 percent natural",
-                "100 percent pure", "all natural", "purely natural"
-            )
-        ),
-
-        ClaimPattern(
-            key = "no_preservatives",
-            triggers = listOf(
-                "no preservatives", "preservative free", "preservative-free",
-                "no artificial preservatives", "without preservatives"
-            )
-        ),
-
-        ClaimPattern(
-            key = "no_artificial_colors",
-            triggers = listOf(
-                "no artificial colors", "no artificial colours",
-                "no artificial color", "no artificial colour",
-                "colour free", "color free"
-            )
-        ),
-
-        ClaimPattern(
-            key = "organic",
-            triggers = listOf(
-                "organic", "certified organic", "100% organic", "usda organic"
-            )
-        ),
-
-        ClaimPattern(
-            key = "high_protein",
-            triggers = listOf(
-                "high protein", "protein rich", "rich in protein",
-                "good source of protein", "excellent source of protein"
-            )
-        ),
-
-        ClaimPattern(
-            key = "zero_trans_fat",
-            triggers = listOf(
-                "zero trans fat", "0g trans fat", "0 trans fat",
-                "trans fat free", "no trans fat", "trans-fat free"
-            )
-        ),
-
-        ClaimPattern(
-            key = "immunity_booster",
-            triggers = listOf(
-                "immunity booster", "boosts immunity", "strengthens immunity",
-                "immune support", "immunity support", "builds immunity",
-                "detox", "detoxifying", "antioxidant rich",
-                "boosts energy", "energy booster"
-            )
-        ),
-
-        ClaimPattern(
-            key = "gluten_free",
-            triggers = listOf(
-                "gluten free", "gluten-free", "no gluten", "without gluten"
-            )
-        ),
-
-        ClaimPattern(
-            key = "low_fat",
-            triggers = listOf(
-                "low fat", "low-fat", "fat free", "fat-free",
-                "0% fat", "zero fat", "reduced fat"
-            )
-        )
-    )
-
-    /**
-     * A single claim pattern with its key and trigger phrases.
-     */
-    private data class ClaimPattern(
-        val key: String,
-        val triggers: List<String>
-    ) {
-        fun matches(normalizedInput: String): Boolean {
-            return triggers.any { trigger ->
-                val normTrigger = trigger.lowercase()
-                normalizedInput.contains(normTrigger) ||
-                    levenshtein(normalizedInput, normTrigger) <= 2
-            }
-        }
     }
 }

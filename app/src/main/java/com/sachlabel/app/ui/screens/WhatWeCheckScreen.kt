@@ -98,7 +98,7 @@ fun WhatWeCheckScreen(
                 }
             }
 
-            itemsIndexed(TAXONOMY_ITEMS) { index, item ->
+            itemsIndexed(com.sachlabel.app.data.model.CanonicalClaimCategory.values()) { index, category ->
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -130,14 +130,14 @@ fun WhatWeCheckScreen(
 
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = item.claimPattern,
+                                text = category.displayName,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = TextPrimary
                             )
                             Spacer(modifier = Modifier.height(3.dp))
                             Text(
-                                text = item.checkDescription,
+                                text = category.checkDescription,
                                 fontSize = 11.sp,
                                 color = TextSecondary,
                                 lineHeight = 16.sp
@@ -162,7 +162,7 @@ fun WhatWeCheckScreen(
                             Text("Why only these 8?", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
                         }
                         Text(
-                            text = "Adding a new claim type requires validating the verification logic against FSSAI food labeling regulations — not just writing an LLM prompt. We would rather show you our exact bounded list than pretend the system understands every possible claim.",
+                            text = "Adding a new claim category requires establishing deterministic verification logic against label disclosure rules — not just asking an LLM to guess. We explicitly bound our scope to these 8 claim types so every check remains transparent and evidence-backed.",
                             fontSize = 12.sp,
                             color = TextSecondary,
                             lineHeight = 18.sp
@@ -173,43 +173,3 @@ fun WhatWeCheckScreen(
         }
     }
 }
-
-private data class TaxonomyItem(
-    val claimPattern: String,
-    val checkDescription: String
-)
-
-private val TAXONOMY_ITEMS = listOf(
-    TaxonomyItem(
-        claimPattern = "\"No Added Sugar\" / \"Sugar Free\" / \"Zero Sugar\"",
-        checkDescription = "Checked against: nutrition table sugar value, and ingredient list for added-sugar keywords (glucose syrup, maltodextrin, dextrose, etc.)"
-    ),
-    TaxonomyItem(
-        claimPattern = "\"100% Natural\" / \"100% Pure\"",
-        checkDescription = "Checked against: fine print for qualifying disclaimers, and ingredient list for artificial/synthetic ingredients (artificial colour, flavour, preservatives)"
-    ),
-    TaxonomyItem(
-        claimPattern = "\"No Preservatives\" / \"Preservative Free\"",
-        checkDescription = "Checked against: ingredient list for preservative-class ingredients (sodium benzoate, potassium sorbate, INS 200–299 codes)"
-    ),
-    TaxonomyItem(
-        claimPattern = "\"No Artificial Colors\"",
-        checkDescription = "Checked against: ingredient list for synthetic color agents (tartrazine, sunset yellow, INS 100-series codes)"
-    ),
-    TaxonomyItem(
-        claimPattern = "\"Organic\" / \"Certified Organic\"",
-        checkDescription = "Checked for: presence of a recognized organic certification mark or certificate number on the label"
-    ),
-    TaxonomyItem(
-        claimPattern = "\"High Protein\" / \"Protein Rich\"",
-        checkDescription = "Checked against: nutrition table protein per 100g (≥20g threshold — verified against food labeling standards)"
-    ),
-    TaxonomyItem(
-        claimPattern = "\"Zero Trans Fat\" / \"0g Trans Fat\"",
-        checkDescription = "Checked against: ingredient list for partially hydrogenated oils (a trans fat source even when table claims 0g per serving)"
-    ),
-    TaxonomyItem(
-        claimPattern = "\"Immunity Booster\" / Vague wellness claims",
-        checkDescription = "Checked against: fine print for regulatory disclaimers, and ingredient list for ingredients associated with immune claims (Vitamin C, Zinc, etc.)"
-    )
-)

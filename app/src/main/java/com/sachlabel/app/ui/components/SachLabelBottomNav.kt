@@ -28,12 +28,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sachlabel.app.ui.theme.*
 
-enum class BottomTab(val route: String, val label: String, val icon: ImageVector) {
-    HOME("home", "Home", Icons.Default.Home),
-    HISTORY("history", "History", Icons.Default.History),
-    SCAN("scan", "Scan", Icons.Default.CameraAlt),
-    STANDARDS("what_we_check", "Standards", Icons.Default.VerifiedUser),
-    MORE("more", "More", Icons.Default.GridView)
+import androidx.compose.ui.res.stringResource
+import com.sachlabel.app.R
+
+enum class BottomTab(val route: String, val labelRes: Int, val icon: ImageVector) {
+    HOME("home", R.string.nav_home, Icons.Default.Home),
+    HISTORY("history", R.string.nav_history, Icons.Default.History),
+    SCAN("scan", R.string.nav_scan, Icons.Default.CameraAlt),
+    STANDARDS("what_we_check", R.string.nav_standards, Icons.Default.VerifiedUser),
+    MORE("more", R.string.nav_more, Icons.Default.GridView)
 }
 
 /**
@@ -136,7 +139,7 @@ fun SachLabelBottomNav(
             }
             Spacer(modifier = Modifier.height(2.dp))
             Text(
-                text = "Scan",
+                text = stringResource(R.string.nav_scan),
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
                 color = PrimaryGreen
@@ -154,6 +157,7 @@ private fun NavTabItem(
 ) {
     val activeColor = PrimaryGreen
     val inactiveColor = TextSecondary
+    val labelText = stringResource(tab.labelRes)
 
     Column(
         modifier = modifier
@@ -168,13 +172,13 @@ private fun NavTabItem(
     ) {
         Icon(
             imageVector = tab.icon,
-            contentDescription = tab.label,
+            contentDescription = labelText,
             tint = if (isSelected) activeColor else inactiveColor,
             modifier = Modifier.size(22.dp)
         )
         Spacer(modifier = Modifier.height(2.dp))
         Text(
-            text = tab.label,
+            text = labelText,
             fontSize = 10.sp,
             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
             color = if (isSelected) activeColor else inactiveColor

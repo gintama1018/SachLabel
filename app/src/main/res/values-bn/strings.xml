@@ -1,10 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">SachLabel</string>
+    <string name="home_greeting">নমস্কার</string>
     <string name="home_tagline">আমরা পরীক্ষা করি যে একটি পণ্যের দাবি তার নিজের লেবেলের সাথে মেলে কিনা।</string>
+    <string name="home_smart_scan">স্মার্ট স্ক্যান</string>
+    <string name="home_scan_product">পণ্য স্ক্যান করুন</string>
+    <string name="home_scan_desc">সামনের দাবি বনাম পেছনের বাস্তব তথ্যের যাচাই।</string>
+    <string name="home_start_scan">স্ক্যান শুরু করুন</string>
+    <string name="home_recent_scans">সাম্প্রতিক স্ক্যান</string>
+    <string name="home_audio_verdict">অডিও ফলাফল</string>
+    <string name="home_action_center">অ্যাকশন সেন্টার</string>
+    <string name="home_action_sub">খাবারের স্বচ্ছতার মূল যাচাই</string>
+    <string name="home_view_rules">নিয়মাবলী দেখুন</string>
+    <string name="home_latest_investigation">সর্বশেষ তদন্ত</string>
     <string name="home_scan_cta">পণ্য স্ক্যান করুন</string>
     <string name="home_demo_cta">ডেমো দেখুন</string>
     <string name="home_what_we_check">আমরা কী পরীক্ষা করি</string>
+
+    <!-- Bottom Nav -->
+    <string name="nav_home">হোম</string>
+    <string name="nav_history">ইতিহাস</string>
+    <string name="nav_scan">স্ক্যান</string>
+    <string name="nav_standards">নিয়ম</string>
+    <string name="nav_more">আরও</string>
     <string name="capture_front_hint">প্যাকেটের সামনের দিক ফোটো তুলুন।</string>
     <string name="capture_back_hint">এখন পেছনে — উপাদান বা পুষ্টি লেবেল।</string>
     <string name="processing_reading">লেবেল পড়ছি…</string>

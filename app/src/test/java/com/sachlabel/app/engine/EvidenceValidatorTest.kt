@@ -69,15 +69,40 @@ class EvidenceValidatorTest {
             claim = Claim("No Preservatives", "no_preservatives"),
             verdict = Verdict.CONSISTENT,
             frontText = "No Preservatives",
+            evidence = Evidence.absent(),
+            explanationEn = "Consistent."
+        )
+        val validated = EvidenceValidator.validate(result, "Water, Salt, Sugar")
+        assertEquals(Verdict.CONSISTENT, validated.verdict)
+    }
+
+    @Test
+    fun `MISLEADING result with empty evidence quote fails and downgrades to NOT_ENOUGH_EVIDENCE`() {
+        val result = ClaimResult(
+            claim = Claim("No Preservatives", "no_preservatives"),
+            verdict = Verdict.MISLEADING,
+            frontText = "No Preservatives",
+            evidence = Evidence.absent(),
+            explanationEn = "Missing evidence."
+        )
+        val validated = EvidenceValidator.validate(result, "Water, Salt, Sugar")
+        assertEquals(Verdict.NOT_ENOUGH_EVIDENCE, validated.verdict)
+    }
+
+    @Test
+    fun `fabricated synthetic quote is rejected under zero synthetic evidence policy`() {
+        val result = ClaimResult(
+            claim = Claim("No Preservatives", "no_preservatives"),
+            verdict = Verdict.MISLEADING,
+            frontText = "No Preservatives",
             evidence = Evidence(
                 quote = "No preservative-class ingredients were detected.",
                 sourceField = Evidence.SourceField.INGREDIENTS
             ),
-            explanationEn = "Consistent."
+            explanationEn = "Fake quote."
         )
-        // "No preservative-class..." is a synthetic note, starts with "No " — passes through
         val validated = EvidenceValidator.validate(result, "Water, Salt, Sugar")
-        assertEquals(Verdict.CONSISTENT, validated.verdict)
+        assertEquals(Verdict.NOT_ENOUGH_EVIDENCE, validated.verdict)
     }
 
     @Test

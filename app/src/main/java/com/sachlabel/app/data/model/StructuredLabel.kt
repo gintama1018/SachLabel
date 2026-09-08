@@ -17,6 +17,9 @@ data class StructuredLabel(
     /** Key-value pairs from the nutrition table (e.g. "sugars_g" → 12.0). */
     val nutritionTable: Map<String, Double> = emptyMap(),
 
+    /** Verbatim raw OCR line/span corresponding to each parsed nutrition key. */
+    val nutritionRawLines: Map<String, String> = emptyMap(),
+
     /** Fine-print / disclaimer sentences (small text, usually at edges/bottom). */
     val finePrint: List<String> = emptyList(),
 

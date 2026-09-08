@@ -52,10 +52,33 @@ class ScanViewModel(application: Application) : AndroidViewModel(application) {
     private val _uiState = MutableStateFlow<ScanUiState>(ScanUiState.Idle)
     val uiState: StateFlow<ScanUiState> = _uiState.asStateFlow()
 
+    val historyRepository = com.sachlabel.app.data.repository.ScanHistoryRepository.getInstance(application)
+    val savedScans: StateFlow<List<com.sachlabel.app.data.repository.SavedScanItem>> = historyRepository.scans
+
     private val _frontImagePath = MutableStateFlow<String?>(null)
     private val _backImagePath = MutableStateFlow<String?>(null)
 
     var selectedLanguage: UserLanguage = UserLanguage.ENGLISH
+
+    fun showSavedScan(item: com.sachlabel.app.data.repository.SavedScanItem) {
+        val scan = ProductScan(
+            id = item.id,
+            structuredLabel = StructuredLabel(frontClaimsRaw = listOf(item.frontClaim)),
+            result = ClaimResult(
+                claim = Claim(item.frontClaim, "saved_claim"),
+                frontText = item.frontClaim,
+                verdict = item.verdict,
+                evidence = if (item.backTruth.isNotBlank() && item.backTruth != "No contradiction found") {
+                    Evidence(quote = item.backTruth, sourceField = Evidence.SourceField.INGREDIENTS)
+                } else {
+                    Evidence.absent()
+                },
+                explanationEn = item.explanationEn
+            ),
+            isMock = item.isMock
+        )
+        _uiState.value = ScanUiState.Result(scan)
+    }
 
     // ─────────────────────────────────────────────────────────────────────────
     // Navigation transitions
@@ -140,6 +163,7 @@ class ScanViewModel(application: Application) : AndroidViewModel(application) {
             isMock = true
         )
 
+        historyRepository.addScan(scan)
         _uiState.value = ScanUiState.Result(scan)
     }
 
@@ -198,6 +222,7 @@ class ScanViewModel(application: Application) : AndroidViewModel(application) {
                     result = result
                 )
 
+                historyRepository.addScan(scan)
                 _uiState.value = ScanUiState.Result(scan)
 
             } catch (e: Exception) {

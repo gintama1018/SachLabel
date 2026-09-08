@@ -119,8 +119,8 @@ private fun ResultContent(
     Column(modifier = Modifier.fillMaxSize()) {
         // Sticky Stitch Header
         SachLabelHeader(
-            title = "Product Verdict",
-            subtitle = "Verified Audit",
+            title = "Claim Check",
+            subtitle = "Label Evidence Check",
             selectedLanguage = selectedLanguage,
             showBackButton = true,
             onBackClick = onBack,
@@ -205,7 +205,7 @@ private fun ResultContent(
                             )
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
-                                text = "FSSAI Standards Audit",
+                                text = "Evidence-Backed Check",
                                 fontSize = 10.sp,
                                 color = Color.White.copy(alpha = 0.75f)
                             )

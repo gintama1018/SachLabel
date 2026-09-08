@@ -3,11 +3,29 @@
     <string name="app_name">SachLabel</string>
 
     <!-- Home -->
+    <string name="home_greeting">Namaskar</string>
     <string name="home_tagline">We check if a product\'s claims match its own label.</string>
+    <string name="home_smart_scan">SMART SCAN</string>
+    <string name="home_scan_product">Scan Product</string>
+    <string name="home_scan_desc">Front claim vs back fine print verification.</string>
+    <string name="home_start_scan">Start Scan</string>
+    <string name="home_recent_scans">Recent Scans</string>
+    <string name="home_audio_verdict">Audio Verdict</string>
+    <string name="home_action_center">ACTION CENTER</string>
+    <string name="home_action_sub">Essential food transparency checks</string>
+    <string name="home_view_rules">View Rules</string>
+    <string name="home_latest_investigation">LATEST INVESTIGATION</string>
     <string name="home_scan_cta">Scan a product</string>
     <string name="home_demo_cta">Try demo scenarios</string>
     <string name="home_what_we_check">What we check for</string>
     <string name="home_on_device_note">On-device · Private · Offline-capable</string>
+
+    <!-- Bottom Nav -->
+    <string name="nav_home">Home</string>
+    <string name="nav_history">History</string>
+    <string name="nav_scan">Scan</string>
+    <string name="nav_standards">Standards</string>
+    <string name="nav_more">More</string>
 
     <!-- Capture -->
     <string name="capture_front_hint">Photograph the front of the pack.</string>

@@ -332,7 +332,7 @@ fun WelcomeScreen(
                                 color = TextSecondary
                             )
                             Text(
-                                text = "FSSAI Declaration",
+                                text = "Statutory Fine Print",
                                 fontSize = 9.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = AlertCrimson
@@ -498,7 +498,7 @@ fun WelcomeScreen(
                 modifier = Modifier.size(14.dp)
             )
             Text(
-                text = "Independent • FSSAI Label Standards Aligned • Evidence-First",
+                text = "Independent Label Auditor • Evidence-First • On-Device",
                 fontSize = 10.sp,
                 color = TextSecondary,
                 fontWeight = FontWeight.Medium

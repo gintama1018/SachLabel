@@ -112,7 +112,7 @@ fun DualEvidenceCard(
                                 letterSpacing = 0.8.sp
                             )
                             Text(
-                                text = "FSSAI Declaration",
+                                text = "Statutory Pack Declaration",
                                 fontSize = 10.sp,
                                 color = TextMuted,
                                 fontWeight = FontWeight.Medium
