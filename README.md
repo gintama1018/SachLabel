@@ -23,10 +23,10 @@ SachLabel is **not** a general health-score app, a medical diagnostic tool, a go
 
 The interface follows a focused, evidence-first design language built with Jetpack Compose and Material 3, emphasizing high readability under supermarket aisle lighting:
 
-| Home Dashboard | Camera Capture & Live OCR | Evidence & Voice Verdict |
-| :---: | :---: | :---: |
-| ![Home Screen](docs/stitch_design/stitch_sachlabel_mobile_app/sachlabel_home_screen/screen.png) | ![Camera Capture](docs/stitch_design/stitch_sachlabel_mobile_app/sachlabel_scan_packaging/screen.png) | ![Verdict Screen](docs/stitch_design/stitch_sachlabel_mobile_app/sachlabel_claim_investigation_verdict_1/screen.png) |
-| *Status indicator, quick audit matrix, and recent scan history* | *CameraX viewfinder with live OCR reticle and dual-step capture* | *Verbatim dual evidence card and regional audio playback* |
+| 1. Onboarding | 2. Home Dashboard | 3. Dual Camera Capture | 4. Evidence Verdict | 5. Past Audits History |
+| :---: | :---: | :---: | :---: | :---: |
+| <img src="docs/stitch_design/stitch_sachlabel_mobile_app/sachlabel_clean_welcome_onboarding/screen.png" width="180" alt="Onboarding Screen" /> | <img src="docs/stitch_design/stitch_sachlabel_mobile_app/sachlabel_clean_home_screen/screen.png" width="180" alt="Home Screen" /> | <img src="docs/stitch_design/stitch_sachlabel_mobile_app/sachlabel_scan_packaging/screen.png" width="180" alt="Camera Capture Screen" /> | <img src="docs/stitch_design/stitch_sachlabel_mobile_app/sachlabel_claim_investigation_verdict_1/screen.png" width="180" alt="Verdict Screen" /> | <img src="docs/stitch_design/stitch_sachlabel_mobile_app/sachlabel_scan_history/screen.png" width="180" alt="History Screen" /> |
+| *Clean welcome with mission & language selection* | *Curved header, smart scan trigger & recent audit stats* | *CameraX reticle, front/back step pill & live OCR* | *Verbatim dual evidence card & regional audio verdict* | *Verified past product audits with search & filter* |
 
 ---
 
