@@ -54,6 +54,9 @@ kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 # Splash screen
 androidx-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashscreen" }
 
+# MediaPipe Tasks GenAI (On-Device Gemma Inference)
+mediapipe-tasks-genai = { group = "com.google.mediapipe", name = "tasks-genai", version = "0.10.14" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

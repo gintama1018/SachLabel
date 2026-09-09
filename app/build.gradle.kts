@@ -69,6 +69,9 @@ dependencies {
     // ML Kit OCR — Devanagari script (Hindi, Marathi, Sanskrit)
     implementation(libs.mlkit.text.recognition.devanagari)
 
+    // MediaPipe Tasks GenAI — On-Device LLM Inference (Gemma 2B)
+    implementation(libs.mediapipe.tasks.genai)
+
     // DataStore for language/settings persistence
     implementation(libs.androidx.datastore.preferences)
 

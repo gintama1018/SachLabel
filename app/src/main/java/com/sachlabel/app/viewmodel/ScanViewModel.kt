@@ -217,6 +217,14 @@ class ScanViewModel(application: Application) : AndroidViewModel(application) {
                 // 4. Composite claim matching (semantic match confidence + layout prominence)
                 val bestClaim = ClaimMatcher.findBestClaim(frontAnalysis.candidateClaimsWithScores)
 
+                // 4b. Release OCR bitmaps from memory before Local AI inference to minimize heap pressure (Phase 10)
+                try {
+                    frontBitmap?.recycle()
+                    backBitmap?.recycle()
+                } catch (_: Throwable) {}
+                frontBitmap = null
+                backBitmap = null
+
                 _uiState.value = ScanUiState.Processing(ProcessingStep.CHECKING_EVIDENCE)
 
                 // 5. Deterministic rule evaluation + LocalAiEngine (if unresolved) + EvidenceValidator
@@ -256,6 +264,32 @@ class ScanViewModel(application: Application) : AndroidViewModel(application) {
                     frontBitmap?.recycle()
                     backBitmap?.recycle()
                 } catch (ignored: Throwable) {}
+            }
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Local Model Management & Diagnostics (Phase 2 & Phase 9)
+    // ─────────────────────────────────────────────────────────────────────────
+
+    fun importLocalModel(uri: android.net.Uri, onComplete: (Boolean, String) -> Unit) {
+        viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+            val res = com.sachlabel.app.engine.ai.LocalAiEngine.importModelFromUri(getApplication(), uri)
+            kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                if (res.isSuccess) {
+                    onComplete(true, "Model imported successfully: ${res.getOrNull()?.name}")
+                } else {
+                    onComplete(false, "Import failed: ${res.exceptionOrNull()?.message}")
+                }
+            }
+        }
+    }
+
+    fun runGemmaDiagnostic(onResult: (com.sachlabel.app.engine.ai.LocalAiEngine.DiagnosticResult) -> Unit) {
+        viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+            val diag = com.sachlabel.app.engine.ai.LocalAiEngine.runDiagnostic(getApplication())
+            kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                onResult(diag)
             }
         }
     }
