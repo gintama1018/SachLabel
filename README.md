@@ -88,31 +88,95 @@ Existing commercial food scanner applications typically follow a **barcode-to-da
 
 ---
 
-## 3. End-to-End Multimodal Pipeline
+## 3. System Design & Architecture
 
-SachLabel's pipeline is engineered around strict on-device predictability, immediate in-aisle latency, and an evidence-first guarantee:
+SachLabel's architecture is structured into four decoupled layers, prioritizing deterministic reliability, user privacy, and zero cloud latency:
 
+```mermaid
+flowchart TB
+    subgraph UI_Layer["1. Presentation Layer (Jetpack Compose & Material 3)"]
+        A["CameraX Dual Viewfinder"] -->|Shutter Tap| B["ScanViewModel (StateFlow Machine)"]
+        B -->|Compose State Stream| C["Stitch UI Screens"]
+        C -->|Voice Request| D["TtsManager (Native Android TTS)"]
+    end
+
+    subgraph Vision_Layer["2. Vision & OCR Processing Layer"]
+        B -->|Raw Bitmap Cache| E["ImagePreprocessor (EXIF & Contrast)"]
+        E -->|Optimized Bitmaps| F["Google ML Kit OCR (Latin + Devanagari)"]
+        F -->|Spatial Bounding Boxes| G["LayoutAnalyzer (Geometry & Prominence)"]
+        F -->|Raw Text Stream| H["LabelExtractor (Headers & Tokenizer)"]
+    end
+
+    subgraph Engine_Layer["3. Deterministic Decision & Gatekeeper Layer"]
+        G -->|Front Prominent Claim| I["ClaimMatcher (8 Canonical Categories)"]
+        H -->|Ingredients & Nutrition Lines| J["RuleEngine (FSSAI Verification Rules)"]
+        I --> J
+        J -->|Proposed Verdict & Evidence| K{"EvidenceValidator Gatekeeper"}
+        K -->|Validated Verdict| L["LocalAiEngine (Orchestrator)"]
+        K -->|Ungrounded Quote| M["Verdict: NOT_ENOUGH_EVIDENCE"]
+        M --> L
+    end
+
+    subgraph Storage_AI_Layer["4. Local AI Runtime & Persistence Layer"]
+        L -->|Ambiguous Claim / Explain| N["GemmaLocalModelRunner (MediaPipe GenAI)"]
+        N -->|Inference Error / Missing Model| P["Deterministic Template Fallback"]
+        P --> L
+        N -->|Grounded Explanation| L
+        L -->|Emit ResultState| B
+        L -->|Persist Verified Audit| Q[("sachlabel_history.json (App Storage)")]
+    end
+
+    classDef ui fill:#E8F5E9,stroke:#2E7D32,stroke-width:2px,color:#1B5E20;
+    classDef vision fill:#E1F5FE,stroke:#0277BD,stroke-width:2px,color:#01579B;
+    classDef engine fill:#FFF3E0,stroke:#EF6C00,stroke-width:2px,color:#E65100;
+    classDef ai fill:#F3E5F5,stroke:#7B1FA2,stroke-width:2px,color:#4A148C;
+
+    class A,B,C,D ui;
+    class E,F,G,H vision;
+    class I,J,K,M engine;
+    class L,N,P,Q ai;
 ```
-[ FRONT PHOTO ] ──► [ ML Kit OCR ] ──► [ LayoutAnalyzer ] ──► [ ClaimMatcher ] ────────┐
-                                                                                        ▼
-                                                                               [ RuleEngine (8 Rules) ]
-                                                                                        │
-[ BACK PHOTO ]  ──► [ ML Kit OCR ] ──► [ LabelExtractor ] ──────────────────────────────┘
-                                        (Ingredients + Nutrition)                       │
-                                                                                        ▼
-                                                                              [ EvidenceValidator ]
-                                                                              (Zero Synthetic Quotes)
-                                                                                        │
-                                                                                        ▼
-                                                                              [ LocalAiEngine / Gemma ]
-                                                                              (Optional / Constrained)
-                                                                                        │
-                                                                                        ▼
-                                                                              [ Explanation & TTS ]
-                                                                              (8 Regional Languages)
+
+---
+
+## 4. End-to-End Multimodal Pipeline
+
+The data transformation pipeline converts raw front and back camera captures into an audited, evidence-backed verdict with voice synthesis:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as Shopper
+    participant Cam as CameraX Capture
+    participant OCR as ML Kit Vision (Latin + Devanagari)
+    participant Layout as LayoutAnalyzer & LabelExtractor
+    participant Matcher as ClaimMatcher (8 Categories)
+    participant Rules as RuleEngine (FSSAI Rules)
+    participant Gate as EvidenceValidator
+    participant AI as LocalAiEngine (Gemma via MediaPipe)
+    participant UI as Result Screen & TTS
+
+    User->>Cam: 1. Photo Front (Claim) & 2. Photo Back (Ingredients)
+    Cam->>OCR: Pass high-resolution image buffers
+    OCR->>Layout: Extract text blocks + bounding box coordinates
+    Layout->>Matcher: Layout sorted front text blocks
+    Matcher->>Rules: Identify 1 of 8 Canonical Categories
+    Layout->>Rules: Tokenized ingredients & raw nutrition lines
+    Rules->>Gate: Evaluate deterministic statutory check
+    Note over Gate: Zero Synthetic Evidence Verification
+    alt Evidence Quote Verified in Raw OCR Text
+        Gate->>AI: Validated Verdict + Verbatim Quotes
+        opt Gemma Model Available & Ready
+            AI->>AI: Generate grounded, conversational explanation
+        end
+    else Quote Missing / Hallucinated
+        Gate->>AI: Downgrade to NOT_ENOUGH_EVIDENCE
+    end
+    AI->>UI: Emit Verified ResultState
+    UI->>User: Display DualEvidenceCard + Play Regional TTS Spoken Audio
 ```
 
-### Pipeline Stage Details
+### Detailed Pipeline Stage Canvas
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
@@ -184,7 +248,7 @@ SachLabel's pipeline is engineered around strict on-device predictability, immed
 
 ---
 
-## 4. Software Architecture & Clean MVVM Design
+## 5. Software Architecture & Clean MVVM Design
 
 The codebase strictly adheres to Clean MVVM principles, separating presentation, business logic, vision, and local AI infrastructure:
 
@@ -265,9 +329,41 @@ app/src/main/java/com/sachlabel/app/
     └── ScanViewModel.kt        # StateFlow driving UI state transitions
 ```
 
+### UI State Machine Canvas
+
+The user experience transitions through an explicit state machine managed by `ScanViewModel`:
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                            UI STATE MACHINE CANVAS                          │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+    [ IDLE / HOME SCREEN ] 
+       │
+       ▼ (User taps "Start Scan" / Scan Floating Button)
+    [ CAPTURING_FRONT ] ─────────► Retake option available
+       │
+       ▼ (User confirms Front photo)
+    [ CAPTURING_BACK ]  ─────────► Retake Front or Back photo
+       │
+       ▼ (Both photos confirmed)
+    [ PROCESSING ]
+       ├── Step 1: Reading label… (ML Kit OCR Latin + Devanagari)
+       ├── Step 2: Finding claims… (LayoutAnalyzer + ClaimMatcher)
+       ├── Step 3: Checking evidence… (RuleEngine + EvidenceValidator)
+       └── Step 4: Preparing explanation… (Optional LocalAiEngine / Gemma)
+       │
+       ▼ (Verification complete)
+    [ DISPLAYING_RESULT ]
+       ├── Dual Evidence Card (Front quote vs Back printed text)
+       ├── Regional Audio Verdict (Spoken TTS playback in chosen language)
+       ├── Option: "What does this mean for me?" ──► [ OPT-IN HEALTH CONTEXT ]
+       └── Option: "Scan Next Product" ───────────► Reset to [ CAPTURING_FRONT ]
+```
+
 ---
 
-## 5. Canonical Claim Taxonomy (The Frozen 8 Categories)
+## 6. Canonical Claim Taxonomy (The Frozen 8 Categories)
 
 To remain trustworthy, reproducible, and verifiable, SachLabel does not attempt open-ended AI guessing. The v1 engine strictly enforces **8 canonical claim categories**:
 
@@ -286,27 +382,115 @@ To remain trustworthy, reproducible, and verifiable, SachLabel does not attempt 
 
 ---
 
-## 6. The Evidence-First Guarantee
+## 7. The Evidence-First Guarantee
 
 The core engineering principle of SachLabel is that every verdict must be grounded in physical OCR evidence:
+
+```mermaid
+flowchart TD
+    A["Proposed Evidence Quote from RuleEngine"] --> B{"Is Quote Present Verbatim in Raw OCR Text?"}
+    B -->|YES: Validated Quote| C["Attach Verbatim Evidence to Verdict"]
+    B -->|NO: Quote Missing from Package| D{"Is Disclosed Text Explicitly Absent?"}
+    D -->|YES: Missing Declaration| E["Emit Evidence.absent(...) — NO fake quote created"]
+    D -->|NO: Ungrounded / Fabricated| F["Strip Quote & Downgrade to NOT_ENOUGH_EVIDENCE"]
+    
+    C --> G["Render DualEvidenceCard UI"]
+    E --> G
+    F --> G
+
+    classDef valid fill:#E8F5E9,stroke:#2E7D32,stroke-width:2px,color:#1B5E20;
+    classDef absent fill:#FFF3E0,stroke:#EF6C00,stroke-width:2px,color:#E65100;
+    classDef error fill:#FFEBEE,stroke:#C62828,stroke-width:2px,color:#B71C1C;
+
+    class C valid;
+    class E absent;
+    class F error;
+```
+
+### Visual Dual-Evidence Presentation Canvas
+
+The UI strictly distinguishes **WHAT THE PACKAGE SAYS** from **SACHLABEL'S EXPLANATION**:
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ ⚠️  CLAIM NEEDS CONTEXT                                      [MISMATCH BADGE]│
+│ Category: No Added Sugar                                                    │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ WHAT THE FRONT PROMISES:                                                    │
+│ ┌─────────────────────────────────────────────────────────────────────────┐ │
+│ │ "No Added Sugar — 100% Real Apple Fruit Juice"                          │ │
+│ └─────────────────────────────────────────────────────────────────────────┘ │
+│ WHAT THE BACK ACTUALLY DECLARES:                                            │
+│ ┌─────────────────────────────────────────────────────────────────────────┐ │
+│ │ "Ingredients: Water, Reconstituted Apple Juice Concentrate (28%),       │ │
+│ │  Total Sugars: 14.8g per 100ml"                                         │ │
+│ └─────────────────────────────────────────────────────────────────────────┘ │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ SACHLABEL EXPLANATION:                                                      │
+│ The product does not add refined table sucrose, but relies on concentrated  │
+│ reconstituted fruit syrups yielding over 14g of free sugar per serving.    │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ [ 🔊 Listen (Hindi) ]                         [ ℹ️ Dietary Relevance Check ]│
+└─────────────────────────────────────────────────────────────────────────────┘
+```
 
 1. **Zero Synthetic Quotations**: The system never generates synthetic quotes, paraphrase summaries, or fabricated assertions.
 2. **Strict Traceability**: Every evidence quote shown to the user must be traceable to the original OCR source text and pass `EvidenceValidator`.
 3. **Absence is Never a Fake Quote**: If an expected ingredient or preservative is missing from the label, SachLabel reports `Evidence.absent(...)`. It **never** displays a manufactured quote like `"No preservatives detected."` as though that phrase was printed on the box.
 4. **Ungrounded Verdict Gate**: If an evidence quote cannot be validated against OCR source text, the verdict is downgraded to `NOT_ENOUGH_EVIDENCE`.
-5. **Clear Separation**: The UI strictly separates **WHAT THE PACKAGE SAYS** (verbatim quoted text) from **SACHLABEL'S EXPLANATION** (plain-language interpretation).
 
 ---
 
-## 7. Local AI & Gemma Runtime
+## 8. Local AI & Gemma Runtime
 
-SachLabel includes a local on-device small language model runtime built with MediaPipe Tasks GenAI:
+SachLabel implements an on-device small language model architecture built with MediaPipe Tasks GenAI:
 
-### Architecture Role
-- **Deterministic verification is primary**: `RuleEngine` and `EvidenceValidator` always run first and establish the factual verdict.
-- **Constrained assistance**: `LocalAiEngine` invokes Gemma only for ambiguous contextual reasoning and generating plain-language, natural explanations.
-- **Strict Guardrails**: Gemma is explicitly prohibited from inventing evidence, inventing ingredients, inventing nutrition, creating synthetic quotes, or overriding validated deterministic rules.
-- **Zero Cloud Requirement**: The deterministic core is fully functional without Gemma. If no model is loaded, the app generates pre-compiled deterministic explanations instantly.
+### Dual-Track Decision & Gemma Fallback Canvas
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                       DUAL-TRACK VERIFICATION ARCHITECTURE                  │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+    [ INPUT: Structured Label + Matched Claim + OCR Text ]
+                         │
+                         ▼
+    ┌─────────────────────────────────────────┐
+    │ TRACK 1 (PRIMARY): DETERMINISTIC ENGINE │ ──► Always runs first (<5ms)
+    │   • RuleEngine.kt (8 Canonical Rules)   │ ──► Zero hallucination risk
+    │   • EvidenceValidator.kt Gatekeeper     │ ──► Validates verbatim quotes
+    └────────────────────┬────────────────────┘
+                         │
+                         ▼ Emits: Verified Verdict + Verified Quotes
+    ┌─────────────────────────────────────────┐
+    │ TRACK 2 (SECONDARY): LOCAL AI ENGINE    │
+    │   • LocalAiEngine.kt Orchestrator       │
+    │   • Constrained Context Prompting       │
+    └────────────────────┬────────────────────┘
+                         │
+         ┌───────────────┴───────────────┐
+         ▼                               ▼
+    [ Model Ready? ]             [ Model Missing / Corrupt? ]
+         │                               │
+         ▼ (YES)                         ▼ (NO)
+    ┌─────────────────────────┐   ┌─────────────────────────────┐
+    │ GemmaLocalModelRunner   │   │ Pre-compiled Deterministic  │
+    │ (MediaPipe LlmInference)│   │ Template Explanations       │
+    └────────────┬────────────┘   └──────────────┬──────────────┘
+                 │                               │
+                 ▼ (Grounded Inference)          │
+    ┌─────────────────────────┐                  │
+    │ Output Validation Check │                  │
+    └────────────┬────────────┘                  │
+                 │                               │
+         ┌───────┴───────┐                       │
+         ▼ (Pass)        ▼ (Fail/OOM)            │
+    [ AI Result ]   [ Instant Fallback ] ◄───────┘
+         │               │
+         └───────┬───────┘
+                 ▼
+    [ UI ResultScreen & Native Android TTS ]
+```
 
 ### Model Discovery & Compatibility Guardrails
 - **Supported Format**: MediaPipe LLM format (`.bin`, `.task`).
@@ -316,7 +500,7 @@ SachLabel includes a local on-device small language model runtime built with Med
 
 ---
 
-## 8. Regional Language & Voice Accessibility
+## 9. Regional Language & Voice Accessibility
 
 SachLabel positions regional language as a core understanding layer:
 
@@ -335,7 +519,7 @@ SachLabel positions regional language as a core understanding layer:
 
 ---
 
-## 9. Secondary Health Context Layer
+## 10. Secondary Health Context Layer
 
 Health context is strictly optional, secondary, and informational:
 
@@ -347,7 +531,7 @@ Health context is strictly optional, secondary, and informational:
 
 ---
 
-## 10. Technology Stack
+## 11. Technology Stack
 
 | Layer | Library / Tool | Purpose |
 | :--- | :--- | :--- |
@@ -362,7 +546,7 @@ Health context is strictly optional, secondary, and informational:
 
 ---
 
-## 11. Current Project Status
+## 12. Current Project Status
 
 ### DONE (Implemented & Verified in Repository)
 - [x] Dual-photo CameraX capture pipeline (Front + Back) with optical alignment reticles.
@@ -390,7 +574,7 @@ Health context is strictly optional, secondary, and informational:
 
 ---
 
-## 12. Building and Running the Project
+## 13. Building and Running the Project
 
 ### Prerequisites
 * **Android Studio**: Ladybug (2024.2+) or Koala.
