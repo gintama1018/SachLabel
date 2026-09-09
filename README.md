@@ -419,7 +419,7 @@ Honest engineering requires acknowledging real-world operational constraints:
 * [ ] **Cylindrical Pouch Stitching**: Multi-shot or sweep capture to assemble complete ingredient tables wrapped around round containers.
 * [ ] **Expanded Canonical Rules**: Addition of FSSAI High-Fat-Sugar-Salt (HFSS) warning indicators, Sodium/Salt thresholds, and Palm Oil blending transparency.
 * [ ] **Additional Regional Languages**: Extending full UI string localization and speech synthesis to Telugu, Marathi, Kannada, and Gujarati.
-* [x] **Local Small Language Model (SLM)**: Real on-device Gemma 2B INT4 inference via Google MediaPipe Tasks GenAI (`GemmaLocalModelRunner`), strictly constrained by `EvidenceValidator`, targeted prompt generation, SAF model import, and deterministic fallback.
+* [ ] **Local Small Language Model (SLM)**: MediaPipe Tasks GenAI engine integrated (`GemmaLocalModelRunner` with format guardrails and SAF import); live on-device inference pending execution on physical device once model is loaded.
 
 ---
 

@@ -14,6 +14,7 @@ import java.io.File
  * - Real inference via [LlmInference.generateResponse]
  * - Proper cleanup via [close]
  * - Zero cloud, zero network, 100% on-device
+ * - Explicit latency and execution logging
  */
 class GemmaLocalModelRunner(
     context: Context,
@@ -22,7 +23,14 @@ class GemmaLocalModelRunner(
 
     private val llmInference: LlmInference
 
+    companion object {
+        private const val TAG = "GemmaLocalModelRunner"
+        private fun logInfo(msg: String) = try { android.util.Log.i(TAG, msg) } catch (_: Throwable) { println("[$TAG] $msg") }
+        private fun logError(msg: String, t: Throwable? = null) = try { android.util.Log.e(TAG, msg, t) } catch (_: Throwable) { System.err.println("[$TAG] $msg: $t") }
+    }
+
     init {
+        logInfo("[Runner Creation] Initializing GemmaLocalModelRunner with file: ${modelFile.absolutePath} (${modelFile.length()} bytes)")
         require(modelFile.exists()) { "Model file does not exist: ${modelFile.absolutePath}" }
         require(modelFile.canRead()) { "Model file is not readable: ${modelFile.absolutePath}" }
 
@@ -33,18 +41,26 @@ class GemmaLocalModelRunner(
             .setTopK(40)
             .build()
 
+        logInfo("[Model Initialization] Calling LlmInference.createFromOptions() on device context")
         llmInference = LlmInference.createFromOptions(context, options)
+        logInfo("[Model Initialization] LlmInference engine successfully created and ready for inference")
     }
 
     override fun generate(prompt: String): String {
-        return llmInference.generateResponse(prompt)
+        logInfo("[Inference Start] Executing real LlmInference.generateResponse() - promptLength=${prompt.length} chars")
+        val startTime = System.currentTimeMillis()
+        val response = llmInference.generateResponse(prompt)
+        val latencyMs = System.currentTimeMillis() - startTime
+        logInfo("[Inference Completion] LlmInference output received in ${latencyMs}ms - outputLength=${response.length} chars")
+        return response
     }
 
     override fun close() {
         try {
+            logInfo("[Cleanup] Closing LlmInference engine resources")
             llmInference.close()
-        } catch (_: Throwable) {
-            // Ignored on teardown
+        } catch (t: Throwable) {
+            logError("[Cleanup] Error while closing LlmInference", t)
         }
     }
 }

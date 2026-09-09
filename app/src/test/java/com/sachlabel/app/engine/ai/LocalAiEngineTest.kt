@@ -46,6 +46,21 @@ class LocalAiEngineTest {
             LocalAiEngine.CANDIDATE_MODEL_FILENAMES.contains("model.task"))
     }
 
+    @Test
+    fun `test format guardrail distinguishes supported bin task and rejects gguf`() {
+        val binMeta = LocalAiEngine.toModelMetadata(File("/dummy/gemma-2b-it-cpu-int4.bin"))
+        assertEquals(LocalAiEngine.CompatibilityStatus.SUPPORTED, binMeta.compatibility)
+
+        val taskMeta = LocalAiEngine.toModelMetadata(File("/dummy/gemma-2b.task"))
+        assertEquals(LocalAiEngine.CompatibilityStatus.SUPPORTED, taskMeta.compatibility)
+
+        val ggufMeta = LocalAiEngine.toModelMetadata(File("/dummy/gemma-2b-it-q4_k_m.gguf"))
+        assertEquals(LocalAiEngine.CompatibilityStatus.UNSUPPORTED_FORMAT, ggufMeta.compatibility)
+
+        val unknownMeta = LocalAiEngine.toModelMetadata(File("/dummy/random_weights.pt"))
+        assertEquals(LocalAiEngine.CompatibilityStatus.UNKNOWN, unknownMeta.compatibility)
+    }
+
     // ─────────────────────────────────────────────────────────────────────────
     // Test 2: Missing Model State
     // ─────────────────────────────────────────────────────────────────────────

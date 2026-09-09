@@ -44,7 +44,6 @@ object LocalAiEngine {
         "gemma-2b-it-gpu-int4.bin",
         "gemma-2b.bin",
         "model.bin",
-        "gemma-2b-it.tflite",
         "model.task"
     )
 
@@ -57,12 +56,19 @@ object LocalAiEngine {
         ERROR
     }
 
+    enum class CompatibilityStatus {
+        SUPPORTED,            // MediaPipe Tasks GenAI binary (.bin) or task bundle (.task)
+        UNSUPPORTED_FORMAT,   // Incompatible formats like GGUF (.gguf) or standard TFLite (.tflite)
+        UNKNOWN               // Unrecognized file formats
+    }
+
     data class ModelMetadata(
         val file: File,
         val fileName: String,
         val sizeBytes: Long,
         val sizeMB: Double,
         val format: String,
+        val compatibility: CompatibilityStatus,
         val isReadable: Boolean
     )
 
@@ -79,6 +85,7 @@ object LocalAiEngine {
         val modelPath: String? = null,
         val modelSizeBytes: Long = 0L,
         val modelSizeMB: Double = 0.0,
+        val compatibility: CompatibilityStatus = CompatibilityStatus.UNKNOWN,
         val engineState: EngineState,
         val pingPrompt: String = "Reply with exactly: GEMMA_OK",
         val pingOutput: String? = null,
@@ -122,6 +129,8 @@ object LocalAiEngine {
      * 1. App's external files directory: /sdcard/Android/data/com.sachlabel.app/files/models/
      * 2. App's internal files directory: /data/user/0/com.sachlabel.app/files/models/
      * 3. App's root files directories
+     *
+     * Guardrail: Strict format inspection. Rejects .gguf or arbitrary non-MediaPipe models.
      */
     fun findAvailableModel(context: Context): ModelMetadata? {
         val candidateDirs = listOfNotNull(
@@ -131,6 +140,8 @@ object LocalAiEngine {
             context.filesDir
         )
 
+        logInfo("[Model Discovery] Scanning candidate storage directories: ${candidateDirs.map { it.absolutePath }}")
+
         for (dir in candidateDirs) {
             if (!dir.exists()) continue
 
@@ -139,36 +150,47 @@ object LocalAiEngine {
                 val file = File(dir, name)
                 if (file.exists() && file.isFile && file.length() >= MIN_MODEL_SIZE_BYTES) {
                     val meta = toModelMetadata(file)
-                    activeModelMeta = meta
-                    return meta
+                    logInfo("[Model Discovery] Match found: ${meta.fileName} (Size: ${meta.sizeMB.toInt()} MB, Format: ${meta.format}, Compatibility: ${meta.compatibility})")
+                    if (meta.compatibility == CompatibilityStatus.SUPPORTED) {
+                        activeModelMeta = meta
+                        return meta
+                    } else {
+                        logWarn("[Model Discovery] Candidate ${meta.fileName} rejected: format ${meta.format} is ${meta.compatibility}")
+                    }
                 }
             }
 
-            // 2. Dynamic discovery: any compatible model file >= 500 MB
-            val anyCompatible = dir.listFiles()?.firstOrNull { f ->
-                f.isFile && f.length() >= MIN_MODEL_SIZE_BYTES &&
-                (f.name.endsWith(".bin", ignoreCase = true) ||
-                 f.name.endsWith(".task", ignoreCase = true) ||
-                 f.name.endsWith(".tflite", ignoreCase = true) ||
-                 f.name.endsWith(".gguf", ignoreCase = true))
-            }
-            if (anyCompatible != null) {
-                val meta = toModelMetadata(anyCompatible)
-                activeModelMeta = meta
-                return meta
+            // 2. Dynamic discovery: strictly check .bin and .task files >= 500 MB (Task 4 guardrail)
+            val candidates = dir.listFiles() ?: continue
+            for (file in candidates) {
+                if (file.isFile && file.length() >= MIN_MODEL_SIZE_BYTES) {
+                    val meta = toModelMetadata(file)
+                    if (meta.compatibility == CompatibilityStatus.SUPPORTED) {
+                        logInfo("[Model Discovery] Dynamically discovered supported model: ${meta.fileName} (${meta.sizeMB.toInt()} MB)")
+                        activeModelMeta = meta
+                        return meta
+                    } else if (meta.compatibility == CompatibilityStatus.UNSUPPORTED_FORMAT) {
+                        logWarn("[Model Discovery] Ignoring unsupported format file: ${file.name} (${meta.format})")
+                    }
+                }
             }
         }
+        logInfo("[Model Discovery] No compatible MediaPipe model found in candidate storage locations.")
         activeModelMeta = null
         return null
     }
 
-    private fun toModelMetadata(file: File): ModelMetadata {
-        val format = when {
-            file.name.endsWith(".bin", ignoreCase = true) -> "MediaPipe / TFLite Binary (.bin)"
-            file.name.endsWith(".task", ignoreCase = true) -> "MediaPipe Task (.task)"
-            file.name.endsWith(".tflite", ignoreCase = true) -> "LiteRT / TFLite (.tflite)"
-            file.name.endsWith(".gguf", ignoreCase = true) -> "GGUF Quantized (.gguf)"
-            else -> "Binary Model"
+    /**
+     * Inspects file headers / extensions to determine format and compatibility (Task 4).
+     */
+    fun toModelMetadata(file: File): ModelMetadata {
+        val extension = file.extension.lowercase()
+        val (format, compatibility) = when (extension) {
+            "bin" -> "MediaPipe Tasks GenAI Binary (.bin)" to CompatibilityStatus.SUPPORTED
+            "task" -> "MediaPipe Task Bundle (.task)" to CompatibilityStatus.SUPPORTED
+            "gguf" -> "llama.cpp Quantized GGUF (.gguf)" to CompatibilityStatus.UNSUPPORTED_FORMAT
+            "tflite" -> "TensorFlow Lite FlatBuffer (.tflite)" to CompatibilityStatus.UNSUPPORTED_FORMAT
+            else -> "Unknown Format (.${file.extension})" to CompatibilityStatus.UNKNOWN
         }
         return ModelMetadata(
             file = file,
@@ -176,6 +198,7 @@ object LocalAiEngine {
             sizeBytes = file.length(),
             sizeMB = file.length() / (1024.0 * 1024.0),
             format = format,
+            compatibility = compatibility,
             isReadable = file.canRead()
         )
     }
@@ -197,11 +220,19 @@ object LocalAiEngine {
                 }
             }
 
+            // Guardrail: reject incompatible file imports before copying
+            val ext = fileName.substringAfterLast('.', "").lowercase()
+            if (ext == "gguf") {
+                val err = "GGUF format (.gguf) cannot be imported. MediaPipe Tasks GenAI requires .bin or .task format."
+                logError("[Model Import] $err")
+                return Result.failure(IllegalArgumentException(err))
+            }
+
             val modelsDir = context.getExternalFilesDir("models") ?: File(context.filesDir, "models")
             if (!modelsDir.exists()) modelsDir.mkdirs()
 
             val destinationFile = File(modelsDir, fileName)
-            logInfo("Importing model from URI to: ${destinationFile.absolutePath}")
+            logInfo("[Model Import] Streaming model from URI to: ${destinationFile.absolutePath}")
 
             contentResolver.openInputStream(sourceUri)?.use { input ->
                 destinationFile.outputStream().use { output ->
@@ -209,10 +240,11 @@ object LocalAiEngine {
                 }
             }
 
+            logInfo("[Model Import] Model imported successfully: ${destinationFile.name} (${destinationFile.length()} bytes)")
             initialize(context)
             Result.success(destinationFile)
         } catch (e: Exception) {
-            logError("Failed to import model from URI", e)
+            logError("[Model Import] Failed to import model from URI", e)
             Result.failure(e)
         }
     }
@@ -223,35 +255,46 @@ object LocalAiEngine {
      */
     @Synchronized
     fun initialize(context: Context): Boolean {
-        if (currentState == EngineState.READY && customRunner != null) return true
+        if (currentState == EngineState.READY && customRunner != null) {
+            logInfo("[Model Initialization] Custom runner already active and READY")
+            return true
+        }
 
         currentState = EngineState.INITIALIZING
         val model = findAvailableModel(context)
 
         if (model == null) {
-            logInfo("No local AI model found in app storage. Deterministic fallback mode active.")
+            logInfo("[Model Initialization] No model found in app storage. Fallback mode active.")
             currentState = EngineState.MODEL_NOT_FOUND
             activeModelFile = null
             return false
         }
 
+        if (model.compatibility != CompatibilityStatus.SUPPORTED) {
+            logError("[Model Initialization] Model ${model.fileName} has format ${model.format} which is ${model.compatibility}. Initialization aborted.")
+            currentState = EngineState.INITIALIZATION_FAILED
+            activeModelFile = null
+            return false
+        }
+
         if (!model.isReadable) {
-            logError("Model file exists but is not readable: ${model.file.absolutePath}")
+            logError("[Model Initialization] Model file exists but is not readable: ${model.file.absolutePath}")
             currentState = EngineState.INITIALIZATION_FAILED
             return false
         }
 
         return try {
             activeModelFile = model.file
+            logInfo("[Runner Creation] Instantiating real GemmaLocalModelRunner for ${model.fileName}")
             // Instantiate real Gemma runner if custom runner is not set
             if (customRunner == null) {
                 customRunner = GemmaLocalModelRunner(context, model.file)
             }
             currentState = EngineState.READY
-            logInfo("Real Gemma on-device engine initialized: ${model.fileName} (${model.sizeMB.toInt()} MB)")
+            logInfo("[Model Initialization] Real Gemma on-device engine initialized successfully: ${model.fileName} (${model.sizeMB.toInt()} MB)")
             true
         } catch (t: Throwable) {
-            logError("Failed to initialize Gemma runner", t)
+            logError("[Model Initialization] Failed to initialize Gemma runner", t)
             currentState = EngineState.INITIALIZATION_FAILED
             activeModelFile = null
             customRunner = null
@@ -318,7 +361,7 @@ object LocalAiEngine {
         return try {
             val rawModelOutput = runner.generate(prompt)
             val elapsedMs = System.currentTimeMillis() - startTime
-            logDebug("Local AI inference completed in ${elapsedMs}ms")
+            logDebug("[LocalAiEngine] Local AI inference completed in ${elapsedMs}ms")
 
             // 4. Parse JSON output safely
             val parsedResult = parseModelResponse(rawModelOutput, claim, deterministicResult)
@@ -340,7 +383,7 @@ object LocalAiEngine {
                 modelName = activeModelFile?.name ?: "GemmaLocal"
             )
         } catch (t: Throwable) {
-            logWarn("Local AI inference failed; falling back to deterministic result", t)
+            logWarn("[LocalAiEngine] Local AI inference failed; falling back to deterministic result", t)
             LocalAiResult(
                 claimResult = deterministicResult,
                 isFromLocalAi = false,
@@ -520,7 +563,7 @@ object LocalAiEngine {
                 ruleKey = fallback.ruleKey
             )
         } catch (e: Exception) {
-            logWarn("Failed to parse model response JSON: $response", e)
+            logWarn("[LocalAiEngine] Failed to parse model response JSON: $response", e)
             return fallback
         }
     }
@@ -530,9 +573,11 @@ object LocalAiEngine {
      */
     fun runDiagnostic(context: Context): DiagnosticResult {
         val totalStart = System.currentTimeMillis()
+        logInfo("[Diagnostic Test] Starting on-device diagnostic sequence")
 
         val model = findAvailableModel(context)
         if (model == null) {
+            logInfo("[Diagnostic Test] Aborted: No Gemma model found in app storage")
             return DiagnosticResult(
                 modelFound = false,
                 engineState = EngineState.MODEL_NOT_FOUND,
@@ -540,14 +585,30 @@ object LocalAiEngine {
             )
         }
 
+        if (model.compatibility != CompatibilityStatus.SUPPORTED) {
+            logError("[Diagnostic Test] Aborted: Model ${model.fileName} has format ${model.format} which is ${model.compatibility}")
+            return DiagnosticResult(
+                modelFound = true,
+                modelPath = model.file.absolutePath,
+                modelSizeBytes = model.sizeBytes,
+                modelSizeMB = model.sizeMB,
+                compatibility = model.compatibility,
+                engineState = EngineState.INITIALIZATION_FAILED,
+                errorMessage = "Unsupported model format (${model.format}). MediaPipe requires .bin or .task."
+            )
+        }
+
         if (currentState != EngineState.READY || customRunner == null) {
+            logInfo("[Diagnostic Test] Engine not ready; initializing now")
             val initialized = initialize(context)
             if (!initialized || customRunner == null) {
+                logError("[Diagnostic Test] Failed to initialize runner during diagnostic")
                 return DiagnosticResult(
                     modelFound = true,
                     modelPath = model.file.absolutePath,
                     modelSizeBytes = model.sizeBytes,
                     modelSizeMB = model.sizeMB,
+                    compatibility = model.compatibility,
                     engineState = currentState,
                     errorMessage = "Failed to initialize GemmaLocalModelRunner for ${model.fileName}"
                 )
@@ -559,6 +620,7 @@ object LocalAiEngine {
             modelPath = model.file.absolutePath,
             modelSizeBytes = model.sizeBytes,
             modelSizeMB = model.sizeMB,
+            compatibility = model.compatibility,
             engineState = EngineState.ERROR,
             errorMessage = "Runner is null after initialization"
         )
@@ -570,15 +632,18 @@ object LocalAiEngine {
         val pingStart = System.currentTimeMillis()
 
         try {
+            logInfo("[Diagnostic Test] Executing ping prompt: \"$pingPrompt\"")
             pingOutput = runner.generate(pingPrompt).trim()
             pingSuccess = pingOutput.contains("GEMMA_OK", ignoreCase = true)
+            logInfo("[Diagnostic Test] Ping output: \"$pingOutput\", pingSuccess=$pingSuccess")
         } catch (e: Throwable) {
-            logWarn("Diagnostic ping failed", e)
+            logWarn("[Diagnostic Test] Ping execution failed", e)
             return DiagnosticResult(
                 modelFound = true,
                 modelPath = model.file.absolutePath,
                 modelSizeBytes = model.sizeBytes,
                 modelSizeMB = model.sizeMB,
+                compatibility = model.compatibility,
                 engineState = EngineState.ERROR,
                 pingPrompt = pingPrompt,
                 pingOutput = pingOutput,
@@ -604,6 +669,7 @@ object LocalAiEngine {
         val domainStart = System.currentTimeMillis()
 
         try {
+            logInfo("[Diagnostic Test] Executing domain prompt for claim: \"${domainClaim.rawText}\"")
             domainOutput = runner.generate(domainPrompt)
             val fallback = RuleEngine.check(domainClaim, domainLabel)
             val parsed = parseModelResponse(domainOutput, domainClaim, fallback)
@@ -611,17 +677,21 @@ object LocalAiEngine {
             domainVerdict = validated.verdict
             domainEvidenceQuote = validated.evidence.quote
             domainSuccess = validated.verdict == Verdict.NEEDS_CONTEXT || validated.verdict == Verdict.MISLEADING
+            logInfo("[Diagnostic Test] Domain output: \"$domainOutput\", verdict=$domainVerdict, quote=\"$domainEvidenceQuote\"")
         } catch (e: Throwable) {
-            logWarn("Diagnostic domain test failed", e)
+            logWarn("[Diagnostic Test] Domain test failed", e)
         }
         val domainLatency = System.currentTimeMillis() - domainStart
         val totalLatency = System.currentTimeMillis() - totalStart
+
+        logInfo("[Diagnostic Test] Diagnostic complete: pingLatency=${pingLatency}ms, domainLatency=${domainLatency}ms, total=${totalLatency}ms")
 
         return DiagnosticResult(
             modelFound = true,
             modelPath = model.file.absolutePath,
             modelSizeBytes = model.sizeBytes,
             modelSizeMB = model.sizeMB,
+            compatibility = model.compatibility,
             engineState = currentState,
             pingPrompt = pingPrompt,
             pingOutput = pingOutput,
@@ -644,13 +714,14 @@ object LocalAiEngine {
     @Synchronized
     fun unload() {
         try {
+            logInfo("[LocalAiEngine] Unloading model resources")
             customRunner?.close()
         } catch (ignored: Throwable) {}
         customRunner = null
         activeModelFile = null
         activeModelMeta = null
         currentState = EngineState.UNINITIALIZED
-        logInfo("Local AI engine unloaded.")
+        logInfo("[LocalAiEngine] Local AI engine unloaded.")
     }
 }
 
