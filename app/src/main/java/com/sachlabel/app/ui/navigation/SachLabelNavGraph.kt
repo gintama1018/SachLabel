@@ -47,6 +47,14 @@ object Routes {
     const val MOCK_SELECT = "mock_select"
 }
 
+class LocalizedActivityContext(
+    base: android.content.Context,
+    private val localizedConfigContext: android.content.Context
+) : android.content.ContextWrapper(base) {
+    override fun getResources(): android.content.res.Resources = localizedConfigContext.resources
+    override fun getAssets(): android.content.res.AssetManager = localizedConfigContext.assets
+}
+
 @Composable
 fun SachLabelNavGraph() {
     val navController = rememberNavController()
@@ -75,16 +83,31 @@ fun SachLabelNavGraph() {
     val startDestination = if (isFirstLaunch) Routes.WELCOME else Routes.HOME
 
     val context = androidx.compose.ui.platform.LocalContext.current
-    val localizedContext = remember(selectedLanguage) {
+    val activityResultRegistryOwner = androidx.activity.compose.LocalActivityResultRegistryOwner.current
+
+    val localizedContext = remember(selectedLanguage, context) {
         val locale = java.util.Locale(selectedLanguage.code)
         java.util.Locale.setDefault(locale)
         val config = android.content.res.Configuration(context.resources.configuration)
         config.setLocale(locale)
-        context.createConfigurationContext(config)
+        val configContext = context.createConfigurationContext(config)
+        LocalizedActivityContext(context, configContext)
+    }
+
+    val owner = activityResultRegistryOwner ?: (context as? androidx.activity.result.ActivityResultRegistryOwner)
+    val providers = if (owner != null) {
+        arrayOf(
+            androidx.compose.ui.platform.LocalContext provides localizedContext,
+            androidx.activity.compose.LocalActivityResultRegistryOwner provides owner
+        )
+    } else {
+        arrayOf(
+            androidx.compose.ui.platform.LocalContext provides localizedContext
+        )
     }
 
     CompositionLocalProvider(
-        androidx.compose.ui.platform.LocalContext provides localizedContext
+        *providers
     ) {
         Scaffold(
             containerColor = BackgroundSurface,
@@ -107,8 +130,12 @@ fun SachLabelNavGraph() {
                                 }
                             }
                             BottomTab.SCAN -> {
-                                scanViewModel.startScan()
-                                navController.navigate(Routes.CAPTURE_FRONT)
+                                if (currentRoute != Routes.CAPTURE_FRONT) {
+                                    scanViewModel.startScan()
+                                    navController.navigate(Routes.CAPTURE_FRONT) {
+                                        launchSingleTop = true
+                                    }
+                                }
                             }
                             BottomTab.STANDARDS -> {
                                 if (currentRoute != Routes.WHAT_WE_CHECK) {
@@ -142,8 +169,12 @@ fun SachLabelNavGraph() {
                         onLanguageClick = { navController.navigate(Routes.LANGUAGE_SELECT) },
                         onStartScan = {
                             settingsViewModel.selectLanguage(selectedLanguage)
-                            scanViewModel.startScan()
-                            navController.navigate(Routes.CAPTURE_FRONT)
+                            if (currentRoute != Routes.CAPTURE_FRONT) {
+                                scanViewModel.startScan()
+                                navController.navigate(Routes.CAPTURE_FRONT) {
+                                    launchSingleTop = true
+                                }
+                            }
                         },
                         onDemoClick = {
                             settingsViewModel.selectLanguage(selectedLanguage)
@@ -175,8 +206,12 @@ fun SachLabelNavGraph() {
                         selectedLanguage = selectedLanguage,
                         savedScans = savedScans,
                         onScanClick = {
-                            scanViewModel.startScan()
-                            navController.navigate(Routes.CAPTURE_FRONT)
+                            if (currentRoute != Routes.CAPTURE_FRONT) {
+                                scanViewModel.startScan()
+                                navController.navigate(Routes.CAPTURE_FRONT) {
+                                    launchSingleTop = true
+                                }
+                            }
                         },
                         onHistoryClick = { navController.navigate(Routes.HISTORY) },
                         onMockDemoClick = { navController.navigate(Routes.MOCK_SELECT) },
@@ -203,8 +238,12 @@ fun SachLabelNavGraph() {
                             navController.navigate(Routes.RESULT)
                         },
                         onScanClick = {
-                            scanViewModel.startScan()
-                            navController.navigate(Routes.CAPTURE_FRONT)
+                            if (currentRoute != Routes.CAPTURE_FRONT) {
+                                scanViewModel.startScan()
+                                navController.navigate(Routes.CAPTURE_FRONT) {
+                                    launchSingleTop = true
+                                }
+                            }
                         },
                         onLanguageClick = { navController.navigate(Routes.LANGUAGE_SELECT) }
                     )

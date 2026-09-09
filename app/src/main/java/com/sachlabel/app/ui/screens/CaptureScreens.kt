@@ -1,7 +1,9 @@
 package com.sachlabel.app.ui.screens
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -24,6 +26,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,11 +49,21 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.sachlabel.app.R
 import com.sachlabel.app.ui.components.SachLabelHeader
 import com.sachlabel.app.ui.theme.*
+import kotlinx.coroutines.delay
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+
+private fun Context.findActivity(): Activity? {
+    var ctx = this
+    while (ctx is ContextWrapper) {
+        if (ctx is Activity) return ctx
+        ctx = ctx.baseContext
+    }
+    return null
+}
 
 /**
  * Stitch Screen 4 — Front Camera Capture
@@ -104,11 +117,13 @@ private fun StitchCameraScreen(
     onBack: () -> Unit
 ) {
     val context = LocalContext.current
+    val actualActivity = remember(context) { context.findActivity() }
+    val cameraContext = actualActivity ?: context
     val lifecycleOwner = LocalLifecycleOwner.current
 
     var hasCameraPermission by remember {
         mutableStateOf(
-            ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+            ContextCompat.checkSelfPermission(cameraContext, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
         )
     }
 
@@ -121,9 +136,17 @@ private fun StitchCameraScreen(
         }
     }
 
-    LaunchedEffect(Unit) {
-        if (!hasCameraPermission) {
-            permissionLauncher.launch(Manifest.permission.CAMERA)
+    var hasAutoPromptedPermission by rememberSaveable { mutableStateOf(false) }
+
+    LaunchedEffect(hasCameraPermission) {
+        if (!hasCameraPermission && !hasAutoPromptedPermission) {
+            hasAutoPromptedPermission = true
+            try {
+                delay(200)
+                permissionLauncher.launch(Manifest.permission.CAMERA)
+            } catch (e: Exception) {
+                Log.e("StitchCamera", "Safe auto permission request failed", e)
+            }
         }
     }
 
@@ -217,32 +240,51 @@ private fun StitchCameraScreen(
                     key(cameraLensFacing, hasCameraPermission) {
                         AndroidView(
                             factory = { ctx ->
-                                val previewView = PreviewView(ctx)
-                                val cameraProviderFuture = ProcessCameraProvider.getInstance(ctx)
-                                cameraProviderFuture.addListener({
-                                    val cameraProvider = cameraProviderFuture.get()
-                                    val preview = Preview.Builder().build().also {
-                                        it.setSurfaceProvider(previewView.surfaceProvider)
+                                val viewContext = ctx.findActivity() ?: ctx
+                                try {
+                                    val previewView = PreviewView(viewContext).apply {
+                                        implementationMode = PreviewView.ImplementationMode.COMPATIBLE
                                     }
-                                    val capture = ImageCapture.Builder()
-                                        .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
-                                        .build()
-                                    imageCapture = capture
+                                    val cameraProviderFuture = ProcessCameraProvider.getInstance(viewContext)
+                                    cameraProviderFuture.addListener({
+                                        try {
+                                            val cameraProvider = cameraProviderFuture.get()
+                                            cameraProvider.unbindAll()
 
-                                    try {
-                                        cameraProvider.unbindAll()
-                                        val camera = cameraProvider.bindToLifecycle(
-                                            lifecycleOwner,
-                                            CameraSelector.Builder().requireLensFacing(cameraLensFacing).build(),
-                                            preview,
-                                            capture
-                                        )
-                                        cameraControl = camera.cameraControl
-                                    } catch (e: Exception) {
-                                        Log.e("StitchCamera", "Camera bind failed", e)
-                                    }
-                                }, ContextCompat.getMainExecutor(ctx))
-                                previewView
+                                            val preview = Preview.Builder().build().also {
+                                                it.setSurfaceProvider(previewView.surfaceProvider)
+                                            }
+                                            val capture = ImageCapture.Builder()
+                                                .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
+                                                .build()
+                                            imageCapture = capture
+
+                                            val hasBack = cameraProvider.hasCamera(CameraSelector.DEFAULT_BACK_CAMERA)
+                                            val hasFront = cameraProvider.hasCamera(CameraSelector.DEFAULT_FRONT_CAMERA)
+
+                                            val selector = when {
+                                                cameraLensFacing == CameraSelector.LENS_FACING_FRONT && hasFront -> CameraSelector.DEFAULT_FRONT_CAMERA
+                                                hasBack -> CameraSelector.DEFAULT_BACK_CAMERA
+                                                hasFront -> CameraSelector.DEFAULT_FRONT_CAMERA
+                                                else -> CameraSelector.DEFAULT_BACK_CAMERA
+                                            }
+
+                                            val camera = cameraProvider.bindToLifecycle(
+                                                lifecycleOwner,
+                                                selector,
+                                                preview,
+                                                capture
+                                            )
+                                            cameraControl = camera.cameraControl
+                                        } catch (e: Exception) {
+                                            Log.e("StitchCamera", "Camera provider or bind failed", e)
+                                        }
+                                    }, ContextCompat.getMainExecutor(viewContext))
+                                    previewView
+                                } catch (e: Exception) {
+                                    Log.e("StitchCamera", "PreviewView construction failed", e)
+                                    android.view.View(viewContext)
+                                }
                             },
                             modifier = Modifier.fillMaxSize()
                         )
@@ -374,7 +416,13 @@ private fun StitchCameraScreen(
                         Spacer(modifier = Modifier.height(24.dp))
 
                         Button(
-                            onClick = { permissionLauncher.launch(Manifest.permission.CAMERA) },
+                            onClick = {
+                                try {
+                                    permissionLauncher.launch(Manifest.permission.CAMERA)
+                                } catch (e: Exception) {
+                                    Log.e("StitchCamera", "Permission request failed on button", e)
+                                }
+                            },
                             shape = RoundedCornerShape(14.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen)
                         ) {
@@ -387,10 +435,15 @@ private fun StitchCameraScreen(
 
                         TextButton(
                             onClick = {
-                                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                                    data = Uri.fromParts("package", context.packageName, null)
+                                try {
+                                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                        data = Uri.fromParts("package", cameraContext.packageName, null)
+                                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                    }
+                                    cameraContext.startActivity(intent)
+                                } catch (e: Exception) {
+                                    Log.e("StitchCamera", "Failed to open settings", e)
                                 }
-                                context.startActivity(intent)
                             }
                         ) {
                             Text(stringResource(R.string.camera_permission_settings), color = PrimaryFixed, fontSize = 12.sp)
@@ -440,11 +493,15 @@ private fun StitchCameraScreen(
                             .background(PrimaryFixed.copy(alpha = 0.25f))
                             .clickable {
                                 if (!hasCameraPermission) {
-                                    permissionLauncher.launch(Manifest.permission.CAMERA)
+                                    try {
+                                        permissionLauncher.launch(Manifest.permission.CAMERA)
+                                    } catch (e: Exception) {
+                                        Log.e("StitchCamera", "Shutter permission launch error", e)
+                                    }
                                 } else if (!isCapturing) {
                                     isCapturing = true
                                     capturePhoto(
-                                        context = context,
+                                        context = cameraContext,
                                         imageCapture = imageCapture,
                                         executor = cameraExecutor,
                                         onSuccess = { path ->
@@ -641,24 +698,34 @@ private fun capturePhoto(
     onSuccess: (String) -> Unit,
     onError: () -> Unit
 ) {
-    val photoFile = File(
-        context.cacheDir,
-        "sachlabel_${SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())}.jpg"
-    )
-    val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
-    imageCapture?.takePicture(
-        outputOptions,
-        executor,
-        object : ImageCapture.OnImageSavedCallback {
-            override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                onSuccess(photoFile.absolutePath)
+    if (imageCapture == null) {
+        Log.w("StitchCamera", "ImageCapture is null, invoking onError")
+        onError()
+        return
+    }
+    try {
+        val photoFile = File(
+            context.cacheDir,
+            "sachlabel_${SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())}.jpg"
+        )
+        val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
+        imageCapture.takePicture(
+            outputOptions,
+            executor,
+            object : ImageCapture.OnImageSavedCallback {
+                override fun onImageSaved(output: ImageCapture.OutputFileResults) {
+                    onSuccess(photoFile.absolutePath)
+                }
+                override fun onError(exc: ImageCaptureException) {
+                    Log.e("StitchCamera", "Photo capture failed", exc)
+                    onError()
+                }
             }
-            override fun onError(exc: ImageCaptureException) {
-                Log.e("StitchCamera", "Photo capture failed", exc)
-                onError()
-            }
-        }
-    )
+        )
+    } catch (e: Exception) {
+        Log.e("StitchCamera", "Exception during takePicture", e)
+        onError()
+    }
 }
 
 /**
