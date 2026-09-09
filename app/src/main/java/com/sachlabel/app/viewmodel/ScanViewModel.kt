@@ -60,6 +60,18 @@ class ScanViewModel(application: Application) : AndroidViewModel(application) {
 
     var selectedLanguage: UserLanguage = UserLanguage.ENGLISH
 
+    init {
+        // Safely check for on-device local AI model in background
+        viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+            com.sachlabel.app.engine.ai.LocalAiEngine.initialize(application)
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        com.sachlabel.app.engine.ai.LocalAiEngine.unload()
+    }
+
     fun showSavedScan(item: com.sachlabel.app.data.repository.SavedScanItem) {
         val scan = ProductScan(
             id = item.id,
@@ -207,12 +219,16 @@ class ScanViewModel(application: Application) : AndroidViewModel(application) {
 
                 _uiState.value = ScanUiState.Processing(ProcessingStep.CHECKING_EVIDENCE)
 
-                // 5. Deterministic rule evaluation & zero synthetic evidence guardrail
+                // 5. Deterministic rule evaluation + LocalAiEngine (if unresolved) + EvidenceValidator
                 val result = if (bestClaim == null) {
                     RuleEngine.noClaimDetected()
                 } else {
-                    val rawResult = RuleEngine.check(bestClaim, label, selectedLanguage)
-                    EvidenceValidator.validate(rawResult, label.rawBackText)
+                    val aiOutcome = com.sachlabel.app.engine.ai.LocalAiEngine.process(
+                        claim = bestClaim,
+                        label = label,
+                        language = selectedLanguage
+                    )
+                    aiOutcome.claimResult
                 }
 
                 _uiState.value = ScanUiState.Processing(ProcessingStep.PREPARING_EXPLANATION)
