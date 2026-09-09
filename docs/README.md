@@ -1,39 +1,31 @@
-# SachLabel — Doc Index (IQL Hackathon)
+# SachLabel — Documentation Index
 
-Read in this order:
+SachLabel is an AI-assisted packaging intelligence app that audits a food product's own words against itself.
 
-1. **PRD.md** — what we're building and why, MVP scope, non-goals, risks.
-2. **plan.txt** — every user flow, screen by screen, including edge cases.
-3. **design.md** — visual language, screen specs, accessibility checklist.
-4. **system_design.txt** — the AI pipeline, components, sequence flow, NFRs.
-5. **architecture.md** — actual tech stack, API contracts, data models,
-   build-order recommendation.
-6. **PROMPT_TEMPLATES.md** — ready-to-use Claude prompts for each pipeline
-   stage (vision extraction, claim detection, conflict reasoning,
-   personalization note).
-7. **CLAIM_RULES.md** — the deterministic rule-engine pattern library
-   (check this before reaching for an LLM call).
-8. **DEMO_SCRIPT.md** — the judge-facing pitch/demo walkthrough.
+---
 
-## One-line pitch
+## Authoritative Documentation Guide
 
-> We don't score how healthy a product is. We check whether what's printed
-> on the front of the pack actually matches what's printed on the back —
-> and show you the exact words that prove it, in your own language.
+1. **[architecture.md](architecture.md)** — Core multimodal pipeline, component architecture, data flow, tech stack, and safety constraints.
+2. **[claims-taxonomy.md](claims-taxonomy.md)** — The closed 8 canonical v1 claim categories, trigger definitions, and verification targets.
+3. **[CLAIM_RULES.md](CLAIM_RULES.md)** — Deterministic pattern library and statutory FSSAI verification check functions.
+4. **[PRD.md](PRD.md)** — Product requirements, problem statement, user personas, and explicit non-goals.
+5. **[PROMPT_TEMPLATES.md](PROMPT_TEMPLATES.md)** — On-device prompt construction for `LocalAiEngine` and targeted evidence filtering.
+6. **[design.md](design.md)** — Evidence-first visual language, Stitch design tokens, and UI layout specifications.
+7. **[DEMO_SCRIPT.md](DEMO_SCRIPT.md)** — Judge-facing pitch, live packaging demonstration flow, and QA objection handling.
+8. **[qa-checklist.md](qa-checklist.md)** — Physical-package testing checklist, edge case handling, and device validation steps.
 
-## Fastest path to a working demo (see architecture.md §6 for detail)
+---
 
-1. Hardcode/mock OCR output for 3-5 real, pre-tested products.
-2. Build the rule engine (CLAIM_RULES.md) against that mock data.
-3. Build the Result screen UI (design.md §3.5) against the rule engine's
-   output — this is what judges look at longest.
-4. Swap mock OCR for real vision/OCR calls (PROMPT_TEMPLATES.md).
-5. Add translation + TTS for 1-2 languages.
-6. Add personalization layer last, only if time remains.
+## Core Product North Star
 
-## Non-negotiable guardrail (repeated across every doc, on purpose)
+> SachLabel does **not** score how healthy a product is. We check whether what's printed on the front of the pack actually matches what's printed on the back — and show you the exact words that prove it, in your own language.
 
-Every verdict shown to a user must cite an exact quoted snippet that
-actually exists in the OCR text. Never show a verdict the system can't
-point to evidence for — show "Not enough evidence" instead. This is the
-product's entire credibility.
+---
+
+## Non-Negotiable Engineering Principles
+
+1. **Evidence-First Guarantee**: Every verdict must cite an exact verbatim quotation from the raw OCR text or declare `Evidence.absent()`. The system never invents synthetic quotes.
+2. **Deterministic Supremacy**: `RuleEngine` is the primary source of truth. Local AI (`LocalAiEngine`) is optional, constrained, and cannot override deterministic verdicts.
+3. **Closed Canonical Taxonomy**: v1 supports exactly the 8 canonical categories defined in `CanonicalClaimCategory.kt`.
+4. **Offline-First Execution**: The core pipeline runs completely on-device without network calls.

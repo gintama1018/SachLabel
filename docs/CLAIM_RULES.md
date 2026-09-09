@@ -1,143 +1,155 @@
-# Claim Rules — Deterministic Pattern Library
+# Claim Rules — Deterministic Pattern Library (v1 Canonical)
 
-Check these BEFORE calling an LLM (see system_design.txt §2.7 and
-PROMPT_TEMPLATES.md stage 4/5 note). Cheaper, faster, more trustworthy for
-a demo. Each rule: trigger condition -> verdict -> what to cite.
+This document defines the deterministic rule engine checks executed in `com.sachlabel.app.engine.RuleEngine`.
+These deterministic checks are evaluated **BEFORE** any optional local AI call (architecture §3.4 / §3.5).
 
-Format per rule:
+### Canonical Rule Structure
+Every rule defines:
+- **CLAIM PATTERN**: Front-of-pack phrases matched by `com.sachlabel.app.engine.ClaimMatcher`
+- **CHECK AGAINST**: Structured label fields inspected (`ingredients`, `nutritionTable`, `finePrint`)
+- **TRIGGER**: Deterministic condition evaluated
+- **VERDICT**: `CONSISTENT`, `NEEDS_CONTEXT`, `MISLEADING`, or `NOT_ENOUGH_EVIDENCE`
+- **CITE**: Verbatim quote from raw OCR text, or `Evidence.absent()` if missing
+
+---
+
+### Rule 1 — "No Added Sugar" (`no_added_sugar`)
 ```
-CLAIM PATTERN   : phrases that match this rule
-CHECK AGAINST   : which structured field(s) to inspect
-TRIGGER         : condition that fires the rule
-VERDICT         : resulting badge
-CITE            : what to quote back to the user
+CLAIM PATTERN   : "no added sugar", "without added sugar", "zero added sugar", "बिना चीनी"
+CHECK AGAINST   : ingredients[], nutritionTable["sugars_g"], finePrint[]
+TRIGGER         : 
+  - CONTEXT: Ingredients contain added sugar syrups / alternate-name sugars
+    [glucose syrup, high-fructose corn syrup, dextrose, maltodextrin, fructose,
+     honey, molasses, fruit juice concentrate, corn syrup, maltose, invert sugar,
+     invert syrup, agave, rice syrup]
+  - CONTEXT: nutritionTable["sugars_g"] > 0.5g with elevated sugars line
+  - NOT ENOUGH EVIDENCE: Ingredients and nutrition table both unreadable
+  - CONSISTENT: No added sugar ingredients and sugar values clean
+VERDICT         : NEEDS_CONTEXT / CONSISTENT / NOT_ENOUGH_EVIDENCE
+CITE            : Matched ingredient quote OR exact nutrition raw sugar line
+NOTE            : Distinct from "Sugar-Free" (Rule 3). "No added sugar" allows
+                  naturally occurring sugars from milk/fruit, but warrants context
+                  when alternate-name sugar syrups or concentrates are present.
 ```
 
 ---
 
-### Rule 1 — "No Added Sugar" / "Sugar Free" / "Zero Sugar"
+### Rule 2 — "100% Natural" / "100% Pure" (`100_percent_natural`)
 ```
-CLAIM PATTERN   : "no added sugar", "sugar free", "zero sugar", "0% sugar"
-CHECK AGAINST   : nutrition_table.sugars_g, ingredients[]
-TRIGGER         : sugars_g > 0.5  OR  ingredients contains any of
-                  [glucose syrup, fructose, maltodextrin, honey, molasses,
-                   fruit juice concentrate, corn syrup, dextrose]
-VERDICT         : NEEDS_CONTEXT
-CITE            : the matched ingredient term + the sugars_g figure
-NOTE            : "no added sugar" can be literally true (no sugar added
-                  during processing) while the product still contains
-                  naturally-occurring or alternate-name sugars — explain
-                  this distinction in plain language, don't call it an
-                  outright lie.
-```
-
-### Rule 2 — "100% <Adjective>" (Pure / Natural / Organic)
-```
-CLAIM PATTERN   : "100% pure", "100% natural", "100% organic"
-CHECK AGAINST   : fine_print[]
-TRIGGER         : fine_print contains qualifier language, e.g.
-                  "quality mark", "not a claim as to composition",
-                  "does not imply", "refers only to"
-VERDICT         : NEEDS_CONTEXT (or MISLEADING if ingredients[] directly
-                  contradicts, e.g. "100% natural" + a synthetic
-                  preservative/color listed by E-number)
-CITE            : the exact fine-print qualifier sentence
+CLAIM PATTERN   : "100% natural", "100% pure", "all natural", "100% प्राकृतिक", "शुद्ध"
+CHECK AGAINST   : ingredients[], finePrint[]
+TRIGGER         :
+  - MISLEADING: Ingredients contain synthetic / chemical additives:
+    [artificial flavor, artificial flavour, artificial color, artificial colour,
+     synthetic, nature identical, INS 200–299 preservatives]
+  - NEEDS_CONTEXT: finePrint contains qualifier language:
+    ["quality mark", "trademark only", "does not imply", "refers only to"]
+  - CONSISTENT: No synthetic additives and no qualifying disclaimer found
+VERDICT         : MISLEADING / NEEDS_CONTEXT / CONSISTENT
+CITE            : Exact synthetic ingredient OR exact fine-print disclaimer sentence
 ```
 
-### Rule 3 — "Immunity Booster" / "Boosts Immunity"
+---
+
+### Rule 3 — "Sugar-Free" / "Zero Sugar" (`sugar_free`)
 ```
-CLAIM PATTERN   : "immunity booster", "boosts immunity", "strengthens
-                  immunity"
-CHECK AGAINST   : fine_print[], ingredients[]
-TRIGGER         : fine_print contains a disclaimer, e.g. "this statement
-                  has not been evaluated", "does not diagnose, treat,
-                  cure" -- OR no supporting active ingredient (e.g.
-                  vitamin C, zinc) is listed at all
-VERDICT         : NEEDS_CONTEXT
-CITE            : disclaimer sentence if present; otherwise note the
-                  absence of a specific supporting ingredient
+CLAIM PATTERN   : "sugar free", "sugar-free", "zero sugar", "0% sugar", "शुगर फ्री", "चीनी रहित"
+CHECK AGAINST   : nutritionTable["sugars_g"], ingredients[]
+TRIGGER         :
+  - MISLEADING: nutritionTable total sugars > 0.5g per 100g/serving
+  - NEEDS_CONTEXT: Sugars <= 0.5g, but non-nutritive / artificial sweeteners present
+    [sucralose, aspartame, acesulfame potassium, acesulfame k, stevia, steviol,
+     maltitol, sorbitol, erythritol, xylitol, ins 950, ins 951, ins 955, ins 960]
+  - CONSISTENT: Total sugars <= 0.5g/100g with no disclaimer flags
+VERDICT         : MISLEADING / NEEDS_CONTEXT / CONSISTENT
+CITE            : Exact nutrition raw sugar line OR matched sweetener ingredient
+NOTE            : Distinct from "No Added Sugar" (Rule 1). Sugar-free evaluates
+                  total sugar concentration against the statutory 0.5g/100g threshold.
 ```
 
-### Rule 4 — "Dermatologically Tested" / "Clinically Proven"
-```
-CLAIM PATTERN   : "dermatologically tested", "clinically proven",
-                  "clinically tested"
-CHECK AGAINST   : fine_print[]
-TRIGGER         : fine_print does not specify what was tested, sample
-                  size, or references a specific study -- OR explicitly
-                  states "results may vary" / "individual results"
-VERDICT         : NEEDS_CONTEXT
-CITE            : whatever fine print exists about the testing claim; if
-                  none exists at all, cite the absence explicitly and use
-                  NOT_ENOUGH_EVIDENCE instead
-```
+---
 
-### Rule 5 — "Gluten Free"
+### Rule 4 — "No Preservatives" (`no_preservatives`)
 ```
-CLAIM PATTERN   : "gluten free"
-CHECK AGAINST   : ingredients[], fine_print[]
-TRIGGER         : ingredients contains wheat/barley/rye/malt -- OR
-                  fine_print contains "may contain traces of gluten" /
-                  "produced in a facility that also processes wheat"
-VERDICT         : MISLEADING if a gluten-containing ingredient is
-                  directly listed; NEEDS_CONTEXT if only a trace/
-                  cross-contamination disclaimer is present
-CITE            : the specific ingredient or disclaimer sentence
-```
-
-### Rule 6 — "Low Fat" / "Fat Free"
-```
-CLAIM PATTERN   : "low fat", "fat free", "0% fat"
-CHECK AGAINST   : nutrition_table.total_fat_g, nutrition_table.sugars_g
-TRIGGER         : total_fat_g is genuinely low/zero (claim likely
-                  CONSISTENT) BUT sugars_g or sodium_mg is unusually high
-VERDICT         : NEEDS_CONTEXT — not because the fat claim is false, but
-                  to surface the common "low fat, high sugar" trade-off
-CITE            : the fat figure (supports the claim) AND the sugar/sodium
-                  figure (the added context)
-```
-
-### Rule 7 — "No Preservatives" / "No Artificial Colors"
-```
-CLAIM PATTERN   : "no preservatives", "no artificial colors/colours",
-                  "no artificial flavors/flavours"
+CLAIM PATTERN   : "no preservatives", "preservative free", "zero preservatives", "बिना प्रिजर्वेटिव"
 CHECK AGAINST   : ingredients[]
-TRIGGER         : ingredients contains an E-number or named preservative/
-                  synthetic color/flavor compound (e.g. sodium benzoate,
-                  potassium sorbate, tartrazine, sunset yellow)
-VERDICT         : MISLEADING
-CITE            : the specific listed ingredient that contradicts the
-                  claim
-```
-
-### Default Rule — No Pattern Match
-```
-TRIGGER         : claim doesn't match any rule above
-ACTION          : route to LLM reasoning (PROMPT_TEMPLATES.md stage 4/5)
-                  with all available evidence fields
-VERDICT         : whatever the LLM returns, subject to the backend
-                  evidence-quote validation guardrail
-```
-
-### Default Rule — No Evidence Found At All
-```
-TRIGGER         : claim detected, but no ingredient/nutrition/fine-print
-                  field has any plausibly related content (checked by
-                  keyword/semantic search returning zero candidates)
-VERDICT         : NOT_ENOUGH_EVIDENCE
-ACTION          : do NOT call the LLM for a verdict in this case — there
-                  is nothing to reason over; show the "limited check"
-                  state directly (see plan.txt Flow 6b/6d)
+TRIGGER         :
+  - MISLEADING: Ingredients contain recognized preservative keywords or INS codes:
+    [sodium benzoate, potassium sorbate, sodium metabisulphite, potassium metabisulphite,
+     sorbic acid, benzoic acid, sulphur dioxide, calcium propionate, INS 211, INS 202,
+     INS 224, INS 200, INS 220, INS 282, class ii preservative, preservative]
+  - CONSISTENT: No preservative keywords or INS 200-series codes detected
+VERDICT         : MISLEADING / CONSISTENT
+CITE            : Exact matched preservative ingredient text
 ```
 
 ---
 
-## Adding new rules later (v2/v3/v4 expansion)
+### Rule 5 — "Organic" / "Certified Organic" (`organic`)
+```
+CLAIM PATTERN   : "organic", "certified organic", "100% organic", "jaivik bharat", "जैविक"
+CHECK AGAINST   : rawBackText, finePrint[]
+TRIGGER         :
+  - CONSISTENT: OCR text confirms recognized certification keyword or mark:
+    ["jaivik bharat", "npop", "pgs-india", "usda organic", "certified organic by",
+     "np-op", "organic certification", "certification no", "lic no"]
+  - NEEDS_CONTEXT: Front claims organic but no recognized certification mark
+    or license number appears in back text
+VERDICT         : CONSISTENT / NEEDS_CONTEXT
+CITE            : Certification text snippet when present; Evidence.absent() when unverified
+```
 
-Each new product category (personal-care, supplements, OTC/medicine) will
-need its own small rule set following this same template:
-`CLAIM PATTERN -> CHECK AGAINST -> TRIGGER -> VERDICT -> CITE`.
-Keep rules additive in a config/data file rather than branching logic, so
-the rule engine stays a flat, auditable list — this also makes it easy to
-show judges "here's literally every check we run" if asked how the system
-avoids just being an opaque LLM guess.
+---
+
+### Rule 6 — "High Protein" (`high_protein`)
+```
+CLAIM PATTERN   : "high protein", "protein rich", "rich in protein", "हाई प्रोटीन"
+CHECK AGAINST   : nutritionTable["protein_g"], ingredients[]
+TRIGGER         :
+  - CONSISTENT: nutritionTable protein >= 12.0g per 100g (statutory high-protein threshold)
+  - NEEDS_CONTEXT: Protein is between 6.0g and 11.9g per 100g ("source of protein", but
+    not strictly "high protein")
+  - MISLEADING: Protein is below 6.0g per 100g
+VERDICT         : CONSISTENT / NEEDS_CONTEXT / MISLEADING
+CITE            : Exact nutrition raw protein line
+```
+
+---
+
+### Rule 7 — "Zero Trans Fat" (`zero_trans_fat`)
+```
+CLAIM PATTERN   : "zero trans fat", "0g trans fat", "trans fat free", "शून्य ट्रांस फैट"
+CHECK AGAINST   : ingredients[], nutritionTable["trans_fat_g"]
+TRIGGER         :
+  - NEEDS_CONTEXT: Ingredients contain partially hydrogenated vegetable oil / vanaspati
+    (disclosing source of industrial trans fatty acids even if rounded to 0g on table)
+  - MISLEADING: nutritionTable discloses trans_fat_g > 0.2g per 100g
+  - CONSISTENT: Trans fat <= 0.2g/100g and no hydrogenated oils in ingredients
+VERDICT         : NEEDS_CONTEXT / MISLEADING / CONSISTENT
+CITE            : Matched partially hydrogenated oil ingredient OR raw trans fat nutrition line
+```
+
+---
+
+### Rule 8 — Vague Wellness Claims (`vague_wellness`)
+```
+CLAIM PATTERN   : "immunity booster", "boosts immunity", "detox", "energy booster", "रोग प्रतिरोधक"
+CHECK AGAINST   : finePrint[], ingredients[]
+TRIGGER         :
+  - NEEDS_CONTEXT (Disclaimer): finePrint notes qualifying legal disclaimer:
+    ["not been evaluated", "does not diagnose", "not intended to treat",
+     "results may vary", "individual results", "quality mark"]
+  - CONSISTENT: Ingredients disclose recognized active supporting nutrient:
+    [vitamin c, zinc, amla, tulsi, ashwagandha, curcumin, turmeric, echinacea, vitamin d]
+  - NEEDS_CONTEXT (Omission): No supporting active ingredient identifiable
+VERDICT         : NEEDS_CONTEXT / CONSISTENT / NOT_ENOUGH_EVIDENCE
+CITE            : Exact disclaimer quote OR supporting ingredient quote
+```
+
+---
+
+## Evidence-First Policy
+
+1. **Verbatim Quotation Requirement**: Every evidence quote MUST be an exact character-for-character substring of the scanned OCR text.
+2. **Zero Synthetic Quotations**: The engine will never invent a quote. When a statutory disclosure or certification is absent, `Evidence.absent()` is used.
+3. **Gatekeeper Validation**: All verdicts emitted by `RuleEngine` pass through `EvidenceValidator.validate(result, rawBackText)`. If an evidence quote cannot be matched to the raw OCR text, the quote is rejected and the verdict is downgraded to `NOT_ENOUGH_EVIDENCE`.

@@ -10,7 +10,7 @@ This document defines every user-facing flow for the v1 MVP. Each flow lists tri
 **Trigger:** App opened for the first time.
 
 1. Welcome screen — one-line product statement: *"We check if a product's claims match its own label."*
-2. Language selection screen — user picks their preferred language (Hindi, English, + 2–3 regional languages for MVP). This selection drives both on-screen text and TTS voice.
+2. Language selection screen — user picks their preferred language (English, Hindi, Marathi, Tamil, Telugu, Kannada, Bengali, Gujarati). This selection drives both on-screen text and TTS voice.
 3. Optional: 3-screen explainer (claim → contradiction → evidence) — skippable.
 4. Land on Home / Scan screen.
 
@@ -23,51 +23,57 @@ This document defines every user-facing flow for the v1 MVP. Each flow lists tri
 **Trigger:** User taps "Scan a product" from Home.
 
 1. **Capture front** — camera opens with an on-screen guide frame + hint text: *"Photograph the front of the pack."*
-2. User captures front photo → auto-advances (or manual "Next" if capture confidence is low).
+2. User captures front photo → auto-advances.
 3. **Capture back** — same camera UI, hint text: *"Now the back — ingredients or nutrition label."*
 4. User captures back photo.
-5. **Processing screen** — short, on-device processing indicator (this should be fast; if it isn't, show a determinate progress state, not a spinner with no feedback).
+5. **Processing screen** — on-device pipeline runs:
+   - ML Kit OCR (Latin + Devanagari) + geometry extraction
+   - Layout analysis & structured label segmentation
+   - Canonical claim matching (`ClaimMatcher`)
+   - Deterministic rule check (`RuleEngine`)
+   - Zero-synthetic evidence verification (`EvidenceValidator`)
+   - Optional local Gemma explanation (`LocalAiEngine`)
 6. **Result screen** — one of four states (see Flow 2–5 below).
 
 **Exit state:** Result screen shown.
 
 **Edge cases:**
-- Blurry/unreadable photo → prompt to retake before proceeding to processing (don't process garbage input silently).
-- No claim detected on front photo at all → route to Flow 5 (no claim found), not an error state — some products legitimately have no headline claim.
+- Blurry/unreadable photo → prompt to retake before proceeding to processing.
+- No claim detected on front photo at all → route to Flow 5 (`NOT_ENOUGH_EVIDENCE` / `NO_CLAIM_DETECTED`).
 
 ---
 
-## Flow 2 — Result: Contradiction Found
+## Flow 2 — Result: Contradiction Found (`MISMATCH`)
 
-1. Result header: **"⚠️ Claim needs context"** (not "Product is bad" — see design.md tone rules).
+1. Result header: **"⚠️ Claim needs context"** (audit finding, not an accusation).
 2. Front claim shown as captured text: *"100% Natural"*
-3. Back evidence shown as captured text (the exact qualifying/contradicting text).
+3. Back evidence shown as captured text (the exact qualifying/contradicting text verified by `EvidenceValidator`).
 4. Plain-language explanation: *"The front claim may create a broader impression than the detailed label supports."*
-5. "🔊 Listen" button — plays the explanation via TTS in the selected language.
+5. "🔊 Listen" button — plays the explanation via native Android TTS in the selected language.
 6. CTA: **"Want to check what this means for you?"** → Flow 6 (opt-in health context).
 7. Secondary action: "Scan another product."
 
 ---
 
-## Flow 3 — Result: Qualification Found
+## Flow 3 — Result: Qualification Found (`QUALIFIED`)
 
 Same layout as Flow 2, but framed as a narrower-than-implied claim rather than a direct contradiction (e.g., "no added sugar" claim is technically true but the product is naturally sugar-heavy). Explanation copy differs; UI structure is identical.
 
 ---
 
-## Flow 4 — Result: No Issue Found
+## Flow 4 — Result: No Issue Found (`VERIFIED`)
 
 1. Result header: **"✓ No contradiction found for this claim."**
 2. Front claim shown.
-3. One-line note on what was checked against (transparency, not just a green checkmark): *"Checked against ingredients and nutrition label — no conflicting information found."*
+3. One-line note on what was checked against: *"Checked against ingredients and nutrition label — no conflicting information found."*
 4. Still offers "🔊 Listen" and "Want to check what this means for you?" — the opt-in health layer is available regardless of whether a contradiction was found.
 
 ---
 
-## Flow 5 — Result: No Claim Detected
+## Flow 5 — Result: Insufficient Evidence or No Claim Detected (`NOT_ENOUGH_EVIDENCE`)
 
-1. Result header: **"No prominent claim detected on this product."**
-2. Short explanation: this product doesn't carry one of the claim types this version checks for (link to "What we check for" — the v1 taxonomy list from PRD §7.3).
+1. Result header: **"No prominent claim detected or unverified evidence."**
+2. Short explanation: this product doesn't carry one of the 8 canonical claim types this version checks for, or package fine print was unreadable.
 3. CTA: "Scan another product."
 
 *(This is a legitimate, expected outcome — not an error. Framing it as a limitation of the product's checklist, not a failure, matters for user trust.)*

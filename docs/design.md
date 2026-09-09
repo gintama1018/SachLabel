@@ -15,10 +15,10 @@ Avoid a traffic-light health-score palette (that's Yuka's visual language, and a
 
 | State | Color | Icon | Rationale |
 |---|---|---|---|
-| Contradiction found | Amber/warm orange | ⚠️ | "Pay attention," not "danger" |
-| Qualification found | Muted amber | ℹ️ | Softer than contradiction |
-| No issue found | Neutral green-gray | ✓ | Calm confirmation, not celebratory |
-| No claim detected | Neutral gray | — | Informational, not a result |
+| Contradiction found (`MISMATCH`) | Amber/warm orange | ⚠️ | "Pay attention," not "danger" |
+| Qualification found (`QUALIFIED`) | Muted amber | ℹ️ | Softer than contradiction |
+| No issue found (`VERIFIED`) | Neutral green-gray | ✓ | Calm confirmation, not celebratory |
+| Insufficient evidence (`NOT_ENOUGH_EVIDENCE`) | Neutral gray | — | Informational, not a result |
 
 Avoid red/green binary — it reads as a health verdict, which this product is not making.
 
@@ -28,6 +28,7 @@ Avoid red/green binary — it reads as a health verdict, which this product is n
 
 ### 2.3 Evidence display
 - Quoted package text shown in a distinct visual treatment (e.g., monospace or quote-block styling) so it's clearly "what the package says" vs. "what we're telling you."
+- Zero synthetic evidence: Every quote must be validated by `EvidenceValidator` against OCR source text. If text is missing, show absence state, not a synthetic quotation.
 
 ## 3. Screen-by-Screen Notes
 
@@ -48,11 +49,12 @@ Avoid red/green binary — it reads as a health verdict, which this product is n
 
 **Opt-in health context screen**
 - Preset chips (diabetic, high BP, gluten-free, allergy types) alongside free text — reduces typing for the exact users least likely to want to type.
-- Disclaimer text is not dismissible/collapsible — it renders every time, same weight as the result itself.
+- Disclaimer text is not dismissible/collapsible — it renders every time, same weight as the result itself:
+  *"This ingredient may be relevant to the concern you mentioned. This is informational, not a medical determination."*
 
 ## 4. Tone of Voice — Explanation Copy Rules
 
-1. Always attribute to the package, not to Claude/the app's own judgment: *"the package's own fine print"* not *"we think this is misleading."*
+1. Always attribute to the package, not to the AI or the app's own judgment: *"the package's own fine print"* not *"we think this is misleading."*
 2. Hedge appropriately: *"may create a broader impression than..."* not *"this is false."*
 3. Never use the words "lie," "scam," "fraud," or similar — legally and tonally, this product audits information gaps, not intent.
 4. Health-context responses always end with the fixed disclaimer sentence — do not vary or soften it away over iterations.

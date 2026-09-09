@@ -1,20 +1,36 @@
-# Claim Taxonomy — v1 Rule Engine Spec
+# Claim Taxonomy — v1 Canonical Specification
 
-Each row is one detectable claim pattern. This table is the actual spec to build the rule engine's check functions from — one function per row. Keep this list closed for v1; adding a row requires legal/factual verification of the check logic, not just an engineering change.
+This document defines the closed set of **8 canonical v1 claim categories** recognized by SachLabel.
+Single source of truth implemented in `com.sachlabel.app.data.model.CanonicalClaimCategory`.
 
-| # | Claim (front, matched fuzzily) | Check logic (against back label) | Result if triggered | Cited fields |
-|---|---|---|---|---|
-| 1 | "No Added Sugar" | Nutrition table sugar value > 0g per serving above naturally-occurring baseline, OR ingredients contain added-sugar keywords (glucose syrup, high-fructose corn syrup, dextrose, maltose added separately from whole-food source) | Qualification | Front claim text + nutrition sugar line / ingredient keyword |
-| 2 | "100% Natural" / "100% Pure" | Ingredients contain synthetic/artificial-flagged keyword (artificial flavor, artificial color, preservative INS code list) OR disclaimer text contains qualifying language ("quality mark," "does not guarantee," "as per company standard") | Contradiction | Front claim text + matched ingredient or disclaimer text |
-| 3 | "Sugar-Free" | Nutrition table sugar value > regulatory threshold for "sugar-free" labeling (verify exact threshold per applicable food regulation before shipping this check) | Contradiction | Front claim text + nutrition sugar line |
-| 4 | "No Preservatives" | Ingredients contain preservative-class keyword or INS code (INS 200–299 range, common preservative codes) | Contradiction | Front claim text + matched ingredient |
-| 5 | "Organic" | No recognized organic certification mark/number detected in OCR text | Qualification (flag as unverified, not false) | Front claim text + absence note |
-| 6 | "High Protein" | Nutrition table protein-per-serving below the claim's implied threshold (verify applicable regulatory threshold before shipping) | Qualification | Front claim text + nutrition protein line |
-| 7 | "Zero Trans Fat" | Ingredients contain "partially hydrogenated oil" (a source of trans fat even when the nutrition table rounds down to 0g per serving under labeling rules) | Qualification | Front claim text + matched ingredient |
-| 8 | Vague wellness claims ("Immunity Booster," "Detox," etc.) | No ingredient with a commonly recognized supporting property detected | Qualification (flag as unsubstantiated by visible ingredients, not false) | Front claim text + note on absence of supporting ingredient |
+---
 
-## Build notes
-- **Fuzzy matching, not exact string match** — OCR output will have noise (misread characters, line breaks mid-phrase). Use a similarity threshold, not exact equality, when matching claim text.
-- **Rows 3 and 6 need a verified regulatory threshold before shipping** — don't hardcode a guessed number; confirm the applicable food-labeling standard's actual threshold, or soften the check to a qualification-only flag if you can't verify it in time.
-- **Every row must produce a cited-text output** — no row should be able to trigger a result without also returning the exact source text that caused it (this is a hard architectural requirement, not a nice-to-have — see design.md, evidence-first principle).
-- **This list is user-visible.** Ship a simple in-app "What we check for" screen listing these 8 patterns in plain language — this is what keeps the product's own claims honest.
+## Canonical Categories Table
+
+| # | Canonical Key (`id`) | User-Facing Display Name | Core Verification Target | Result Types | Source Fields Cited |
+|---|---|---|---|---|---|
+| **1** | `no_added_sugar` | **No Added Sugar** | Inspects ingredients for alternate-name sugar syrups (glucose syrup, maltodextrin, invert sugar, concentrates) and checks nutrition table sugar values. | `NEEDS_CONTEXT` / `CONSISTENT` | Ingredient name or raw sugar declaration line |
+| **2** | `100_percent_natural` | **100% Natural / Pure** | Inspects ingredients for synthetic/artificial additives, colorings, flavorings, and fine print for qualifying trademark/disclaimer language. | `MISLEADING` / `NEEDS_CONTEXT` / `CONSISTENT` | Matched synthetic ingredient or disclaimer sentence |
+| **3** | `sugar_free` | **Sugar-Free / Zero Sugar** | Checks total sugars per 100g against the 0.5g/100g regulatory threshold; checks for non-nutritive artificial sweeteners (sucralose, aspartame, polyols). | `MISLEADING` / `NEEDS_CONTEXT` / `CONSISTENT` | Raw sugar declaration line or matched sweetener |
+| **4** | `no_preservatives` | **No Preservatives** | Checks ingredient declarations for Class II chemical preservatives (sodium benzoate, sorbates, sulfites, INS 200–299). | `MISLEADING` / `CONSISTENT` | Matched preservative ingredient |
+| **5** | `organic` | **Organic / Certified Organic** | Inspects back text for recognized certification marks or license numbers (Jaivik Bharat, NPOP, USDA Organic). | `CONSISTENT` / `NEEDS_CONTEXT` | Certification mark quote or `Evidence.absent()` |
+| **6** | `high_protein` | **High Protein** | Evaluates nutrition table protein declaration against statutory high-protein threshold (>= 12g/100g). | `CONSISTENT` / `NEEDS_CONTEXT` / `MISLEADING` | Raw protein declaration line |
+| **7** | `zero_trans_fat` | **Zero Trans Fat** | Checks ingredients for partially hydrogenated vegetable oil / vanaspati and checks nutrition table trans fat value (<= 0.2g/100g). | `NEEDS_CONTEXT` / `MISLEADING` / `CONSISTENT` | Matched hydrogenated oil or trans fat line |
+| **8** | `vague_wellness` | **Vague Wellness Claims** | Inspects fine print for legal disclaimers and checks ingredients for recognized active supporting nutrients (vitamin C, zinc, turmeric). | `NEEDS_CONTEXT` / `CONSISTENT` / `NOT_ENOUGH_EVIDENCE` | Disclaimer quote or supporting ingredient |
+
+---
+
+## Critical Taxonomy Rules
+
+1. **"No Added Sugar" vs "Sugar-Free" Separation**:
+   - `no_added_sugar` checks whether sugars or sugar syrups were added during manufacturing (naturally occurring sugars from milk or fruit may remain).
+   - `sugar_free` checks total sugar content against the statutory 0.5g/100g threshold and flags replacement artificial sweeteners.
+   - These are distinct regulatory definitions and are evaluated by separate rule functions.
+
+2. **Strictly Closed Scope in v1**:
+   - Prototype categories such as `gluten_free`, `low_fat`, `whole_wheat_atta`, `dermatologically_tested`, or `no_artificial_colors` are **retired from the v1 canonical registry**.
+   - If a product carries a claim outside these 8 categories, SachLabel emits `Verdict.NO_CLAIM_DETECTED` with a clear explanation rather than making unsupported guesses.
+
+3. **Zero Synthetic Quotations**:
+   - Absence of evidence is flagged using `Evidence.absent()`. The system never invents fake quotations such as *"No preservatives detected."*
+   - All citations must pass `EvidenceValidator` against the raw OCR text.

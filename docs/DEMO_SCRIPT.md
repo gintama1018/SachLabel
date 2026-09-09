@@ -1,104 +1,63 @@
-# Demo Script — SachLabel (for judges)
+# Demo Script — SachLabel (for Judges)
 
-Target: ~60-90 seconds core demo + 30-60 seconds framing/close. Rehearse
-with the exact physical products you'll bring — don't improvise product
-choice live.
+Target: ~60–90 seconds core demo + 30–45 seconds framing.
+Rehearse with the exact physical packaged product you bring to the table.
 
 ---
 
-## 0. Pre-demo checklist (do this before you're called up)
+## 0. Pre-Demo Checklist
 
-- [ ] 3-5 real products pre-tested end-to-end, at least 1 with a strong,
-      visually obvious "gotcha" (front claim vs. fine print).
-- [ ] Phone/device charged, app open to Home screen already (skip
-      onboarding live).
-- [ ] Lighting at the demo table checked — glare on packaging kills OCR.
-- [ ] Backup: screen recording of a successful run, in case live demo
-      fails (network, lighting, etc.) — never let a live-demo failure be
-      the last thing judges see.
+- [ ] 1–2 real physical food packages tested end-to-end (e.g. Real Fruit Juice or a Protein Bar).
+- [ ] Phone charged, app open to Home screen.
+- [ ] Good ambient lighting or CameraX flash toggle verified to avoid excessive glare.
+- [ ] Pre-packaged Offline Mock Scenario available as backup in case of adverse table lighting.
 
-## 1. Opening line (5-10 seconds)
+---
 
-> "Every packaged product makes a promise on the front. We built something
-> that checks that promise against what the product's own back label
-> actually says — and shows you the exact words that prove it."
+## 1. The Opening Hook (10 seconds)
 
-Do NOT open with "we built a health app" — that undersells the
-differentiation and invites the "another health app" reaction.
+> "Every packaged food product makes a promise on the front. We built SachLabel to audit that promise directly against what the product's own back label actually declares — and show the exact verbatim words that prove it, in the consumer's own language."
 
-## 2. The core demo (60-90 seconds)
+---
 
-1. Hold up the pre-tested product. Point at the front claim out loud:
-   *"This says '100% Pure.'"*
-2. Scan front -> scan back (or gallery-picker fallback if lighting is
-   unpredictable).
-3. While processing, narrate once, briefly: *"It's reading the front
-   claim, then the ingredients and fine print on the back."*
-4. Result appears -> point at the verdict badge first (NEEDS_CONTEXT /
-   MISLEADING), then tap "Show evidence."
-5. Read the quoted fine print out loud, then physically point to that
-   exact sentence on the real package in your hand.
-   *"That's not us guessing — that's their own fine print."*
-6. Tap the speaker icon -> play the regional-language audio for a few
-   seconds. *"And for someone who doesn't read English fine print
-   comfortably, they get this spoken back to them in their language."*
+## 2. Live Core Demonstration (60 seconds)
 
-## 3. One-line personalization beat (10-15 seconds, only if time allows)
+1. **Hold up the physical product** (e.g., a juice carton):
+   *"The front prominently claims 'No Added Sugar'."*
+2. **Capture Front Photo**:
+   Tap capture. Reticle aligns with the front face.
+3. **Capture Back Photo**:
+   Flip package and capture ingredients and nutritional table.
+4. **Narrate during on-device processing**:
+   *"The app runs on-device ML Kit OCR, segments ingredients and nutrition lines, and checks the claim against deterministic verification rules. EvidenceValidator ensures zero synthetic quotes, and our local Gemma engine assists with a plain-language explanation."*
+5. **Point to Verdict Badge & Evidence**:
+   Verdict displays `QUALIFIED` or `MISMATCH`.
+   *"Look at the evidence card. It cites the exact line from the back: 'Reconstituted Apple Juice Concentrate'. That is not an AI guess — that is the brand's own verbatim declaration verified by EvidenceValidator."*
+6. **Trigger Spoken Audio (TTS)**:
+   Tap the speaker icon. Listen to the 1-sentence plain-language explanation in Hindi (or chosen regional language).
+   *"For a shopper who cannot comfortably read dense English fine print in a supermarket aisle, this is explained aloud clearly in their preferred language."*
 
-> "If someone tells us they're managing diabetes, we add one extra note —
-> clearly separate from the core check, never a medical directive — just
-> 'this may be relevant to you.'"
+---
 
-Show the "For you" card briefly. Do not spend more than this on
-personalization — it's the secondary feature, not the headline.
+## 3. Optional Personalization Beat (10 seconds, if time permits)
 
-## 4. The close (15-20 seconds)
+> "If a user chooses to set a dietary preference like diabetes, SachLabel adds a secondary informational note: 'This ingredient may be relevant to the concern you mentioned. This is informational, not a medical determination.' We never give medical directives."
 
-> "The point isn't 'is this product healthy.' The point is: can a
-> consumer trust what's printed on the front, based on what the
-> manufacturer already printed on the back? Every flag we show is a
-> direct quote from their own package — nothing here is our opinion."
+---
 
-Optional, if there's time and the judges seem technical:
+## 4. Closing Line (15 seconds)
 
-> "Underneath, it's a rule engine first — deterministic checks for common
-> patterns like sugar claims and purity disclaimers — and we only call an
-> AI model for the genuinely ambiguous cases, and even then we verify its
-> quote actually exists in the label text before showing it. So it's not
-> a black box guessing at health scores."
+> "SachLabel does not calculate an arbitrary 0–100 health score. It does not guess. Every verdict is backed by an exact quote verified against the package in the shopper's hand."
 
-## 5. Anticipated judge questions (prepare short answers)
+---
 
-- **"How is this different from just reading the label yourself?"**
-  -> Most people don't read fine print at all; this surfaces the specific
-  contradiction in seconds and reads it aloud, which matters a lot for
-  low-literacy/regional-language users.
+## 5. Anticipated Judge Questions & Technical Answers
 
-- **"What if the AI gets it wrong?"**
-  -> Every verdict must cite an exact quote that we verify exists in the
-  scanned text server-side; if it can't find solid evidence, it says
-  "Not enough evidence" instead of guessing — walk through CLAIM_RULES.md
-  rule engine briefly if asked for depth.
-
+- **"How does this differ from barcode scanners like Yuka?"**
+  → Barcode scanners look up static cloud databases that fail on unlisted regional Indian products or recent reformulation updates. SachLabel reads the physical package directly using on-device computer vision.
+- **"What prevents AI hallucination?"**
+  → Architecture is deterministic first. `RuleEngine` verifies statutory criteria. An `EvidenceValidator` gatekeeper strictly requires that every cited evidence quote exists verbatim in the raw OCR text. If evidence cannot be verified, it outputs `NOT_ENOUGH_EVIDENCE`.
+- **"Is an internet connection required?"**
+  → No. The core pipeline (CameraX, ML Kit OCR, LayoutAnalyzer, LabelExtractor, ClaimMatcher, RuleEngine, EvidenceValidator, and Android TTS) executes 100% locally on-device.
 - **"Is this medical advice?"**
-  -> No — explicitly not. The core product is a claim-vs-label fact
-  check; personalization is a clearly separate, hedged, opt-in layer that
-  never gives a directive.
-
-- **"What's next after the hackathon?"**
-  -> Personal-care claims, then supplements, then (with much stricter
-  review) OTC/medicine labels — see PRD.md §10 for the phased roadmap.
-
-- **"Why regional language/TTS specifically?"**
-  -> The people most likely to miss a misleading fine-print claim are
-  often the same people least likely to comfortably read dense English
-  fine print — this isn't an add-on, it's core to who actually needs this
-  tool.
-
-## 6. Things to avoid saying
-
-- Don't say "health score" or "we rate products" — undermines the core
-  thesis.
-- Don't say "AI decides if it's good for you" — reframe as "AI checks
-  the package against itself."
-- Don't over-promise medical usefulness of the personalization layer.
+  → Absolutely not. SachLabel audits promotional claims against package facts. Health context is strictly informational.
