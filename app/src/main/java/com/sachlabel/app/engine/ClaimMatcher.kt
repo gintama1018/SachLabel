@@ -28,29 +28,35 @@ object ClaimMatcher {
         val candidateTokens = normalized.split(" ").filter { it.isNotBlank() }
         if (candidateTokens.isEmpty()) return null
 
+        var bestMatch: Claim? = null
+        var highestConfidence = 0f
+
         // Check canonical categories in order
         for (category in CanonicalClaimCategory.values()) {
             for (trigger in category.triggers) {
-                if (matchesTrigger(normalized, candidateTokens, trigger)) {
-                    return Claim(
+                val confidence = evaluateTriggerMatch(normalized, candidateTokens, trigger)
+                if (confidence > highestConfidence) {
+                    highestConfidence = confidence
+                    bestMatch = Claim(
                         rawText = trimmed,
                         patternKey = category.id,
-                        prominenceScore = prominenceScore
+                        prominenceScore = prominenceScore,
+                        matchConfidence = confidence
                     )
                 }
             }
         }
-        return null
+        return bestMatch
     }
 
     /**
      * Find the best claim from candidate front regions.
-     * Ranks matched claims by prominenceScore (bounding box size + position weight).
+     * Ranks matched claims by compositeScore (semantic match confidence + layout prominence).
      */
     fun findBestClaim(candidates: List<Pair<String, Float>>): Claim? {
         return candidates
             .mapNotNull { (text, score) -> match(text, score) }
-            .maxByOrNull { it.prominenceScore }
+            .maxByOrNull { it.compositeScore }
     }
 
     /**
@@ -62,31 +68,47 @@ object ClaimMatcher {
         normalizedCandidate: String,
         candidateTokens: List<String>,
         trigger: String
-    ): Boolean {
-        val normTrigger = normalize(trigger)
-        if (normTrigger.isBlank()) return false
+    ): Boolean = evaluateTriggerMatch(normalizedCandidate, candidateTokens, trigger) > 0f
 
-        // 1. Direct containment check
-        if (normalizedCandidate.contains(normTrigger)) return true
+    /**
+     * Evaluates trigger match confidence:
+     * 1.0f = exact match
+     * 0.95f = direct substring containment
+     * 0.85f = sliding window token fuzzy match
+     * 0.0f = no match
+     */
+    fun evaluateTriggerMatch(
+        normalizedCandidate: String,
+        candidateTokens: List<String>,
+        trigger: String
+    ): Float {
+        val normTrigger = normalize(trigger)
+        if (normTrigger.isBlank()) return 0f
+
+        // 1. Direct equality
+        if (normalizedCandidate == normTrigger) return 1.0f
+
+        // 2. Direct containment check
+        if (normalizedCandidate.contains(normTrigger)) return 0.95f
 
         val triggerTokens = normTrigger.split(" ").filter { it.isNotBlank() }
-        if (triggerTokens.isEmpty()) return false
+        if (triggerTokens.isEmpty()) return 0f
 
         val windowSize = triggerTokens.size
         if (candidateTokens.size < windowSize) {
             // If candidate has fewer words than trigger, test entire string similarity
-            return isTokenSequenceFuzzyMatch(candidateTokens, triggerTokens)
+            return if (isTokenSequenceFuzzyMatch(candidateTokens, triggerTokens)) 0.85f else 0f
         }
 
-        // 2. Sliding window across candidate tokens
+        // 3. Sliding window across candidate tokens
         for (i in 0..(candidateTokens.size - windowSize)) {
             val window = candidateTokens.subList(i, i + windowSize)
             if (isTokenSequenceFuzzyMatch(window, triggerTokens)) {
-                return true
+                return 0.85f
             }
         }
 
-        return false
+        return 0f
     }
 
     private fun isTokenSequenceFuzzyMatch(
@@ -119,11 +141,12 @@ object ClaimMatcher {
 
     /**
      * Normalize text for matching: lowercase, collapse whitespace, strip punctuation noise.
+     * Preserves Devanagari Unicode characters (\u0900-\u097F) for Hindi package text.
      */
     fun normalize(text: String): String =
         text.lowercase()
             .replace(Regex("[\\n\\r\\t]+"), " ")
-            .replace(Regex("[^a-z0-9% ]"), " ")
+            .replace(Regex("[^a-z0-9%\\u0900-\\u097F ]"), " ")
             .replace(Regex("\\s+"), " ")
             .trim()
 

@@ -378,9 +378,8 @@ private fun StitchCameraScreen(
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier.clickable {
-                            // Quick snap fallback for emulator / testing
-                            val mockFile = File(context.cacheDir, "mock_snap_${stepNumber}.jpg").apply { writeText("mock") }
-                            capturedPath = mockFile.absolutePath
+                            // Quick snap fallback for emulator / testing: creates a valid synthetic package bitmap
+                            capturedPath = createSyntheticDemoPackage(context, stepNumber)
                         }
                     ) {
                         Box(
@@ -557,4 +556,84 @@ private fun capturePhoto(
             }
         }
     )
+}
+
+/**
+ * Generates an actual valid JPEG bitmap with realistic packaging text so that
+ * emulator testing or quick demonstrations execute the 100% REAL CV and ML Kit OCR pipeline.
+ */
+private fun createSyntheticDemoPackage(context: Context, stepNumber: Int): String {
+    val file = File(context.cacheDir, "demo_package_step${stepNumber}.jpg")
+    val width = 800
+    val height = 1100
+    val bitmap = android.graphics.Bitmap.createBitmap(width, height, android.graphics.Bitmap.Config.ARGB_8888)
+    val canvas = android.graphics.Canvas(bitmap)
+
+    val bgPaint = android.graphics.Paint().apply {
+        color = if (stepNumber == 1) android.graphics.Color.rgb(248, 244, 232) else android.graphics.Color.WHITE
+    }
+    canvas.drawRect(0f, 0f, width.toFloat(), height.toFloat(), bgPaint)
+
+    val textPaint = android.graphics.Paint().apply {
+        isAntiAlias = true
+        color = android.graphics.Color.BLACK
+    }
+
+    if (stepNumber == 1) {
+        // Front packaging: Brand + Prominent Marketing Claim
+        textPaint.textSize = 34f
+        textPaint.isFakeBoldText = true
+        canvas.drawText("BRITANNIA NUTRICHOICE", 50f, 150f, textPaint)
+
+        textPaint.textSize = 52f
+        textPaint.color = android.graphics.Color.rgb(180, 30, 20)
+        canvas.drawText("NO ADDED SUGAR", 50f, 320f, textPaint)
+
+        textPaint.textSize = 28f
+        textPaint.color = android.graphics.Color.DKGRAY
+        textPaint.isFakeBoldText = false
+        canvas.drawText("100% Whole Wheat Flour Digestive Biscuits", 50f, 420f, textPaint)
+
+        textPaint.textSize = 22f
+        canvas.drawText("Net Weight: 200g | 100% Vegetarian", 50f, 950f, textPaint)
+    } else {
+        // Back packaging: Ingredients list + Nutrition Table + Statutory Declarations
+        textPaint.textSize = 26f
+        textPaint.isFakeBoldText = true
+        canvas.drawText("Ingredients:", 50f, 100f, textPaint)
+
+        textPaint.textSize = 20f
+        textPaint.isFakeBoldText = false
+        canvas.drawText("Whole Wheat Flour (Maida) (60%), Edible Vegetable Oil (Palm),", 50f, 150f, textPaint)
+        canvas.drawText("Maltodextrin, Invert Sugar Syrup, Raising Agents (INS 500ii),", 50f, 190f, textPaint)
+        canvas.drawText("Iodised Salt, Emulsifier (INS 322).", 50f, 230f, textPaint)
+
+        textPaint.textSize = 26f
+        textPaint.isFakeBoldText = true
+        canvas.drawText("Nutritional Information per 100g:", 50f, 330f, textPaint)
+
+        textPaint.textSize = 20f
+        textPaint.isFakeBoldText = false
+        canvas.drawText("Energy: 440 kcal", 70f, 380f, textPaint)
+        canvas.drawText("Protein: 8.0 g", 70f, 420f, textPaint)
+        canvas.drawText("Carbohydrates: 68.0 g", 70f, 460f, textPaint)
+        canvas.drawText("Total Sugars: 14.5 g", 70f, 500f, textPaint)
+        canvas.drawText("Added Sugars: 0.0 g", 70f, 540f, textPaint)
+        canvas.drawText("Total Fat: 16.0 g", 70f, 580f, textPaint)
+        canvas.drawText("Trans Fat: 0.0 g", 70f, 620f, textPaint)
+        canvas.drawText("Sodium: 310 mg", 70f, 660f, textPaint)
+
+        textPaint.textSize = 18f
+        canvas.drawText("FSSAI Lic. No.: 10015043001129", 50f, 750f, textPaint)
+        canvas.drawText("*Contains naturally occurring sugars from cereal ingredients.", 50f, 820f, textPaint)
+    }
+
+    try {
+        file.outputStream().use { out ->
+            bitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 92, out)
+        }
+    } finally {
+        bitmap.recycle()
+    }
+    return file.absolutePath
 }

@@ -173,12 +173,17 @@ class ScanViewModel(application: Application) : AndroidViewModel(application) {
 
     private fun processImages(frontPath: String, backPath: String) {
         viewModelScope.launch {
+            var frontBitmap: Bitmap? = null
+            var backBitmap: Bitmap? = null
+
             try {
                 val sessionId = UUID.randomUUID().toString()
 
                 _uiState.value = ScanUiState.Processing(ProcessingStep.READING_LABEL)
-                val frontBitmap = loadBitmap(frontPath)
-                val backBitmap = loadBitmap(backPath)
+
+                // 1. Load with EXIF orientation correction, safe downsampling, and conditional enhancement
+                frontBitmap = com.sachlabel.app.cv.ImagePreprocessor.loadAndPrepare(frontPath)
+                backBitmap = com.sachlabel.app.cv.ImagePreprocessor.loadAndPrepare(backPath)
 
                 if (frontBitmap == null || backBitmap == null) {
                     _uiState.value = ScanUiState.Error(
@@ -187,23 +192,22 @@ class ScanViewModel(application: Application) : AndroidViewModel(application) {
                     return@launch
                 }
 
-                // OCR both photos
+                // 2. Multi-script on-device OCR (Latin + Devanagari) with exact bounding boxes
                 val frontRegions = MlKitOcrProcessor.process(frontBitmap, useDevanagari = true)
                 val backRegions = MlKitOcrProcessor.process(backBitmap, useDevanagari = true)
 
                 _uiState.value = ScanUiState.Processing(ProcessingStep.FINDING_CLAIMS)
 
-                // Extract structured label from both sets of regions
+                // 3. Layout analysis & structured label extraction
+                val frontAnalysis = com.sachlabel.app.ocr.LayoutAnalyzer.analyzeFront(frontRegions)
                 val label = LabelExtractor.extract(frontRegions, backRegions)
 
-                // Find the best claim from front regions, using prominence (size + position + match)
-                val candidates = frontRegions.map { region ->
-                    Pair(region.text, region.prominenceScore)
-                }
-                val bestClaim = ClaimMatcher.findBestClaim(candidates)
+                // 4. Composite claim matching (semantic match confidence + layout prominence)
+                val bestClaim = ClaimMatcher.findBestClaim(frontAnalysis.candidateClaimsWithScores)
 
                 _uiState.value = ScanUiState.Processing(ProcessingStep.CHECKING_EVIDENCE)
 
+                // 5. Deterministic rule evaluation & zero synthetic evidence guardrail
                 val result = if (bestClaim == null) {
                     RuleEngine.noClaimDetected()
                 } else {
@@ -212,14 +216,15 @@ class ScanViewModel(application: Application) : AndroidViewModel(application) {
                 }
 
                 _uiState.value = ScanUiState.Processing(ProcessingStep.PREPARING_EXPLANATION)
-                delay(300)  // Let the last step message show briefly
+                delay(300)
 
                 val scan = ProductScan(
                     id = sessionId,
                     frontImagePath = frontPath,
                     backImagePath = backPath,
                     structuredLabel = label,
-                    result = result
+                    result = result,
+                    isMock = false
                 )
 
                 historyRepository.addScan(scan)
@@ -229,13 +234,13 @@ class ScanViewModel(application: Application) : AndroidViewModel(application) {
                 _uiState.value = ScanUiState.Error(
                     "We couldn't read this clearly. Try another photo."
                 )
+            } finally {
+                // Free memory
+                try {
+                    frontBitmap?.recycle()
+                    backBitmap?.recycle()
+                } catch (ignored: Throwable) {}
             }
         }
-    }
-
-    private fun loadBitmap(path: String): Bitmap? = try {
-        BitmapFactory.decodeFile(path)
-    } catch (e: Exception) {
-        null
     }
 }

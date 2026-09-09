@@ -58,31 +58,65 @@ object MlKitOcrProcessor {
         recognizer.process(image)
             .addOnSuccessListener { visionText ->
                 val regions = mutableListOf<OcrRegion>()
-                val imageHeight = image.height.coerceAtLeast(1)
+                val imgWidth = image.width.coerceAtLeast(1)
+                val imgHeight = image.height.coerceAtLeast(1)
 
                 for (block in visionText.textBlocks) {
-                    val bbox = block.boundingBox ?: continue
-                    val text = block.text.trim()
-                    if (text.isBlank()) continue
+                    val blockBox = block.boundingBox ?: continue
+                    val blockText = block.text.trim()
+                    if (blockText.isBlank()) continue
 
-                    val centerY = bbox.centerY()
-                    val location = estimateLocation(
-                        centerX = bbox.centerX(),
-                        centerY = centerY,
-                        imageWidth = image.width,
-                        imageHeight = imageHeight,
-                        isSmall = bbox.height() < imageHeight * 0.04
+                    val blockCenterY = blockBox.centerY()
+                    val blockLocation = estimateLocation(
+                        centerX = blockBox.centerX(),
+                        centerY = blockCenterY,
+                        imageWidth = imgWidth,
+                        imageHeight = imgHeight,
+                        isSmall = blockBox.height() < imgHeight * 0.04
                     )
 
+                    // 1. Add block-level region
                     regions.add(
                         OcrRegion(
-                            location = location,
-                            text = text,
-                            boundingHeight = bbox.height(),
-                            boundingWidth = bbox.width(),
-                            centerY = centerY
+                            location = blockLocation,
+                            text = blockText,
+                            boundingHeight = blockBox.height(),
+                            boundingWidth = blockBox.width(),
+                            centerY = blockCenterY,
+                            imageWidth = imgWidth,
+                            imageHeight = imgHeight,
+                            isLineLevel = false
                         )
                     )
+
+                    // 2. Add line-level regions for precise layout analysis & stacked claims
+                    for (line in block.lines) {
+                        val lineBox = line.boundingBox ?: continue
+                        val lineText = line.text.trim()
+                        if (lineText.isBlank() || lineText == blockText) continue
+
+                        val lineCenterY = lineBox.centerY()
+                        val lineLocation = estimateLocation(
+                            centerX = lineBox.centerX(),
+                            centerY = lineCenterY,
+                            imageWidth = imgWidth,
+                            imageHeight = imgHeight,
+                            isSmall = lineBox.height() < imgHeight * 0.03
+                        )
+
+                        regions.add(
+                            OcrRegion(
+                                location = lineLocation,
+                                text = lineText,
+                                boundingHeight = lineBox.height(),
+                                boundingWidth = lineBox.width(),
+                                centerY = lineCenterY,
+                                imageWidth = imgWidth,
+                                imageHeight = imgHeight,
+                                isLineLevel = true
+                            )
+                        )
+                    }
                 }
                 cont.resume(regions)
             }

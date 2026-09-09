@@ -1,7 +1,8 @@
 package com.sachlabel.app.data.model
 
 /**
- * The canonical v1 claim registry — the single source of truth for all detectable claims.
+ * The 8 canonical v1 claim categories — the single source of truth for all detectable claims.
+ * Rule logic is grounded in applicable food-labeling requirements.
  *
  * Sourced directly from docs/claims-taxonomy.md.
  * Strictly closed to these 8 categories in v1.
@@ -22,7 +23,11 @@ enum class CanonicalClaimCategory(
             "no added sugars",
             "without added sugar",
             "zero added sugar",
-            "no sugar added"
+            "no sugar added",
+            "बिना चीनी",
+            "बिना शर्करा",
+            "कोई चीनी नहीं",
+            "शर्करा मुक्त"
         ),
         checkDescription = "Checked against: ingredient list for added-sugar terms (glucose syrup, maltodextrin, dextrose, invert syrup, etc.) and nutrition table sugar values."
     ),
@@ -36,7 +41,11 @@ enum class CanonicalClaimCategory(
             "100 percent natural",
             "100 percent pure",
             "all natural",
-            "purely natural"
+            "purely natural",
+            "100% प्राकृतिक",
+            "100% शुद्ध",
+            "प्राकृतिक",
+            "शुद्ध"
         ),
         checkDescription = "Checked against: fine-print disclaimers and ingredient list for synthetic additives, artificial flavors, or chemical preservatives."
     ),
@@ -51,7 +60,12 @@ enum class CanonicalClaimCategory(
             "0% sugar",
             "0 sugar",
             "no sugar",
-            "sugarless"
+            "sugarless",
+            "शुगर फ्री",
+            "शुगर-फ्री",
+            "चीनी रहित",
+            "शून्य चीनी",
+            "0% चीनी"
         ),
         checkDescription = "Checked against: nutrition table total sugars per 100g (evaluates whether total sugars exceed the 0.5g/100g threshold for sugar-free claims)."
     ),
@@ -65,7 +79,11 @@ enum class CanonicalClaimCategory(
             "preservative-free",
             "without preservatives",
             "no artificial preservatives",
-            "zero preservatives"
+            "zero preservatives",
+            "बिना प्रिजर्वेटिव",
+            "प्रिजर्वेटिव मुक्त",
+            "परिरक्षक मुक्त",
+            "बिना परिरक्षक"
         ),
         checkDescription = "Checked against: ingredient list for chemical preservatives (sodium benzoate, potassium sorbate, sulfites, INS 200–299 codes)."
     ),
@@ -78,7 +96,10 @@ enum class CanonicalClaimCategory(
             "certified organic",
             "100% organic",
             "usda organic",
-            "jaivik bharat"
+            "jaivik bharat",
+            "जैविक",
+            "प्रमाणित जैविक",
+            "100% जैविक"
         ),
         checkDescription = "Checked for: presence of recognized organic certification mark or certificate number in label text."
     ),
@@ -92,7 +113,10 @@ enum class CanonicalClaimCategory(
             "rich in protein",
             "good source of protein",
             "excellent source of protein",
-            "protein packed"
+            "protein packed",
+            "हाई प्रोटीन",
+            "प्रोटीन से भरपूर",
+            "अधिक प्रोटीन"
         ),
         checkDescription = "Checked against: nutrition table protein content per 100g or per serving."
     ),
@@ -107,7 +131,9 @@ enum class CanonicalClaimCategory(
             "trans fat free",
             "no trans fat",
             "trans-fat free",
-            "0% trans fat"
+            "0% trans fat",
+            "शून्य ट्रांस फैट",
+            "ट्रांस फैट मुक्त"
         ),
         checkDescription = "Checked against: ingredient list for partially hydrogenated vegetable oils and nutrition table trans fat values."
     ),
@@ -124,7 +150,11 @@ enum class CanonicalClaimCategory(
             "antioxidant rich",
             "pure & wholesome",
             "energy booster",
-            "cleanses body"
+            "cleanses body",
+            "इम्युनिटी",
+            "रोग प्रतिरोधक",
+            "ऊर्जा वर्धक",
+            "डिटॉक्स"
         ),
         checkDescription = "Checked against: fine print disclaimers and ingredient list for supporting nutrients."
     );

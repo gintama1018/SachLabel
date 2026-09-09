@@ -163,4 +163,34 @@ class ClaimMatcherTest {
         val dist = ClaimMatcher.levenshtein("zero sugar", "zer0 sugar")
         assertTrue(dist <= 2)
     }
+
+    @Test
+    fun `bilingual Devanagari matching recognizes Hindi package claims`() {
+        val sugarResult = ClaimMatcher.match("बिना चीनी")
+        assertNotNull(sugarResult)
+        assertEquals("no_added_sugar", sugarResult!!.patternKey)
+
+        val naturalResult = ClaimMatcher.match("100% प्राकृतिक")
+        assertNotNull(naturalResult)
+        assertEquals(CanonicalClaimCategory.NATURAL_OR_PURE.id, naturalResult!!.patternKey)
+
+        val organicResult = ClaimMatcher.match("जैविक")
+        assertNotNull(organicResult)
+        assertEquals("organic", organicResult!!.patternKey)
+
+        val proteinResult = ClaimMatcher.match("हाई प्रोटीन")
+        assertNotNull(proteinResult)
+        assertEquals("high_protein", proteinResult!!.patternKey)
+    }
+
+    @Test
+    fun `composite scoring prioritizes strong semantic claim over irrelevant text`() {
+        val candidates = listOf(
+            Pair("MANGO FLAVOUR DELIGHT", 3000f), // Non-claim with high text area
+            Pair("100% Natural", 800f)           // Strong claim with lower layout area
+        )
+        val best = ClaimMatcher.findBestClaim(candidates)
+        assertNotNull(best)
+        assertEquals(CanonicalClaimCategory.NATURAL_OR_PURE.id, best!!.patternKey)
+    }
 }

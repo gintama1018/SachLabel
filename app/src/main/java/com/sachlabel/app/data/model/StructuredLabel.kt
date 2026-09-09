@@ -23,12 +23,16 @@ data class StructuredLabel(
     /** Fine-print / disclaimer sentences (small text, usually at edges/bottom). */
     val finePrint: List<String> = emptyList(),
 
+    /** Detected certification & statutory marks (e.g. "FSSAI Lic. No.: ...", "Jaivik Bharat detected"). */
+    val detectedCertifications: List<String> = emptyList(),
+
     /** Raw OCR text from the back label — kept for evidence validation. */
     val rawBackText: String = ""
 ) {
     companion object {
         /** Nutrition table keys (canonical) */
         const val KEY_SUGARS_G = "sugars_g"
+        const val KEY_ADDED_SUGARS_G = "added_sugars_g"
         const val KEY_TOTAL_FAT_G = "total_fat_g"
         const val KEY_PROTEIN_G = "protein_g"
         const val KEY_SODIUM_MG = "sodium_mg"
