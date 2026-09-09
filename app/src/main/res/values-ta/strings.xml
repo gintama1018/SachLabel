@@ -189,4 +189,10 @@
     <string name="lang_title">உங்கள் மொழியைத் தேர்ந்தெடுக்கவும்</string>
     <string name="lang_subtitle">अपनी भाषा चुनें  •  மொழியைத் தேர்ந்தெடுங்கள்  •  আপনার ভাষা বেছে নিন</string>
     <string name="lang_continue">தொடரவும்</string>
+
+    <!-- Camera Permission -->
+    <string name="camera_permission_required">கேமரா அணுகல் தேவை</string>
+    <string name="camera_permission_desc">பேக்கேஜிங்கை புகைப்படம் எடுத்து சரிபார்க்க SachLabel-க்கு கேமரா அனுமதி தேவை.</string>
+    <string name="camera_permission_grant">கேமரா அனுமதி வழங்கவும்</string>
+    <string name="camera_permission_settings">அமைப்புகளைத் திறக்கவும்</string>
 </resources>

@@ -189,4 +189,10 @@
     <string name="lang_title">Choose Your Language</string>
     <string name="lang_subtitle">अपनी भाषा चुनें  •  மொழியைத் தேர்ந்தெடுங்கள்  •  আপনার ভাষা বেছে নিন</string>
     <string name="lang_continue">Continue</string>
+
+    <!-- Camera Permission -->
+    <string name="camera_permission_required">Camera Access Required</string>
+    <string name="camera_permission_desc">SachLabel needs camera access to photograph packaging and audit claims against ingredients.</string>
+    <string name="camera_permission_grant">Grant Camera Permission</string>
+    <string name="camera_permission_settings">Open Settings</string>
 </resources>

@@ -189,4 +189,10 @@
     <string name="lang_title">अपनी भाषा चुनें</string>
     <string name="lang_subtitle">अपनी भाषा चुनें  •  மொழியைத் தேர்ந்தெடுங்கள்  •  আপনার ভাষা বেছে নিন</string>
     <string name="lang_continue">आगे बढ़ें</string>
+
+    <!-- Camera Permission -->
+    <string name="camera_permission_required">कैमरा अनुमति आवश्यक है</string>
+    <string name="camera_permission_desc">सचलेबल को पैकेजिंग की फोटो लेने और दावों की पुष्टि के लिए कैमरा एक्सेस की आवश्यकता है।</string>
+    <string name="camera_permission_grant">कैमरा अनुमति दें</string>
+    <string name="camera_permission_settings">सेटिंग्स खोलें</string>
 </resources>

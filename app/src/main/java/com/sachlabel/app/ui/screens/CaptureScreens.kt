@@ -1,7 +1,14 @@
 package com.sachlabel.app.ui.screens
 
+import android.Manifest
 import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.provider.Settings
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
@@ -99,6 +106,27 @@ private fun StitchCameraScreen(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
+    var hasCameraPermission by remember {
+        mutableStateOf(
+            ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+        )
+    }
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        hasCameraPermission = isGranted
+        if (!isGranted) {
+            Log.w("StitchCamera", "Camera permission denied by user")
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        if (!hasCameraPermission) {
+            permissionLauncher.launch(Manifest.permission.CAMERA)
+        }
+    }
+
     var imageCapture: ImageCapture? by remember { mutableStateOf(null) }
     var cameraControl: CameraControl? by remember { mutableStateOf(null) }
     var isFlashOn by remember { mutableStateOf(false) }
@@ -184,116 +212,189 @@ private fun StitchCameraScreen(
                     .background(Color.Black)
                     .border(2.dp, Color.White, RoundedCornerShape(26.dp))
             ) {
-                // CameraX Preview
-                AndroidView(
-                    factory = { ctx ->
-                        val previewView = PreviewView(ctx)
-                        val cameraProviderFuture = ProcessCameraProvider.getInstance(ctx)
-                        cameraProviderFuture.addListener({
-                            val cameraProvider = cameraProviderFuture.get()
-                            val preview = Preview.Builder().build().also {
-                                it.setSurfaceProvider(previewView.surfaceProvider)
-                            }
-                            val capture = ImageCapture.Builder()
-                                .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
-                                .build()
-                            imageCapture = capture
+                if (hasCameraPermission) {
+                    // CameraX Preview with key to rebind on lens facing or permission changes
+                    key(cameraLensFacing, hasCameraPermission) {
+                        AndroidView(
+                            factory = { ctx ->
+                                val previewView = PreviewView(ctx)
+                                val cameraProviderFuture = ProcessCameraProvider.getInstance(ctx)
+                                cameraProviderFuture.addListener({
+                                    val cameraProvider = cameraProviderFuture.get()
+                                    val preview = Preview.Builder().build().also {
+                                        it.setSurfaceProvider(previewView.surfaceProvider)
+                                    }
+                                    val capture = ImageCapture.Builder()
+                                        .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
+                                        .build()
+                                    imageCapture = capture
 
-                            try {
-                                cameraProvider.unbindAll()
-                                val camera = cameraProvider.bindToLifecycle(
-                                    lifecycleOwner,
-                                    CameraSelector.Builder().requireLensFacing(cameraLensFacing).build(),
-                                    preview,
-                                    capture
-                                )
-                                cameraControl = camera.cameraControl
-                            } catch (e: Exception) {
-                                Log.e("StitchCamera", "Camera bind failed", e)
-                            }
-                        }, ContextCompat.getMainExecutor(ctx))
-                        previewView
-                    },
-                    modifier = Modifier.fillMaxSize()
-                )
-
-                // Reticle Corner Brackets Overlay
-                ReticleOverlay(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(24.dp)
-                )
-
-                // Top Alignment Pill
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.TopCenter)
-                        .padding(top = 16.dp)
-                        .clip(CircleShape)
-                        .background(Color(0xD9151D1A))
-                        .padding(horizontal = 14.dp, vertical = 6.dp)
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.CenterFocusStrong,
-                            contentDescription = null,
-                            tint = PrimaryFixed,
-                            modifier = Modifier.size(15.dp)
-                        )
-                        Text(
-                            text = alignmentHint,
-                            color = Color.White,
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.SemiBold
+                                    try {
+                                        cameraProvider.unbindAll()
+                                        val camera = cameraProvider.bindToLifecycle(
+                                            lifecycleOwner,
+                                            CameraSelector.Builder().requireLensFacing(cameraLensFacing).build(),
+                                            preview,
+                                            capture
+                                        )
+                                        cameraControl = camera.cameraControl
+                                    } catch (e: Exception) {
+                                        Log.e("StitchCamera", "Camera bind failed", e)
+                                    }
+                                }, ContextCompat.getMainExecutor(ctx))
+                                previewView
+                            },
+                            modifier = Modifier.fillMaxSize()
                         )
                     }
-                }
 
-                // Bottom Live OCR Detection Preview Pill
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .padding(16.dp)
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(16.dp))
-                        .background(Color.White.copy(alpha = 0.95f))
-                        .padding(horizontal = 12.dp, vertical = 8.dp)
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    // Reticle Corner Brackets Overlay
+                    ReticleOverlay(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(24.dp)
+                    )
+
+                    // Top Alignment Pill
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.TopCenter)
+                            .padding(top = 16.dp)
+                            .clip(CircleShape)
+                            .background(Color(0xD9151D1A))
+                            .padding(horizontal = 14.dp, vertical = 6.dp)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.CenterFocusStrong,
+                                contentDescription = null,
+                                tint = PrimaryFixed,
+                                modifier = Modifier.size(15.dp)
+                            )
+                            Text(
+                                text = alignmentHint,
+                                color = Color.White,
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                    }
+
+                    // Bottom Live OCR Detection Preview Pill
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .padding(16.dp)
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(Color.White.copy(alpha = 0.95f))
+                            .padding(horizontal = 12.dp, vertical = 8.dp)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(8.dp)
+                                    .clip(CircleShape)
+                                    .background(PrimaryGreen)
+                            )
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = stringResource(R.string.capture_live_ocr),
+                                    fontSize = 9.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = PrimaryGreen,
+                                    letterSpacing = 0.8.sp
+                                )
+                                Text(
+                                    text = liveOcrSample,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = TextPrimary,
+                                    maxLines = 1
+                                )
+                            }
+                            Icon(
+                                imageVector = Icons.Default.CheckCircle,
+                                contentDescription = null,
+                                tint = PrimaryGreen,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                    }
+                } else {
+                    // Camera Permission Request Rationale UI
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
                     ) {
                         Box(
                             modifier = Modifier
-                                .size(8.dp)
+                                .size(72.dp)
                                 .clip(CircleShape)
-                                .background(PrimaryGreen)
-                        )
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = stringResource(R.string.capture_live_ocr),
-                                fontSize = 9.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = PrimaryGreen,
-                                letterSpacing = 0.8.sp
-                            )
-                            Text(
-                                text = liveOcrSample,
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = TextPrimary,
-                                maxLines = 1
+                                .background(PrimaryFixed.copy(alpha = 0.2f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.PhotoCamera,
+                                contentDescription = null,
+                                tint = PrimaryFixed,
+                                modifier = Modifier.size(36.dp)
                             )
                         }
-                        Icon(
-                            imageVector = Icons.Default.CheckCircle,
-                            contentDescription = null,
-                            tint = PrimaryGreen,
-                            modifier = Modifier.size(18.dp)
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Text(
+                            text = stringResource(R.string.camera_permission_required),
+                            color = Color.White,
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center
                         )
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Text(
+                            text = stringResource(R.string.camera_permission_desc),
+                            color = TextSecondary,
+                            fontSize = 13.sp,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(horizontal = 16.dp)
+                        )
+
+                        Spacer(modifier = Modifier.height(24.dp))
+
+                        Button(
+                            onClick = { permissionLauncher.launch(Manifest.permission.CAMERA) },
+                            shape = RoundedCornerShape(14.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen)
+                        ) {
+                            Icon(Icons.Default.LockOpen, contentDescription = null, modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(stringResource(R.string.camera_permission_grant), fontWeight = FontWeight.Bold)
+                        }
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        TextButton(
+                            onClick = {
+                                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                    data = Uri.fromParts("package", context.packageName, null)
+                                }
+                                context.startActivity(intent)
+                            }
+                        ) {
+                            Text(stringResource(R.string.camera_permission_settings), color = PrimaryFixed, fontSize = 12.sp)
+                        }
                     }
                 }
             }
@@ -338,7 +439,9 @@ private fun StitchCameraScreen(
                             .clip(CircleShape)
                             .background(PrimaryFixed.copy(alpha = 0.25f))
                             .clickable {
-                                if (!isCapturing) {
+                                if (!hasCameraPermission) {
+                                    permissionLauncher.launch(Manifest.permission.CAMERA)
+                                } else if (!isCapturing) {
                                     isCapturing = true
                                     capturePhoto(
                                         context = context,
